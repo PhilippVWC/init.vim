@@ -134,7 +134,7 @@ nnoremap <localleader>ev :split $MYVIMRC<CR>
 "source (aka. "reload") ""vimrc file
 nnoremap <localleader>r :source $MYVIMRC<CR>
 "open terminal emulator
-nnoremap <localleader>C :split term://zsh<CR>
+nnoremap <localleader>C :<c-u>execute "split term://zsh"<cr>:startinsert<cr>
 "select word with space key
 nnoremap <space> viw	
 "clear current line
@@ -206,9 +206,13 @@ augroup markdown
  	autocmd FileType markdown onoremap <buffer> ih :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_"<cr>|	"delete markdown file heading of current section
 	autocmd FileType markdown onoremap <buffer> ah :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_j"<cr>|	"delete around heading
 augroup END
-augroup several
+augroup vimscript
 	autocmd!
+	autocmd FileType vim setlocal foldmethod=marker
 	autocmd FileType vim nnoremap <buffer> <localleader>c I"<esc>
+augroup END
+augroup miscellaneous
+	autocmd!
 	"Don't wrap text for html files
 	autocmd BufNewFile,BufRead *.html setlocal nowrap
 	"check spelling automatically for tex files
