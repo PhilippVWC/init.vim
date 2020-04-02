@@ -107,6 +107,7 @@ filetype plugin indent on
 
 "------------------------------ABBREVIATIONS------------------------------{{{
 iabbrev 'van\ W' van Wickevoort Crommelin
+"
 "}}}
 
 "------------------------------MAPPINGS------------------------------{{{
