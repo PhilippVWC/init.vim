@@ -34,7 +34,10 @@ call plug#end()
 "}}}
 "================================================== Personal configuration ===================={{{
 "------------------------------FUNCTIONS------------------------------{{{
-
+"TODO: create formatter for r function arguments
+"function! Pvwc_IncrWinSize()
+"	let w:winSize = winsaveview()|:<c-w>_
+"endfunction
 "Go to window with window number
 function! Pvwc_GoToWin(winNumb)
 	call win_gotoid(win_getid(a:winNumb))
@@ -94,6 +97,8 @@ let g:python_host_prog="/usr/bin/python"
 let mapleader = '\'|	"set the leader key to the hyphen character
 let maplocalleader = '-'|	"map the localleader key to a backslash
 
+set splitright|	"make new vertical splits appear to the right
+set splitbelow|	"make new horizontal splits appear below
 set wrap|	"let lines break, if their lengths exceed the window size
 set mouse=a
 set shiftround|	"round value for indentation to multiple of shiftwidth
@@ -118,6 +123,8 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
+"maximize window
+"nnoremap <localleader>M :call Pvwc_IncrWinSize()<cr>
 nnoremap Z ZZ|	"write and close
 "map redo to capital u
 nnoremap U <c-r>
@@ -131,7 +138,7 @@ nnoremap <localleader>t :tabnext<cr>
 nnoremap <localleader><S-t> :tabprevious<cr>
 "Edit vimrc file
 nnoremap <localleader>ev :split $MYVIMRC<CR>
-"source (aka. "reload") ""vimrc file
+"source (aka. "reload") vimrc file
 nnoremap <localleader>r :source $MYVIMRC<CR>
 "open terminal emulator
 nnoremap <localleader>C :<c-u>execute "split term://zsh"<cr>:startinsert<cr>
@@ -143,15 +150,14 @@ nnoremap <localleader>d ddO
 noremap <localleader>ll :let &tabstop += (&tabstop < 10) ? 1 : 0 <CR>
 "Decrease tabstop
 noremap <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
-"Search within visually selected ranges
-"Capitalize word
-"nnoremap <c-u> viwgU
 "}}}
 "------------------------------VISUAL MODE{{{
 vnoremap $ g_|	"go to the last printable character of current line (skip newline char)
 "surround selection by double quotes
 vnoremap <localleader>" di"<esc>pa"<esc>
+"Search constrained to visually selected range
 vnoremap <silent> / :<C-U>call RangeSearch('/')<CR>:if strlen(g:srchstr) > 0\|exec '/'.g:srchstr\|endif<CR>
+"Backward search constrained to visually selected range
 vnoremap <silent> ? :<C-U>call RangeSearch('?')<CR>:if strlen(g:srchstr) > 0\|exec '?'.g:srchstr\|endif<CR>
 vnoremap p i(|	"constrain selection to content of paranthesis
 "}}}
@@ -171,11 +177,11 @@ if(len(maparg('cp'))!=0)|	"check whether mapping already exists
 	unmap cp|		"unmap iron-vims repeat command
 endif
 onoremap p i(|"inner paranthesis environment
-onoremap pp :<c-u>normal! F)vi(<cr>|	"next paranethesis environment
-onoremap np :<c-u>normal! f(vi(<cr>|	"last paranthesis environment
+onoremap pp :<c-u>normal! F)hvi(<cr>|	"next paranethesis environment
+onoremap np :<c-u>normal! f(lvi(<cr>|	"last paranthesis environment
 onoremap b :<c-u>normal! vi{<cr>|	"inner brace environment
-onoremap nb :<c-u>normal! f{vi{<cr>|	"next brace environment
-onoremap pb :<c-u>normal! F}vi{<cr>|	"last brace environment
+onoremap nb :<c-u>normal! f{lvi{<cr>|	"next brace environment
+onoremap pb :<c-u>normal! F}hvi{<cr>|	"last brace environment
 "}}} 
 "}}}
 "------------------------------AUTOCOMMANDS	{{{
@@ -184,42 +190,57 @@ onoremap pb :<c-u>normal! F}vi{<cr>|	"last brace environment
 "	or alternatively 
 "	autocmd FileType r "deactivate iron-vim plugin"
 "Comment a line specific to its filetype
-augroup filetype_html
-    autocmd!
-    autocmd FileType html nnoremap <buffer> <localleader>f Vatzf
+"------------------------------Filetype html{{{
+augroup html
+	autocmd!
+	"Don't wrap text for html files
+	autocmd BufNewFile,BufRead *.html setlocal nowrap
+	autocmd FileType html nnoremap <buffer> <localleader>f Vatzf
 augroup END
+"}}}
+"------------------------------Filetype python{{{
 augroup python
 	autocmd!|	"Delete all comands from group first
 	autocmd FileType python nnoremap <buffer> <localleader>c I#<esc>
 	autocmd FileType python :iabbrev iff if:<left>
 	autocmd FileType python :iabbrev fnn def ()<left><left>
+	autocmd FileType python setlocal foldmethod=indent
+	autocmd FileType python setlocal foldlevelstart=0
 augroup END
+"}}}
+"------------------------------Filetype r{{{
 augroup r
 	autocmd!
 	autocmd FileType r nnoremap <buffer> <localleader>c I#<esc>
 	autocmd FileType r :iabbrev iff if()<left>
 	autocmd FileType r :iabbrev fnn = function()<left><left><left><left><left><left><left><left><left><left><left><left><left><left>
 augroup END
+"}}}
+"------------------------------Filetype html{{{
 augroup markdown
 	autocmd!
 	autocmd FileType markdown onoremap <buffer> in@ :<c-u>execute "normal! /@\r:nohlsearch\rhviw"<cr>
  	autocmd FileType markdown onoremap <buffer> ih :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_"<cr>|	"delete markdown file heading of current section
 	autocmd FileType markdown onoremap <buffer> ah :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_j"<cr>|	"delete around heading
 augroup END
-augroup vimscript
+"}}}
+"------------------------------Filetype vim{{{
+augroup vim
 	autocmd!
 	autocmd FileType vim setlocal foldmethod=marker
+	autocmd FileType vim setlocal foldlevelstart=0
 	autocmd FileType vim nnoremap <buffer> <localleader>c I"<esc>
 augroup END
+"}}}
+"------------------------------miscellaneous{{{
 augroup miscellaneous
 	autocmd!
-	"Don't wrap text for html files
-	autocmd BufNewFile,BufRead *.html setlocal nowrap
 	"check spelling automatically for tex files
 	autocmd FileType plaintex :setlocal spell spelllang=de
-	autocmd BufWinEnter * call ResCur()
+	autocmd BufWinEnter * call ResCur()|	"reset cursor position
 	"autocmd ButT
 augroup END
+"}}}
 "}}}
 "}}}
 "================================================== PLugin configuration ===================={{{
