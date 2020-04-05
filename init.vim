@@ -33,7 +33,7 @@ Plug 'edkolev/tmuxline.vim'
 call plug#end()
 "}}}
 "================================================== Personal configuration ===================={{{
-"Global option for more verbose output
+"Global indicator variable for more verbose output
 let s:verbose = 1
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: create formatter for r function arguments
@@ -97,12 +97,9 @@ endfunction
 
 "Maximize current window
 function! Pvwc_MaxCurWin()
-	function! NewTab()
-		execute ":tabedit ".g:minBn
-		let g:maxWinID = win_getid()
-		call extend(g:minMaxPairs,{g:minWinID:g:maxWinID})
-		call extend(g:maxMinPairs,{g:maxWinID:g:minWinID})
-	endfunction
+	let g:cursorPosition = getcurpos()
+	"let g:cursorRow = g:cp[1]
+	"let g:cursorCol = g:cp[4]
 	if !exists("g:minMaxPairs")
 		let g:minMaxPairs = {}
 		let g:maxMinPairs = {}
@@ -111,10 +108,17 @@ function! Pvwc_MaxCurWin()
 	let g:minBn = bufname(bufnr())
 	call Pvwc_c("Pvwc: Current window ID = ".g:minWinID."\tbuffer name\t".g:minBn)
 	let g:maxWinID = get(g:minMaxPairs,g:minWinID,0)  
+	function! NewTab()
+		execute ":tabedit ".g:minBn
+		let g:maxWinID = win_getid()
+		call extend(g:minMaxPairs,{g:minWinID:g:maxWinID})
+		call extend(g:maxMinPairs,{g:maxWinID:g:minWinID})
+		call setpos(".",g:cursorPosition)
+	endfunction
 	if g:maxWinID!=#0 && !empty(getwininfo(g:maxWinID))
-		if s:verbose|:echo "Max window does already exist"|:endif
-		call Pvwc_c("maxWinID is\t".g:maxWinID)
+		call Pvwc_c("Max window does already exist. MaxWinID is\t".g:maxWinID)
 		call win_gotoid(g:maxWinID)
+		call setpos(".",g:cursorPosition)
 	elseif g:maxWinID!=#0 && empty(getwininfo(g:maxWinID))
 		call Pvwc_c("remove invalid entries")
 		call remove(g:minMaxPairs,g:minWinID)
@@ -134,8 +138,10 @@ function! Pvwc_MinCurWin()
 			call Pvwc_c("There is not minimized window that belongs to the current window. Nothing done")
 		else
 			call Pvwc_c("Close maximized window and go to minimized version")
+			let g:cursorPosition = getcurpos()
 			execute ":close"
 			call win_gotoid(g:minWinID)
+			call setpos(".",g:cursorPosition)
 			call remove(g:maxMinPairs,g:maxWinID)
 			call remove(g:minMaxPairs,g:minWinID)
 		endif
@@ -149,6 +155,7 @@ let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/pyth
 let g:python_host_prog="/usr/bin/python"
 let mapleader = '\'|	"set the leader key to the hyphen character
 let maplocalleader = '-'|	"map the localleader key to a backslash
+set ignorecase|	"Ignore case for vim search function / or ?
 set hlsearch incsearch|	"highlight all matching search patterns while typing
 set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
 set splitright|	"make new vertical splits appear to the right
