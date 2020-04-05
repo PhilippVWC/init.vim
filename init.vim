@@ -89,18 +89,24 @@ endfunction
 
 "Maximize current window
 function! Pvwc_MaxCurWin()
-	"let g:winPairs = {}
-	let g:curWinID = win_getid()
-	let g:bn = bufname(bufnr())
-	echom "Pvwc: Current window ID = ".g:curWinID."\tbuffer name\t".g:bn
-	execute ":tabedit ".g:bn
+	if !exists("g:winPairs")
+		let g:winPairs = {}
+	endif
+	let g:minWinID = win_getid()
+	let g:minBn = bufname(bufnr())
+	echom "Pvwc: Current window ID = ".g:minWinID."\tbuffer name\t".g:minBn
+	execute ":tabedit ".g:minBn
+	let g:maxWinID = win_getid()
+	let g:maxBn = bufname(bufnr())
+	call extend(g:winPairs,{g:minWinID:g:maxWinID})
+	echom g:winPairs
 endfunction
 
 function! Pvwc_MinCurWin()
-	if exists("g:curWinID")
+	if exists("g:minWinID")
 		let g:maxWinID = win_getid()
 		execute ":close"
-		call win_gotoid(g:curWinID)
+		call win_gotoid(g:minWinID)
 	endif
 endfunction
 "}}}
