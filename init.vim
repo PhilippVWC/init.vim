@@ -89,24 +89,35 @@ endfunction
 
 "Maximize current window
 function! Pvwc_MaxCurWin()
-	if !exists("g:winPairs")
-		let g:winPairs = {}
+	if !exists("g:minMaxPairs")
+		let g:minMaxPairs = {}
+		let g:maxMinPairs = {}
 	endif
 	let g:minWinID = win_getid()
 	let g:minBn = bufname(bufnr())
 	echom "Pvwc: Current window ID = ".g:minWinID."\tbuffer name\t".g:minBn
-	execute ":tabedit ".g:minBn
-	let g:maxWinID = win_getid()
-	let g:maxBn = bufname(bufnr())
-	call extend(g:winPairs,{g:minWinID:g:maxWinID})
-	echom g:winPairs
+	if exists("get(g:minMaxPairs,g:minWinID)")
+		let g:maxWinID = get(g:minMaxPairs,g:minWinID)
+		call win_gotoid(g:maxWinID)
+	else
+		execute ":tabedit ".g:minBn
+		let g:maxWinID = win_getid()
+		let g:maxBn = bufname(bufnr())
+		call extend(g:minMaxPairs,{g:minWinID:g:maxWinID})
+		call extend(g:maxMinPairs,{g:maxWinID:g:minWinID})
+	endif
+	"echo "After maximization: minMaxPairs\t".g:minMaxPairs."maxMinPairs\t".g:maxMinPairs
 endfunction
 
 function! Pvwc_MinCurWin()
-	if exists("g:minWinID")
+	if exists("g:maxMinPairs")
 		let g:maxWinID = win_getid()
-		execute ":close"
+		let g:minWinID = get(g:maxMinPairs,g:maxWinID)
 		call win_gotoid(g:minWinID)
+		execute ":close"
+		call remove(g:maxMinPairs,g:maxWinID)
+		call remove(g:minMaxPairs,g:minWinID)
+		"echo "After minimization: minMaxPairs\t".g:minMaxPairs."maxMinPairs\t".g:maxMinPairs
 	endif
 endfunction
 "}}}
