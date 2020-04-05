@@ -89,6 +89,7 @@ endfunction
 
 "Maximize current window
 function! Pvwc_MaxCurWin()
+	"let g:winPairs = {}
 	let g:curWinID = win_getid()
 	let g:bn = bufname(bufnr())
 	echom "Pvwc: Current window ID = ".g:curWinID."\tbuffer name\t".g:bn
@@ -310,7 +311,7 @@ let NERDTreeShowHidden = 1
 "Trigger nerdtree file system browser automatically, when starting vim session
 "autocmd vimenter * NERDTree 
 "nnoremap <localleader>n :NERDTreeToggle<CR>|if &ignorecase\|set noignorecase\|else\|set ignorecase<cr>
-nnoremap <localleader>n<cr>
+nnoremap <localleader>n :NERDTreeToggle<cr>
 "nnoremap <localleader>h :call <Plug>NERDTreeMapOpenSplit()<CR>
 let g:webdevicons_enable_nerdtree = 1
 "}}}
