@@ -33,9 +33,17 @@ Plug 'edkolev/tmuxline.vim'
 call plug#end()
 "}}}
 "================================================== Personal configuration ===================={{{
+"Global option for more verbose output
+let s:verbose = 1
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: create formatter for r function arguments
 "TODO: create function that cycles through all non-active buffers + additional flag that
+"create a comment only if s:verbose script variable has been set
+function! Pvwc_c(comment)
+	if s:verbose
+		echo a:comment
+	endif
+endfunction
 "Go to window with window numbe r
 function! Pvwc_GoToWin(winNumb)
 	call win_gotoid(win_getid(a:winNumb))
@@ -89,7 +97,7 @@ endfunction
 
 "Maximize current window
 function! Pvwc_MaxCurWin()
-	function! Pvwc_newTab()
+	function! NewTab()
 		execute ":tabedit ".g:minBn
 		let g:maxWinID = win_getid()
 		call extend(g:minMaxPairs,{g:minWinID:g:maxWinID})
@@ -101,20 +109,20 @@ function! Pvwc_MaxCurWin()
 	endif
 	let g:minWinID = win_getid()
 	let g:minBn = bufname(bufnr())
-	echom "Pvwc: Current window ID = ".g:minWinID."\tbuffer name\t".g:minBn
+	call Pvwc_c("Pvwc: Current window ID = ".g:minWinID."\tbuffer name\t".g:minBn)
 	let g:maxWinID = get(g:minMaxPairs,g:minWinID,0)  
 	if g:maxWinID!=#0 && !empty(getwininfo(g:maxWinID))
-		echo "Max window does already exist"
-		echo "maxWinID is\t".g:maxWinID
+		if s:verbose|:echo "Max window does already exist"|:endif
+		call Pvwc_c("maxWinID is\t".g:maxWinID)
 		call win_gotoid(g:maxWinID)
 	elseif g:maxWinID!=#0 && empty(getwininfo(g:maxWinID))
-		echo "remove invalid entries"
+		call Pvwc_c("remove invalid entries")
 		call remove(g:minMaxPairs,g:minWinID)
 		call remove(g:maxMinPairs,g:maxWinID)
-		call Pvwc_newTab()
+		call NewTab()
 	else
-		echo "Max window does not exist"
-		call Pvwc_newTab()
+		call Pvwc_c("Max window does not exist")
+		call NewTab()
 	endif
 endfunction
 
@@ -123,9 +131,9 @@ function! Pvwc_MinCurWin()
 		let g:maxWinID = win_getid()
 		let g:minWinID = get(g:maxMinPairs,g:maxWinID,0)
 		if g:minWinID==#0
-			echo "There is not minimized window that belongs to the current window. Nothing done"
+			call Pvwc_c("There is not minimized window that belongs to the current window. Nothing done")
 		else
-			echo "Close maximized window and go to minimized version"
+			call Pvwc_c("Close maximized window and go to minimized version")
 			execute ":close"
 			call win_gotoid(g:minWinID)
 			call remove(g:maxMinPairs,g:maxWinID)
@@ -174,9 +182,9 @@ noremap F T
 nnoremap <localleader>Z :wqall<cr>
 "maximize window
 "nnoremap <localleader>M :tabedit %<cr>
-nnoremap <localleader>M :call Pvwc_MaxCurWin()<cr>
+nnoremap <silent> <localleader>M :call Pvwc_MaxCurWin()<cr>
 "minimize window
-nnoremap <localleader>m :call Pvwc_MinCurWin()<cr>
+nnoremap <silent> <localleader>m :call Pvwc_MinCurWin()<cr>
 "write and close
 nnoremap Z ZZ|	"write and close
 "map redo to capital u
