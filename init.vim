@@ -116,18 +116,21 @@ function! Pvwc_MaxCurWin()
 		echo "Max window does not exist"
 		call Pvwc_newTab()
 	endif
-	"echo "After maximization: minMaxPairs\t".g:minMaxPairs."maxMinPairs\t".g:maxMinPairs
 endfunction
 
 function! Pvwc_MinCurWin()
 	if exists("g:maxMinPairs")
 		let g:maxWinID = win_getid()
-		let g:minWinID = get(g:maxMinPairs,g:maxWinID)
-		execute ":close"
-		call win_gotoid(g:minWinID)
-		call remove(g:maxMinPairs,g:maxWinID)
-		call remove(g:minMaxPairs,g:minWinID)
-		"echo "After minimization: minMaxPairs\t".g:minMaxPairs."maxMinPairs\t".g:maxMinPairs
+		let g:minWinID = get(g:maxMinPairs,g:maxWinID,0)
+		if g:minWinID==#0
+			echo "There is not minimized window that belongs to the current window. Nothing done"
+		else
+			echo "Close maximized window and go to minimized version"
+			execute ":close"
+			call win_gotoid(g:minWinID)
+			call remove(g:maxMinPairs,g:maxWinID)
+			call remove(g:minMaxPairs,g:minWinID)
+		endif
 	endif
 endfunction
 "}}}
