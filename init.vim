@@ -35,10 +35,8 @@ call plug#end()
 "================================================== Personal configuration ===================={{{
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: create formatter for r function arguments
-"function! Pvwc_IncrWinSize()
-"	let w:winSize = winsaveview()|:<c-w>_
-"endfunction
-"Go to window with window number
+"TODO: create function that cycles through all non-active buffers + additional flag that
+"Go to window with window numbe r
 function! Pvwc_GoToWin(winNumb)
 	call win_gotoid(win_getid(a:winNumb))
 endfunction
@@ -88,6 +86,22 @@ function! ResCur()
     return 1
   endif
 endfunction
+
+"Maximize current window
+function! Pvwc_MaxCurWin()
+	let g:curWinID = win_getid()
+	let g:bn = bufname(bufnr())
+	echom "Pvwc: Current window ID = ".g:curWinID."\tbuffer name\t".g:bn
+	execute ":tabedit ".g:bn
+endfunction
+
+function! Pvwc_MinCurWin()
+	if exists("g:curWinID")
+		let g:maxWinID = win_getid()
+		execute ":close"
+		call win_gotoid(g:curWinID)
+	endif
+endfunction
 "}}}
 "------------------------------SETTINGS------------------------------{{{
 "TODO:command that repeats last command
@@ -96,9 +110,12 @@ let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/pyth
 let g:python_host_prog="/usr/bin/python"
 let mapleader = '\'|	"set the leader key to the hyphen character
 let maplocalleader = '-'|	"map the localleader key to a backslash
-
+set hlsearch incsearch|	"highlight all matching search patterns while typing
+set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
 set splitright|	"make new vertical splits appear to the right
 set splitbelow|	"make new horizontal splits appear below
+"consider command <<aboveleft>> for vertical/horizontal splits to open to the left/top of the
+"current active window
 set wrap|	"let lines break, if their lengths exceed the window size
 set mouse=a
 set shiftround|	"round value for indentation to multiple of shiftwidth
@@ -123,8 +140,13 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
+nnoremap <localleader>Z :wqall<cr>
 "maximize window
-"nnoremap <localleader>M :call Pvwc_IncrWinSize()<cr>
+"nnoremap <localleader>M :tabedit %<cr>
+nnoremap <localleader>M :call Pvwc_MaxCurWin()<cr>
+"minimize window
+nnoremap <localleader>m :call Pvwc_MinCurWin()<cr>
+"write and close
 nnoremap Z ZZ|	"write and close
 "map redo to capital u
 nnoremap U <c-r>
@@ -133,9 +155,9 @@ nnoremap t <c-w><c-w>
 "go to previous window
 nnoremap <S-t> :call Pvwc_GoToPrevWin()<esc>
 "go to next tab
-nnoremap <localleader>t :tabnext<cr>
+"nnoremap <localleader>t :tabnext<cr>
 "go to previous tab
-nnoremap <localleader><S-t> :tabprevious<cr>
+"nnoremap <localleader><S-t> :tabprevious<cr>
 "Edit vimrc file
 nnoremap <localleader>ev :split $MYVIMRC<CR>
 "source (aka. "reload") vimrc file
@@ -148,7 +170,7 @@ nnoremap <space> viw
 nnoremap <localleader>d ddO
 "Increase tabstop
 noremap <localleader>ll :let &tabstop += (&tabstop < 10) ? 1 : 0 <CR>
-"Decrease tabstop
+"Decrease tabsto
 noremap <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
 "}}}
 "------------------------------VISUAL MODE{{{
@@ -156,9 +178,9 @@ vnoremap $ g_|	"go to the last printable character of current line (skip newline
 "surround selection by double quotes
 vnoremap <localleader>" di"<esc>pa"<esc>
 "Search constrained to visually selected range
-vnoremap <silent> / :<C-U>call RangeSearch('/')<CR>:if strlen(g:srchstr) > 0\|exec '/'.g:srchstr\|endif<CR>
+vnoremap <silent> / :<C-U>call RangeSearch('/')<CR>:if strlen(g:srchstr) > 0\|execute '/'.g:srchstr\|endif<CR>
 "Backward search constrained to visually selected range
-vnoremap <silent> ? :<C-U>call RangeSearch('?')<CR>:if strlen(g:srchstr) > 0\|exec '?'.g:srchstr\|endif<CR>
+vnoremap <silent> ? :<C-U>call RangeSearch('?')<CR>:if strlen(g:srchstr) > 0\|execute '?'.g:srchstr\|endif<CR>
 vnoremap p i(|	"constrain selection to content of paranthesis
 "}}}
 "------------------------------INSERT MODE{{{
@@ -236,6 +258,7 @@ augroup END
 augroup miscellaneous
 	autocmd!
 	"check spelling automatically for tex files
+	autocmd Filetype help setlocal number
 	autocmd FileType plaintex :setlocal spell spelllang=de
 	autocmd BufWinEnter * call ResCur()|	"reset cursor position
 	"autocmd ButT
@@ -272,6 +295,12 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 "}}}
 "------------------------------NERDTREE CONFIGURATION------------------------------{{{
 "try fc-cache -v -f in terminal to reset font buffer
+augroup nerdtree
+	autocmd!
+	autocmd FileType nerdtree set ignorecase|echom "Ignorecase option set for nerdtree"|	"Only global option exists.
+	autocmd FileType nerdtree nnoremap <buffer> t <c-w><c-w>
+	autocmd QuitPre if &ignorecase==1\|set noignorecase|echom "Ignorecase option unset"
+augroup END
 set guifont=hack_nerd_font:h11
 set encoding=utf-8
 "show line numbers per default
@@ -280,7 +309,8 @@ let NERDTreeShowLineNumbers = 0
 let NERDTreeShowHidden = 1
 "Trigger nerdtree file system browser automatically, when starting vim session
 "autocmd vimenter * NERDTree 
-nnoremap <localleader>n :NERDTreeToggle<CR>
+"nnoremap <localleader>n :NERDTreeToggle<CR>|if &ignorecase\|set noignorecase\|else\|set ignorecase<cr>
+nnoremap <localleader>n<cr>
 "nnoremap <localleader>h :call <Plug>NERDTreeMapOpenSplit()<CR>
 let g:webdevicons_enable_nerdtree = 1
 "}}}
