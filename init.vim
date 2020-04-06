@@ -217,7 +217,7 @@ noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
 "Highlight all trailing white space charactes before end-of-line character
-nnoremap <localleader>w :call Pvwc_EOL_Highlight()<cr> 
+nnoremap <localleader>w :call Pvwc_hlTrlWsp()<cr> 
 "Delete all trailing white space charactes before end-of-line character
 nnoremap <localleader>W :execute "normal! s/".g:trlWspPattern."//g\<cr>"
 "Write and close all windows in all tabs und quit vim 	
