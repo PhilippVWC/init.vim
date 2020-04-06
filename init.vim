@@ -33,12 +33,42 @@ Plug 'edkolev/tmuxline.vim'
 call plug#end()
 "}}}
 "================================================== Personal configuration ===================={{{
+"------------------------------GLOBAL VARIABLES------------------------------{{{
 "Global indicator variable for more verbose output
-let s:verbose = 1
+let s:verbose = 0
+let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
+let g:python_host_prog="/usr/bin/python"
+let mapleader = '\'|	"set the leader key to the hyphen character
+let maplocalleader = '-'|	"map the localleader key to a backslash
+let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
+"}}}
 "------------------------------FUNCTIONS------------------------------{{{
+"TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
 "TODO: create function that cycles through all non-active buffers + additional flag that
 "create a comment only if s:verbose script variable has been set
+"Function that toggles highlighting trailing white-space characters
+function! Pvwc_hlTrlWsp()
+	highlight trlWspGroup ctermbg=green guibg=green
+	function! Local_hl()
+		execute ":match trlWspGroup /".g:trlWspPattern."/"
+		let g:highlTrailWhsp = 1
+	endfunction
+	function! Local_nohl()
+		"Do not highlight anything
+		:match trlWspGroup /-dd-sdf-weiosdf-sdfhas-ewhd/
+		let g:highlTrailWhsp = 0
+	endfunction
+	if exists("g:highlTrailWhsp")
+		if g:highlTrailWhsp
+			call Local_nohl()
+		else
+			call Local_hl()
+		endif       
+	else
+		call Local_hl()		
+	endif
+endfunction
 function! Pvwc_c(comment)
 	if s:verbose
 		echo a:comment
@@ -96,6 +126,10 @@ function! ResCur()
 endfunction
 
 "Maximize current window
+"TODO: if a buffer change occurs in either window mirror
+"that in the other one
+"TODO: if a split occurs in maximized window connect that split to the minimized
+"window somehow
 function! Pvwc_MaxCurWin()
 	let g:cursorPosition = getcurpos()
 	"let g:cursorRow = g:cp[1]
@@ -151,10 +185,6 @@ endfunction
 "------------------------------SETTINGS------------------------------{{{
 "TODO:command that repeats last command
 command! Tex :w|:!pdflatex -shell-escape % 
-let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
-let g:python_host_prog="/usr/bin/python"
-let mapleader = '\'|	"set the leader key to the hyphen character
-let maplocalleader = '-'|	"map the localleader key to a backslash
 set ignorecase|	"Ignore case for vim search function / or ?
 set hlsearch incsearch|	"highlight all matching search patterns while typing
 set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
@@ -186,6 +216,11 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
+"Highlight all trailing white space charactes before end-of-line character
+nnoremap <localleader>w :call Pvwc_EOL_Highlight()<cr> 
+"Delete all trailing white space charactes before end-of-line character
+nnoremap <localleader>W :execute "normal! s/".g:trlWspPattern."//g\<cr>"
+"Write and close all windows in all tabs und quit vim 	
 nnoremap <localleader>Z :wqall<cr>
 "maximize window
 "nnoremap <localleader>M :tabedit %<cr>
@@ -343,9 +378,10 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 "try fc-cache -v -f in terminal to reset font buffer
 augroup nerdtree
 	autocmd!
-	autocmd FileType nerdtree set ignorecase|echom "Ignorecase option set for nerdtree"|	"Only global option exists.
+	autocmd FileType nerdtree set ignorecase | call Pvwc_c("Ignorecase option set for nerdtree")
 	autocmd FileType nerdtree nnoremap <buffer> t <c-w><c-w>
-	autocmd QuitPre if &ignorecase==1\|set noignorecase|echom "Ignorecase option unset"
+	"Trigger nerdtree file system browser automatically, when starting vim session
+	"autocmd vimenter * NERDTree0
 augroup END
 set guifont=hack_nerd_font:h11
 set encoding=utf-8
@@ -353,8 +389,6 @@ set encoding=utf-8
 let NERDTreeShowLineNumbers = 0
 "show hidden files per default
 let NERDTreeShowHidden = 1
-"Trigger nerdtree file system browser automatically, when starting vim session
-"autocmd vimenter * NERDTree 
 "nnoremap <localleader>n :NERDTreeToggle<CR>|if &ignorecase\|set noignorecase\|else\|set ignorecase<cr>
 nnoremap <localleader>n :NERDTreeToggle<cr>
 "nnoremap <localleader>h :call <Plug>NERDTreeMapOpenSplit()<CR>
