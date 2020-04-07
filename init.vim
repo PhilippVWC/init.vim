@@ -1,7 +1,7 @@
 "Init.vim from Philipp van Wickevoort Crommelin.
 "Contact me by email: philippcrommelin@googlemail.com.
 "
-"------------------------------PLUGINS------------------------------{{{  
+"------------------------------PLUGINS------------------------------{{{
 call plug#begin()
 "Plug 'ncm2/ncm2'
 "Plug 'roxma/nvim-yarp'
@@ -22,8 +22,8 @@ Plug  'ryanoasis/vim-devicons'
 Plug 'tpope/vim-surround'
 "Plug 'zchee/deoplete-jedi' "
 Plug 'vim-airline/vim-airline' "fancy vim status bar
-"Plug 'vim-airline/vim-airline-themes' 
-Plug 'jiangmiao/auto-pairs' "set matching quotation marks, braces, etc. 
+"Plug 'vim-airline/vim-airline-themes'
+Plug 'jiangmiao/auto-pairs' "set matching quotation marks, braces, etc.
 Plug 'davidhalter/jedi-vim' "python go-to function and completion
 Plug 'sbdchd/neoformat' "code formatting
 Plug 'neomake/neomake'
@@ -64,9 +64,9 @@ function! Pvwc_hlTrlWsp()
 			call Local_nohl()
 		else
 			call Local_hl()
-		endif       
+		endif
 	else
-		call Local_hl()		
+		call Local_hl()
 	endif
 endfunction
 function! Pvwc_c(comment)
@@ -80,7 +80,7 @@ function! Pvwc_GoToWin(winNumb)
 endfunction
 
 "Go to previous window
-function! Pvwc_GoToPrevWin() 
+function! Pvwc_GoToPrevWin()
 	let l = winnr()-1
 	let n = winnr('$')
 	if( l==0 )
@@ -141,7 +141,7 @@ function! Pvwc_MaxCurWin()
 	let g:minWinID = win_getid()
 	let g:minBn = bufname(bufnr())
 	call Pvwc_c("Pvwc: Current window ID = ".g:minWinID."\tbuffer name\t".g:minBn)
-	let g:maxWinID = get(g:minMaxPairs,g:minWinID,0)  
+	let g:maxWinID = get(g:minMaxPairs,g:minWinID,0)
 	function! NewTab()
 		execute ":tabedit ".g:minBn
 		let g:maxWinID = win_getid()
@@ -184,7 +184,7 @@ endfunction
 "}}}
 "------------------------------SETTINGS------------------------------{{{
 "TODO:command that repeats last command
-command! Tex :w|:!pdflatex -shell-escape % 
+command! Tex :w|:!pdflatex -shell-escape %
 set ignorecase|	"Ignore case for vim search function / or ?
 set hlsearch incsearch|	"highlight all matching search patterns while typing
 set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
@@ -216,11 +216,14 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
+"Perform 'very magic' searches by default, for conventional regex pattern parsing like
+"perl, python and ruby.
+nnoremap / /\v
 "Highlight all trailing white space charactes before end-of-line character
-nnoremap <silent> <localleader>w :call Pvwc_hlTrlWsp()<cr> 
+nnoremap <silent> <localleader>w :call Pvwc_hlTrlWsp()<cr>
 "Delete all trailing white space charactes before end-of-line character
 nnoremap <silent> <localleader>W :execute "normal! mq:%s/".trlWspPattern."//g\r:nohl\r`q"<cr>
-"Write and close all windows in all tabs und quit vim 	
+"Write and close all windows in all tabs und quit vim
 nnoremap <localleader>Z :wqall<cr>
 "maximize window
 "nnoremap <localleader>M :tabedit %<cr>
@@ -246,7 +249,7 @@ nnoremap <localleader>r :source $MYVIMRC<CR>
 "open terminal emulator
 nnoremap <localleader>C :<c-u>execute "split term://zsh"<cr>:startinsert<cr>
 "select word with space key
-nnoremap <space> viw	
+nnoremap <space> viw
 "clear current line
 nnoremap <localleader>d ddO
 "Increase tabstop
@@ -266,7 +269,7 @@ vnoremap p i(|	"constrain selection to content of paranthesis
 "}}}
 "------------------------------INSERT MODE{{{
 "Capitalize word, place cursor behind word, and enter instert mode
-inoremap <c-u>  <esc>viwgUea	
+inoremap <c-u>  <esc>viwgUea
 "Escape sequence
 "inoremap jk <esc>
 "inoremap <esc> <nop>
@@ -285,12 +288,12 @@ onoremap np :<c-u>normal! f(lvi(<cr>|	"last paranthesis environment
 onoremap b :<c-u>normal! vi{<cr>|	"inner brace environment
 onoremap nb :<c-u>normal! f{lvi{<cr>|	"next brace environment
 onoremap pb :<c-u>normal! F}hvi{<cr>|	"last brace environment
-"}}} 
+"}}}
 "}}}
 "------------------------------AUTOCOMMANDS	{{{
 "autocmd BufWinEnter * :write|echom("PVWC\tFile saved.")
 "TODO: autocmd BufWinenter *.R "deactivate iron-vim plugin"
-"	or alternatively 
+"	or alternatively
 "	autocmd FileType r "deactivate iron-vim plugin"
 "Comment a line specific to its filetype
 "------------------------------Filetype html{{{
@@ -342,6 +345,7 @@ augroup miscellaneous
 	autocmd Filetype help setlocal number
 	autocmd FileType plaintex :setlocal spell spelllang=de
 	autocmd BufWinEnter * call ResCur()|	"reset cursor position
+	autocmd BufWinEnter * let &scrolloff=&lines/2
 	"autocmd ButT
 augroup END
 "}}}
