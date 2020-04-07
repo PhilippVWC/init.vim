@@ -38,8 +38,8 @@ call plug#end()
 let s:verbose = 0
 let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
 let g:python_host_prog="/usr/bin/python"
-let mapleader = '\'|	"set the leader key to the hyphen character
-let maplocalleader = '-'|	"map the localleader key to a backslash
+let mapleader = '\'|			"set the leader key to the hyphen character
+let maplocalleader = '-'|		"map the localleader key to a backslash
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "}}}
 "------------------------------FUNCTIONS------------------------------{{{
@@ -216,6 +216,8 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
+"Disable search highlighting
+nnoremap <silent> <localleader>l :nohlsearch<cr>
 "Perform 'very magic' searches by default, for conventional regex pattern parsing like
 "perl, python and ruby.
 nnoremap / /\v
