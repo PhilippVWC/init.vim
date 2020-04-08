@@ -216,10 +216,14 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
+"echo cword
+nnoremap <localleader>ee :execute "echom shellescape(expand(\"\<cword>\"))"<cr>
+"echo cWORD
+nnoremap <localleader>EE :execute "echom shellescape(expand(\"\<cWORD>\"))"<cr>
 "disable highlighting from previous search commands.
 nnoremap <silent> <localleader>v :nohl<cr>
 "Search operator
-nnoremap <leader>g :execute "grep -iR ".shellescape("<cword>")." ."<cr>
+nnoremap <leader>g :execute "grep! -iR ".shellescape(expand("<cWORD>"))." /Users/Philipp/Desktop/pythonOutput"<cr>:copen<cr>
 "Disable search highlighting
 nnoremap <silent> <localleader>l :nohlsearch<cr>
 "Perform 'very magic' searches by default, for conventional regex pattern parsing like
@@ -243,25 +247,25 @@ nnoremap U <c-r>
 "go to next window
 nnoremap t <c-w><c-w>
 "go to previous window
-nnoremap <S-t> :call Pvwc_GoToPrevWin()<esc>
+nnoremap <silent> <S-t> :call Pvwc_GoToPrevWin()<esc>
 "go to next tab
 "nnoremap <localleader>t :tabnext<cr>
 "go to previous tab
 "nnoremap <localleader><S-t> :tabprevious<cr>
 "Edit vimrc file
-nnoremap <localleader>ev :split $MYVIMRC<CR>
+nnoremap <silent> <localleader>ev :split $MYVIMRC<CR>
 "source (aka. "reload") vimrc file
-nnoremap <localleader>r :source $MYVIMRC<CR>
+nnoremap <silent> <localleader>r :source $MYVIMRC<CR>
 "open terminal emulator
-nnoremap <localleader>C :<c-u>execute "split term://zsh"<cr>:startinsert<cr>
+nnoremap <silent> <localleader>C :<c-u>execute "split term://zsh"<cr>:startinsert<cr>
 "select word with space key
 nnoremap <space> viw
 "clear current line
 nnoremap <localleader>d ddO
 "Increase tabstop
-noremap <localleader>ll :let &tabstop += (&tabstop < 10) ? 1 : 0 <CR>
+noremap <silent> <localleader>ll :let &tabstop += (&tabstop < 10) ? 1 : 0 <CR>
 "Decrease tabsto
-noremap <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
+noremap <silent> <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
 "}}}
 "------------------------------VISUAL MODE{{{
 "Enclose/surround visually selected area with/by angle brackets
