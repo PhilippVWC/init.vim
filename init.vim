@@ -219,7 +219,7 @@ noremap F T
 "disable highlighting from previous search commands.
 nnoremap <silent> <localleader>v :nohl<cr>
 "Search operator
-nnoremap <leader>g :execute "grep -iR ".shellescape(<cword>)." . "<cr>
+nnoremap <leader>g :execute "grep -iR ".shellescape("<cword>")." ."<cr>
 "Disable search highlighting
 nnoremap <silent> <localleader>l :nohlsearch<cr>
 "Perform 'very magic' searches by default, for conventional regex pattern parsing like
