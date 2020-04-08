@@ -223,7 +223,7 @@ nnoremap <localleader>EE :execute "echom shellescape(expand(\"\<cWORD>\"))"<cr>
 "disable highlighting from previous search commands.
 nnoremap <silent> <localleader>v :nohl<cr>
 "Search operator
-nnoremap <leader>g :execute "grep! -iR ".shellescape(expand("<cWORD>"))." /Users/Philipp/Desktop/pythonOutput"<cr>:copen<cr>
+nnoremap <silent> <leader>g :execute "grep! -iR ".shellescape(expand("<cWORD>"))." /Users/Philipp/Desktop/pythonOutput"<cr>:copen<cr>
 "Disable search highlighting
 nnoremap <silent> <localleader>l :nohlsearch<cr>
 "Perform 'very magic' searches by default, for conventional regex pattern parsing like
@@ -244,14 +244,14 @@ nnoremap <silent> <localleader>m :call Pvwc_MinCurWin()<cr>
 nnoremap Z ZZ|	"write and close
 "map redo to capital u
 nnoremap U <c-r>
+"go to next buffer
+nnoremap <silent> <localleader>b :bnext<cr>
+"go to previous buffer
+nnoremap <silent> <localleader>B :bprevious<cr>
 "go to next window
 nnoremap t <c-w><c-w>
 "go to previous window
 nnoremap <silent> <S-t> :call Pvwc_GoToPrevWin()<esc>
-"go to next tab
-"nnoremap <localleader>t :tabnext<cr>
-"go to previous tab
-"nnoremap <localleader><S-t> :tabprevious<cr>
 "Edit vimrc file
 nnoremap <silent> <localleader>ev :split $MYVIMRC<CR>
 "source (aka. "reload") vimrc file
