@@ -1,4 +1,4 @@
-"Init.vim from Philipp van Wickevoort Crommelin.
+"Ini.vim from Philipp van Wickevoort Crommelin.
 "Contact me by email: philippcrommelin@googlemail.com.
 "
 "------------------------------PLUGINS------------------------------{{{
@@ -19,7 +19,7 @@ Plug 'preservim/nerdtree'
 Plug  'ryanoasis/vim-devicons'
 "Plug  'vim-syntastic/syntastic'
 "Plug 'Lokaltog/powerline'
-Plug 'tpope/vim-surround'
+"Plug 'tpope/vim-surround'
 "Plug 'zchee/deoplete-jedi' "
 Plug 'vim-airline/vim-airline' "fancy vim status bar
 "Plug 'vim-airline/vim-airline-themes'
@@ -32,7 +32,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'edkolev/tmuxline.vim'
 call plug#end()
 "}}}
-"================================================== Personal configuration ===================={{{
+"================================================= Personal configuration ===================={{{
 "------------------------------GLOBAL VARIABLES------------------------------{{{
 "Global indicator variable for more verbose output
 let s:verbose = 0
@@ -216,6 +216,10 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
+"disable highlighting from previous search commands.
+nnoremap <silent> <localleader>v :nohl<cr>
+"Search operator
+nnoremap <leader>g :execute "grep -iR ".shellescape(<cword>)." . "<cr>
 "Disable search highlighting
 nnoremap <silent> <localleader>l :nohlsearch<cr>
 "Perform 'very magic' searches by default, for conventional regex pattern parsing like
@@ -260,14 +264,27 @@ noremap <localleader>ll :let &tabstop += (&tabstop < 10) ? 1 : 0 <CR>
 noremap <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
 "}}}
 "------------------------------VISUAL MODE{{{
-vnoremap $ g_|	"go to the last printable character of current line (skip newline char)
-"surround selection by double quotes
-vnoremap <localleader>" di"<esc>pa"<esc>
+"Enclose/surround visually selected area with/by angle brackets
+vnoremap <localleader>e< <esc>`<i<<esc>`>la><esc>
+"Enclose/surround visually selected area with/by brackets
+vnoremap <localleader>e[ <esc>`<i[<esc>`>la]<esc>
+"Enclose/surround visually selected area with/by braces
+vnoremap <localleader>e{ <esc>`<i{<esc>`>la}<esc>
+"Enclose/surround visually selected area with/by parenthesis
+vnoremap <localleader>e( <esc>`<i(<esc>`>la)<esc>
+"Enclose/surround visually selected area with/by single quotes
+vnoremap <localleader>e' <esc>`<i'<esc>`>la'<esc>
+"Enclose/surround visually selected area with/by single quotes
+vnoremap <localleader>e" di"<esc>pa"<esc>
+"go to the last printable character of current line (skip newline char)
+vnoremap $ g_
 "Search constrained to visually selected range
 vnoremap <silent> / :<C-U>call RangeSearch('/')<CR>:if strlen(g:srchstr) > 0\|execute '/'.g:srchstr\|endif<CR>
 "Backward search constrained to visually selected range
 vnoremap <silent> ? :<C-U>call RangeSearch('?')<CR>:if strlen(g:srchstr) > 0\|execute '?'.g:srchstr\|endif<CR>
-vnoremap p i(|	"constrain selection to content of paranthesis
+"constrain selection to content of paranthesis
+vnoremap n( <esc>:<c-u>execute "normal! /".'\v\('."\rlvi("<cr>
+"vnoremap n( <esc>:<c-u>execute "normal! /".'vRange'."\rviw"<cr>
 "}}}
 "------------------------------INSERT MODE{{{
 "Capitalize word, place cursor behind word, and enter instert mode
