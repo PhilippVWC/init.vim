@@ -278,14 +278,27 @@ vnoremap <localleader>e' <esc>`<i'<esc>`>la'<esc>
 vnoremap <localleader>e" di"<esc>pa"<esc>
 "go to the last printable character of current line (skip newline char)
 vnoremap $ g_
-"Search constrained to visually selected range
+"Search constrained to visually selected range.
 vnoremap <silent> / :<C-U>call RangeSearch('/')<CR>:if strlen(g:srchstr) > 0\|execute '/'.g:srchstr\|endif<CR>
 "Backward search constrained to visually selected range
-vnoremap <silent> ? :<C-U>call RangeSearch('?')<CR>:if strlen(g:srchstr) > 0\|execute '?'.g:srchstr\|endif<CR>
-"constrain selection to content of paranthesis
+vnoremap <silent> ? :<C-U>call RangeSearch('?')<CR>:if strlen(g:srchstr) > 0\|execute '?'.g:srchstr\|endif<CR> <lsflaksjfd>
+"constrain selection to content of next emerging pair of paranthesis
 vnoremap n( <esc>:<c-u>execute "normal! /".'\v\('."\rlvi("<cr>
-"vnoremap n( <esc>:<c-u>execute "normal! /".'vRange'."\rviw"<cr>
-"}}}
+"constrain selection to content of previously emerging pair of paranthesis
+vnoremap p( <esc>:<c-u>execute "normal! ?".'\v\)'."\rhvi("<cr>
+"constrain selection to content of next emerging pair of braces
+vnoremap n{ <esc>:<c-u>execute "normal! /".'\v\{'."\rlvi{"<cr>
+"constrain selection to content of previously emerging pair of braces
+vnoremap p{ <esc>:<c-u>execute "normal! ?".'\v\}'."\rhvi{"<cr>
+"constrain selection to content of next emerging pair of square brackets
+vnoremap n[ <esc>:<c-u>execute "normal! /".'\v\['."\rlvi["<cr>
+"constrain selection to content of previously emerging pair of square brackets
+vnoremap p[ <esc>:<c-u>execute "normal! ?".'\v\]'."\rhvi["<cr>
+"constrain selection to content of next emerging pair of angle brackets
+vnoremap n< <esc>:<c-u>execute "normal! /".'\v\<'."\rlvi<"<cr>
+"constrain selection to content of previously emerging pair of angle brackets
+vnoremap p< <esc>:<c-u>execute "normal! ?".'\v\>'."\rhvi<"<cr>
+"}}} <alskdjflkasf>
 "------------------------------INSERT MODE{{{
 "Capitalize word, place cursor behind word, and enter instert mode
 inoremap <c-u>  <esc>viwgUea
