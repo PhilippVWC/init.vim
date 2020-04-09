@@ -33,6 +33,8 @@ Plug 'edkolev/tmuxline.vim'
 call plug#end()
 "}}}
 "================================================= Personal configuration ===================={{{
+"load custom plugins
+":source "/Users/Philipp/.config/nvim/autoload/grep-operator.vim"
 "------------------------------GLOBAL VARIABLES------------------------------{{{
 "Global indicator variable for more verbose output
 let s:verbose = 0
@@ -46,7 +48,32 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
 "TODO: create function that cycles through all non-active buffers + additional flag that
-"create a comment only if s:verbose script variable has been set
+function! Pvwc_bufferCycle()
+	if exists("g:bufCycWindow")
+		function! Local_incrementIndex()
+			if g:curBufIndex ==# g:numOfBufs
+				let g:curBufIndex = 0
+			else
+				let g:curBufIndex += 1
+			endif
+		endfunction
+		call win_gotoid(g:bufCycWindowID)
+		buffer g:tabBufNames[g:curBufIndex]
+		call Local_incrementIndex()
+	else
+		let g:tabNr = tabpagenr()
+		let g:tabBufs = tabpagebuflist(g:tabNr)
+		let g:numOfBufs = len(g:tabBufs)
+		let g:tabBufNames = []
+		for bufNr in g:tabBufs
+			let g:tabBufNames += [bufname(bufNr)]	
+		endfor
+		let g:curBufIndex = 0
+		split g:tabBufNames[g:curBufIndex]
+		call Local_incrementIndex()
+		let g:bufCycWindowID = win_getid()
+	endif
+endfunction
 "Function that toggles highlighting trailing white-space characters
 function! Pvwc_hlTrlWsp()
 	highlight trlWspGroup ctermbg=green guibg=green
@@ -69,6 +96,7 @@ function! Pvwc_hlTrlWsp()
 		call Local_hl()
 	endif
 endfunction
+"Print a comment if boolean script variable s:verbose is set
 function! Pvwc_c(comment)
 	if s:verbose
 		echo a:comment
@@ -216,14 +244,18 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
+"Search operator
+"nnoremap <silent> <leader>g :execute "grep! -iR ".shellescape(expand("<cWORD>"))." /Users/Philipp/Desktop/pythonOutput"<cr>:copen<cr>
+
+"navigate within the quickfix-window
+noremap <silent> ü :cnext<cr>
+noremap <silent> ä :cprevious<cr>
 "echo cword
 nnoremap <localleader>ee :execute "echom shellescape(expand(\"\<cword>\"))"<cr>
 "echo cWORD
 nnoremap <localleader>EE :execute "echom shellescape(expand(\"\<cWORD>\"))"<cr>
 "disable highlighting from previous search commands.
 nnoremap <silent> <localleader>v :nohl<cr>
-"Search operator
-nnoremap <silent> <leader>g :execute "grep! -iR ".shellescape(expand("<cWORD>"))." /Users/Philipp/Desktop/pythonOutput"<cr>:copen<cr>
 "Disable search highlighting
 nnoremap <silent> <localleader>l :nohlsearch<cr>
 "Perform 'very magic' searches by default, for conventional regex pattern parsing like
