@@ -48,18 +48,53 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
 "TODO: create function that cycles through all non-active buffers + additional flag that
-function! Pvwc_bufferCycle()
-	if exists("g:bufCycWindow")
-		function! Local_incrementIndex()
-			if g:curBufIndex ==# g:numOfBufs
-				let g:curBufIndex = 0
-			else
-				let g:curBufIndex += 1
+function! Pvwc_bufferCycle(direction)
+	function! Local_incrementIndex()
+		if g:curBufIndex ==# (g:numOfBufs-1)
+			let g:curBufIndex = 0
+		else
+			let g:curBufIndex += 1
+		endif
+	endfunction
+	function! Local_decrementIndex()
+		if g:curBufIndex==#0
+			let g:curBufIndex = (g:numOfBufs-1)
+		else
+			let g:curBufIndex -= 1
+		endif
+	endfunction
+	function! Local_cycleIndex(direc)
+		if exists("g:curBufIndex")
+			if a:direc ==? "up"
+				call Local_incrementIndex()
+			elseif a:direc ==? "down"
+				call Local_decrementIndex()
 			endif
-		endfunction
+		else
+			let g:curBufIndex = 0
+		endif
+	endfunction
+	function! Local_openNewWindow()
+		let g:lastWinID = win_getid()
+		execute ":topleft vertical split ".g:tabBufNames[g:curBufIndex]
+		let g:bufCycWindowID = win_getid()
+		call win_gotoid(g:lastWinID)
+	endfunction
+	function! Local_openExistingWindow()
+		let g:lastWinID = win_getid()
 		call win_gotoid(g:bufCycWindowID)
-		buffer g:tabBufNames[g:curBufIndex]
-		call Local_incrementIndex()
+		execute ":edit ".g:tabBufNames[g:curBufIndex]
+		call win_gotoid(g:lastWinID)
+	endfunction
+
+	if exists("g:bufCycWindowID")
+		if !empty(getwininfo(g:bufCycWindowID))
+			call Local_cycleIndex(a:direction)
+			call Local_openExistingWindow()
+		else
+			call Local_cycleIndex(a:direction)
+			call Local_openNewWindow()
+		endif
 	else
 		let g:tabNr = tabpagenr()
 		let g:tabBufs = tabpagebuflist(g:tabNr)
@@ -68,10 +103,8 @@ function! Pvwc_bufferCycle()
 		for bufNr in g:tabBufs
 			let g:tabBufNames += [bufname(bufNr)]	
 		endfor
-		let g:curBufIndex = 0
-		split g:tabBufNames[g:curBufIndex]
-		call Local_incrementIndex()
-		let g:bufCycWindowID = win_getid()
+		call Local_cycleIndex(a:direction)
+		call Local_openNewWindow()
 	endif
 endfunction
 "Function that toggles highlighting trailing white-space characters
@@ -147,10 +180,12 @@ endfunction
 
 "Reset cursor position
 function! ResCur()
-  if line("'\"") <= line("$")
-    normal! g`"
-    return 1
-  endif
+	try
+		if line("'\"") <= line("$")
+			normal! g`"
+			return 1
+		endif
+	endtry
 endfunction
 
 "Maximize current window
@@ -248,8 +283,8 @@ noremap F T
 "nnoremap <silent> <leader>g :execute "grep! -iR ".shellescape(expand("<cWORD>"))." /Users/Philipp/Desktop/pythonOutput"<cr>:copen<cr>
 
 "navigate within the quickfix-window
-noremap <silent> ü :cnext<cr>
-noremap <silent> ä :cprevious<cr>
+noremap <silent> ü :call Pvwc_bufferCycle("up")<cr>
+noremap <silent> ä :call Pvwc_bufferCycle("down")<cr>
 "echo cword
 nnoremap <localleader>ee :execute "echom shellescape(expand(\"\<cword>\"))"<cr>
 "echo cWORD
@@ -413,7 +448,7 @@ augroup miscellaneous
 	autocmd Filetype help setlocal number
 	autocmd FileType plaintex :setlocal spell spelllang=de
 	autocmd BufWinEnter * call ResCur()|	"reset cursor position
-	autocmd BufWinEnter * let &scrolloff=&lines/2
+	autocmd BufWinEnter * let &scrolloff=&lines/4
 	"autocmd ButT
 augroup END
 "}}}
