@@ -37,7 +37,7 @@ call plug#end()
 ":source "/Users/Philipp/.config/nvim/autoload/grep-operator.vim"
 "------------------------------GLOBAL VARIABLES------------------------------{{{
 "Global indicator variable for more verbose output
-let s:verbose = 0
+let s:verbose = 1
 let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
 let g:python_host_prog="/usr/bin/python"
 let mapleader = '\'|			"set the leader key to the hyphen character
@@ -48,6 +48,22 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
 "TODO: create function that cycles through all non-active buffers + additional flag that
+function! Pvwc_checkBuf(bufNr)
+	if exists("g:bufCycWindowID")
+		if buflisted(a:bufNr)
+			let g:numOfBufs += 1
+			let g:bufNumbrs += [a:bufNr]
+			let g:tabBufNames += [bufname(a:bufNr)]	
+		else
+			let bufNumbrsInd = index(g:bufNumbrs,a:bufNr)
+			let tabBufNamesInd = index(g:tabBufNames,bufname(a:bufNr))
+			call Pvwc_c("Buffer nr. ".a:bufNr." with name ".bufname(a:bufNr)." will be removed")
+			call remove(g:bufNumbrs,bufNumbrsInd)
+			call remove(g:tabBufNames,tabBufNamesInd)
+		endif
+	endif
+endfunction
+"Open a new window and cycle through all listed buffers (A)
 function! Pvwc_bufferCycle(direction)
 	function! Local_incrementIndex()
 		if g:curBufIndex ==# (g:numOfBufs-1)
@@ -75,10 +91,10 @@ function! Pvwc_bufferCycle(direction)
 		endif
 	endfunction
 	function! Local_openNewWindow()
-		let g:lastWinID = win_getid()
+		"let g:lastWinID = win_getid()
 		execute ":topleft vertical split ".g:tabBufNames[g:curBufIndex]
 		let g:bufCycWindowID = win_getid()
-		call win_gotoid(g:lastWinID)
+		"call win_gotoid(g:lastWinID)
 	endfunction
 	function! Local_openExistingWindow()
 		let g:lastWinID = win_getid()
@@ -96,15 +112,21 @@ function! Pvwc_bufferCycle(direction)
 			call Local_openNewWindow()
 		endif
 	else
-		let g:tabNr = tabpagenr()
-		let g:tabBufs = tabpagebuflist(g:tabNr)
-		let g:numOfBufs = len(g:tabBufs)
+		let g:bufCycWindowID = 1|	"simple declaration
+		let g:numOfTrialBufs = 20
+		let g:numOfBufs = 0
+		let g:bufNumbrs = []
 		let g:tabBufNames = []
-		for bufNr in g:tabBufs
-			let g:tabBufNames += [bufname(bufNr)]	
+		for bufNr in range(1,g:numOfTrialBufs)
+			call Pvwc_checkBuf(bufNr)
 		endfor
 		call Local_cycleIndex(a:direction)
 		call Local_openNewWindow()
+		augroup startBufferCycler
+			autocmd!
+			autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())<0"."\n"."call Pvwc_checkBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
+			autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())>0"."\n"."call Pvwc_checkBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
+		augroup END
 	endif
 endfunction
 "Function that toggles highlighting trailing white-space characters
@@ -444,12 +466,10 @@ augroup END
 "------------------------------miscellaneous{{{
 augroup miscellaneous
 	autocmd!
-	"check spelling automatically for tex files
-	autocmd Filetype help setlocal number
-	autocmd FileType plaintex :setlocal spell spelllang=de
-	autocmd BufWinEnter * call ResCur()|	"reset cursor position
-	autocmd BufWinEnter * let &scrolloff=&lines/4
-	"autocmd ButT
+	autocmd Filetype help setlocal number|			"show line numbers for vim documentation files
+	autocmd FileType plaintex :setlocal spell spelllang=de|	"check spelling automatically for tex files
+	autocmd BufWinEnter * call ResCur()|			"reset cursor position
+	autocmd BufWinEnter * let &scrolloff=&lines/4		"Controll scroll offset of window
 augroup END
 "}}}
 "}}}
