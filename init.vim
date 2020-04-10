@@ -414,11 +414,11 @@ if(len(maparg('cp'))!=0)|	"check whether mapping already exists
 	unmap cp|		"unmap iron-vims repeat command
 endif
 onoremap p i(|"inner paranthesis environment
-onoremap pp :<c-u>normal! F)hvi(<cr>|	"next paranethesis environment
-onoremap np :<c-u>normal! f(lvi(<cr>|	"last paranthesis environment
+onoremap p( :<c-u>normal! F)hvi(<cr>|	"last paranethesis environment
+onoremap n( :<c-u>normal! f(lvi(<cr>|	"next paranthesis environment
 onoremap b :<c-u>normal! vi{<cr>|	"inner brace environment
-onoremap nb :<c-u>normal! f{lvi{<cr>|	"next brace environment
-onoremap pb :<c-u>normal! F}hvi{<cr>|	"last brace environment
+onoremap n{ :<c-u>normal! f{lvi{<cr>|	"next brace environment
+onoremap p{ :<c-u>normal! F}hvi{<cr>|	"last brace environment
 "}}}
 "}}}
 "------------------------------AUTOCOMMANDS	{{{
