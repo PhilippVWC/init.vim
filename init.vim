@@ -30,11 +30,12 @@ Plug 'neomake/neomake'
 Plug 'Vigemus/iron.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'edkolev/tmuxline.vim'
+"Plug '~/.config/nvim/autoload/grep-operator.vim'
 call plug#end()
 "}}}
 "================================================= Personal configuration ===================={{{
 "load custom plugins
-":source "/Users/Philipp/.config/nvim/autoload/grep-operator.vim"
+execute ":source ".'/Users/Philipp/.config/nvim/autoload/grep-operator.vim'
 "------------------------------GLOBAL VARIABLES------------------------------{{{
 "Global indicator variable for more verbose output
 let s:verbose = 1
@@ -49,18 +50,23 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "TODO: create formatter for r function arguments
 "TODO: create function that cycles through all non-active buffers + additional flag that
 function! Pvwc_checkBuf(bufNr)
-	if exists("g:bufCycWindowID")
-		if buflisted(a:bufNr)
-			let g:numOfBufs += 1
-			let g:bufNumbrs += [a:bufNr]
-			let g:tabBufNames += [bufname(a:bufNr)]	
-		else
-			let bufNumbrsInd = index(g:bufNumbrs,a:bufNr)
-			let tabBufNamesInd = index(g:tabBufNames,bufname(a:bufNr))
-			call Pvwc_c("Buffer nr. ".a:bufNr." with name ".bufname(a:bufNr)." will be removed")
-			call remove(g:bufNumbrs,bufNumbrsInd)
-			call remove(g:tabBufNames,tabBufNamesInd)
-		endif
+	function! Local_addBuf(_bufNr)
+		let g:numOfBufs += 1
+		let g:bufNumbrs += [a:_bufNr]
+		let g:tabBufNames += [bufname(a:_bufNr)]	
+		call Pvwc_c("Buffer nr. ".a:_bufNr." with name ".bufname(a:_bufNr)." will be added")
+	endfunction
+	function! Local_rmBuf(_bufNr)
+		let bufNumbrsInd = index(g:bufNumbrs,a:_bufNr)
+		let tabBufNamesInd = index(g:tabBufNames,bufname(a:_bufNr))
+		call Pvwc_c("Buffer nr. ".a:_bufNr." with name ".bufname(a:_bufNr)." will be removed")
+		call remove(g:bufNumbrs,bufNumbrsInd)
+		call remove(g:tabBufNames,tabBufNamesInd)
+	endfunction
+	if buflisted(a:bufNr) && index(g:bufNumbrs,a:bufNr)<0
+		call Local_addBuf(a:bufNr)
+	else
+		call Pvwc_c("Buffer nr. ".a:bufNr." with name ".bufname(a:bufNr)." will be ignored")
 	endif
 endfunction
 "Open a new window and cycle through all listed buffers (A)
@@ -112,7 +118,6 @@ function! Pvwc_bufferCycle(direction)
 			call Local_openNewWindow()
 		endif
 	else
-		let g:bufCycWindowID = 1|	"simple declaration
 		let g:numOfTrialBufs = 20
 		let g:numOfBufs = 0
 		let g:bufNumbrs = []
@@ -122,10 +127,11 @@ function! Pvwc_bufferCycle(direction)
 		endfor
 		call Local_cycleIndex(a:direction)
 		call Local_openNewWindow()
-		augroup startBufferCycler
+		augroup startBufferCyclerAutomation
 			autocmd!
-			autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())<0"."\n"."call Pvwc_checkBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
-			autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())>0"."\n"."call Pvwc_checkBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
+			autocmd BufReadPost * call Pvwc_checkBuf(bufnr())
+			"autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())<0"."\n"."call Pvwc_checkBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
+			"autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())>0"."\n"."call Pvwc_checkBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
 		augroup END
 	endif
 endfunction
