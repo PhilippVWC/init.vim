@@ -38,7 +38,7 @@ call plug#end()
 execute ":source ".'/Users/Philipp/.config/nvim/autoload/grep-operator.vim'
 "------------------------------GLOBAL VARIABLES------------------------------{{{
 "Global indicator variable for more verbose output
-let s:verbose = 1
+let s:verbose = 0
 let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
 let g:python_host_prog="/usr/bin/python"
 let mapleader = '\'|			"set the leader key to the hyphen character
@@ -309,10 +309,11 @@ noremap F T
 "------------------------------NORMAL MODE{{{
 "Search operator
 "nnoremap <silent> <leader>g :execute "grep! -iR ".shellescape(expand("<cWORD>"))." /Users/Philipp/Desktop/pythonOutput"<cr>:copen<cr>
-
+nnoremap <silent> ü :cnext<cr>
+nnoremap <silent> ä :cprevious<cr>
 "navigate within the quickfix-window
-noremap <silent> ü :call Pvwc_bufferCycle("up")<cr>
-noremap <silent> ä :call Pvwc_bufferCycle("down")<cr>
+noremap <silent> <tab> :call Pvwc_bufferCycle("up")<cr>
+noremap <silent> <s-tab> :call Pvwc_bufferCycle("down")<cr>
 "echo cword
 nnoremap <localleader>ee :execute "echom shellescape(expand(\"\<cword>\"))"<cr>
 "echo cWORD

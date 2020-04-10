@@ -1,6 +1,14 @@
 nnoremap <localleader>g :set operatorfunc=GrepOperator<cr>g@
-function! GrepOperator(type)
-	echom a:type
-endfunction
 vnoremap <localleader>g :<c-u>call GrepOperator(visualmode())<cr>
-"some minor comment
+function! GrepOperator(type)
+	if a:type ==# 'v'
+		execute "normal! `<v`>y"
+	elseif a:type ==# 'char'
+		execute "normal! `[v`]y"
+	else
+		return
+	endif
+	silent execute "grep -R ".shellescape(@@)." ."
+	copen
+endfunction
+"some minor comments '\/(alskjdf)
