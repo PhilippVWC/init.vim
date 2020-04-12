@@ -27,15 +27,14 @@ Plug 'jiangmiao/auto-pairs' "set matching quotation marks, braces, etc.
 Plug 'davidhalter/jedi-vim' "python go-to function and completion
 Plug 'sbdchd/neoformat' "code formatting
 Plug 'neomake/neomake'
-Plug 'Vigemus/iron.nvim'
+"Plug 'Vigemus/iron.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'edkolev/tmuxline.vim'
-"Plug '~/.config/nvim/autoload/grep-operator.vim'
 call plug#end()
+"------------------------------CUSTOM PLUGINS
+execute ":source ".'/Users/Philipp/.config/nvim/autoload/grep-operator.vim'
 "}}}
 "================================================= Personal configuration ===================={{{
-"load custom plugins
-execute ":source ".'/Users/Philipp/.config/nvim/autoload/grep-operator.vim'
 "------------------------------GLOBAL VARIABLES------------------------------{{{
 "Global indicator variable for more verbose output
 let s:verbose = 0
@@ -49,11 +48,23 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
 "TODO: create function that cycles through all non-active buffers + additional flag that
+function! s:QuickFixToggle()
+	copen
+endfunction
+"Function to toggle the foldcolumn
+function! s:FoldColumnToggle()
+	if &foldcolumn
+		setlocal foldcolumn=0
+	else
+		setlocal foldcolumn=4
+	endif
+endfunction
+
 function! Pvwc_checkBuf(bufNr)
 	function! Local_addBuf(_bufNr)
 		let g:numOfBufs += 1
 		let g:bufNumbrs += [a:_bufNr]
-		let g:tabBufNames += [bufname(a:_bufNr)]	
+		let g:tabBufNames += [bufname(a:_bufNr)]
 		call Pvwc_c("Buffer nr. ".a:_bufNr." with name ".bufname(a:_bufNr)." will be added")
 	endfunction
 	function! Local_rmBuf(_bufNr)
@@ -70,7 +81,7 @@ function! Pvwc_checkBuf(bufNr)
 	endif
 endfunction
 "Open a new window and cycle through all listed buffers (A)
-function! Pvwc_bufferCycle(direction)
+function! s:Pvwc_bufferCycle(direction)
 	function! Local_incrementIndex()
 		if g:curBufIndex ==# (g:numOfBufs-1)
 			let g:curBufIndex = 0
@@ -276,21 +287,22 @@ endfunction
 "------------------------------SETTINGS------------------------------{{{
 "TODO:command that repeats last command
 command! Tex :w|:!pdflatex -shell-escape %
-set ignorecase|	"Ignore case for vim search function / or ?
+set foldcolumn=4|
+set ignorecase|		"Ignore case for vim search function / or ?
 set hlsearch incsearch|	"highlight all matching search patterns while typing
 set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
-set splitright|	"make new vertical splits appear to the right
-set splitbelow|	"make new horizontal splits appear below
-"consider command <<aboveleft>> for vertical/horizontal splits to open to the left/top of the
+set splitright|		"make new vertical splits appear to the right
+set splitbelow|		"make new horizontal splits appear below
+			"consider command <<aboveleft>> for vertical/horizontal splits to open to the left/top of the
 "current active window
-set wrap|	"let lines break, if their lengths exceed the window size
+set wrap|		"let lines break, if their lengths exceed the window size
 set mouse=a
-set shiftround|	"round value for indentation to multiple of shiftwidth
+set shiftround|		"round value for indentation to multiple of shiftwidth
 set number
 set laststatus=2
 set autoindent
 set smartindent
-"set autowriteall "automatically write buffers when required
+"set autowriteall 	"automatically write buffers when required
 filetype plugin indent on
 "}}}
 
@@ -309,11 +321,19 @@ noremap F T
 "------------------------------NORMAL MODE{{{
 "Search operator
 "nnoremap <silent> <leader>g :execute "grep! -iR ".shellescape(expand("<cWORD>"))." /Users/Philipp/Desktop/pythonOutput"<cr>:copen<cr>
-nnoremap <silent> ü :cnext<cr>
-nnoremap <silent> ä :cprevious<cr>
+"toggle number option
+nnoremap <localleader>N :setlocal number!<cr>
+"Enter insert mode automatically after Deletion from cursor to EOL character
+nnoremap <silent> D Da
+"toggle quickfix window
+nnoremap <localleader>q :call <SID>QuickFixToggle()<cr>
 "navigate within the quickfix-window
-noremap <silent> <tab> :call Pvwc_bufferCycle("up")<cr>
-noremap <silent> <s-tab> :call Pvwc_bufferCycle("down")<cr>
+nnoremap <silent> ä :cprevious<cr>
+nnoremap <silent> ü :cnext<cr>
+"Cycle through all listed buffers
+nnoremap <localleader>f :call <SID>FoldColumnToggle()<cr>
+noremap <silent> <tab> :call <SID>Pvwc_bufferCycle("up")<cr>
+noremap <silent> <s-tab> :call <SID>Pvwc_bufferCycle("down")<cr>
 "echo cword
 nnoremap <localleader>ee :execute "echom shellescape(expand(\"\<cword>\"))"<cr>
 "echo cWORD
@@ -476,7 +496,7 @@ augroup miscellaneous
 	autocmd Filetype help setlocal number|			"show line numbers for vim documentation files
 	autocmd FileType plaintex :setlocal spell spelllang=de|	"check spelling automatically for tex files
 	autocmd BufWinEnter * call ResCur()|			"reset cursor position
-	autocmd BufWinEnter * let &scrolloff=&lines/4		"Controll scroll offset of window
+	autocmd BufWinEnter * execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
 augroup END
 "}}}
 "}}}
@@ -530,11 +550,11 @@ let g:webdevicons_enable_nerdtree = 1
 "}}}
 "------------------------------IRON CONFIGURATION------------------------------{{{
 "send visually selected code fragment in visual mode
-vnoremap , <Plug>(iron-visual-send)<Esc><CR>
+"vnoremap <silent> , <Plug>(iron-visual-send)<Esc><CR>
 "nmap <localleader>t    <Plug>(iron-send-motion)
 "nmap <localleader>r    <Plug>(iron-repeat-cmd)
 "send line in normal mode - TODO: move cursor to next line afterwards
-nnoremap , <Plug>(iron-send-line)<CR>
+nnoremap <silent> , <Plug>(iron-send-line)<CR>
 "nmap <localleader><CR> <Plug>(iron-cr)
 "nmap <localleader>i    <plug>(iron-interrupt)
 "nmap <localleader>q    <Plug>(iron-exit)
@@ -543,9 +563,9 @@ nnoremap , <Plug>(iron-send-line)<CR>
 "------------------------------NVIM-R CONFIGURATION------------------------------{{{
 let R_assign = 0
 "remap the 'send line' command of Nvim-R plugin"
-nnoremap , <Plug>RDSendLine
+nmap , <Plug>RDSendLine
 "remap the 'Send selection' command of Nvim-R plugin"
-vnoremap , <Plug>RDSendSelection
+vmap , <Plug>RDSendSelection
 "remap the 'check code before sending and then send' command of Nvim-R plugin"
 "vmap ,c <Plug>RESendSelection
 "}}}
