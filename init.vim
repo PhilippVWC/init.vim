@@ -49,7 +49,17 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "TODO: create formatter for r function arguments
 "TODO: create function that cycles through all non-active buffers + additional flag that
 function! s:QuickFixToggle()
-	copen
+	if exists("g:quickfix_window_is_open") && g:quickfix_window_is_open
+		cclose
+		let g:quickfix_window_is_open = 0
+		"restore last window
+		execute g:quickfix_last_open_win."wincmd w"
+	else
+		let g:quickfix_last_open_win = winnr()
+		copen
+		let g:quickfix_window_is_open = 1
+	endif
+	return
 endfunction
 "Function to toggle the foldcolumn
 function! s:FoldColumnToggle()
