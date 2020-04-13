@@ -33,10 +33,11 @@ call plug#end()
 "------------------------------CUSTOM PLUGINS
 execute ":source ".'/Users/Philipp/.config/nvim/autoload/grep-operator.vim'
 "}}}
-"================================================= Personal configuration ===================={{{
+"	================================================= Personal configuration ===================={{{
 "------------------------------GLOBAL VARIABLES------------------------------{{{
 "Global indicator variable for more verbose output
-let s:verbose = 0
+let g:SPELL_LANG = "en_us"
+let s:verbose = 1
 let g:VIMRC_DIR = "/Users/Philipp/Developer/Vimscript/init.vim"
 let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
 let g:python_host_prog="/usr/bin/python"
@@ -47,7 +48,32 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
-"TODO: create function that cycles through all non-active buffers + additional flag that
+"Open adequate completion menu
+function! s:OpenOmni()
+	if !pumvisible()
+		let minLength = 3
+		let l = getline(".")
+		let g:lineUntilCursor = strpart(l,0,col(".")-1)
+		let g:wordUntilCursor = matchstr(g:lineUntilCursor,'\v[^ \t][^^ \t]*$')
+		call Pvwc_c("wordUntilCursor = ".g:wordUntilCursor)
+		if len(g:wordUntilCursor)>=minLength
+			return "\<c-x>\<c-o>"
+		else
+			return "\<tab>"
+		endif
+	else
+		return "\<C-n>"
+	endif
+endfunction
+"Toggle spell check
+function! s:SpellCheckToggle()
+	if &spell
+		set nospell
+	else
+		execute "set spell spelllang=".g:SPELL_LANG
+	endif
+endfunction
+"Toggle quickfix window
 function! s:QuickFixToggle()
 	if exists("g:quickfix_window_is_open") && g:quickfix_window_is_open
 		cclose
@@ -297,6 +323,7 @@ endfunction
 "------------------------------SETTINGS------------------------------{{{
 "TODO:command that repeats last command
 command! Tex :w|:!pdflatex -shell-escape %
+set omnifunc=syntaxcomplete#Complete
 set foldcolumn=4|
 set ignorecase|		"Ignore case for vim search function / or ?
 set hlsearch incsearch|	"highlight all matching search patterns while typing
@@ -332,7 +359,9 @@ noremap F T
 "Search operator
 "nnoremap <silent> <leader>g :execute "grep! -iR ".shellescape(expand("<cWORD>"))." /Users/Philipp/Desktop/pythonOutput"<cr>:copen<cr>
 "toggle number option
-nnoremap <localleader>N :setlocal number!<cr>
+nnoremap <silent> <localleader>N :setlocal number!<cr>
+"toggle spell control
+nnoremap <localleader>s :call <SID>SpellCheckToggle()<cr>
 "Enter insert mode automatically after Deletion from cursor to EOL character
 nnoremap <silent> D Da
 "toggle quickfix window
@@ -430,11 +459,19 @@ vnoremap n< <esc>:<c-u>execute "normal! /".'\v\<'."\rlvi<"<cr>
 vnoremap p< <esc>:<c-u>execute "normal! ?".'\v\>'."\rhvi<"<cr>
 "}}} <alskdjflkasf>
 "------------------------------INSERT MODE{{{
+"Open completion menuh
+"inoremap <expr> <tab> :call openOmni()
+inoremap <tab> <c-r>=<SID>OpenOmni()<CR>
 "Capitalize word, place cursor behind word, and enter instert mode
 inoremap <c-u>  <esc>viwgUea
 "Escape sequence
 "inoremap jk <esc>
 "inoremap <esc> <nop>
+"enable the <tab> and shift <tab> to cycle through completion pop up menu
+"execture expression pumvisible, when pressing tap
+"inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <localleader><tab> <tab>
 "}}}
 "------------------------------TERMINAL MODE{{{
 "terminal mode: escape key --> exit insert mode
@@ -533,10 +570,6 @@ call deoplete#custom#option({
 "call deoplete#custom#var('omni', 'input_patterns', {
 "      \ 'tex': g:vimtex#re#deoplete
 "      \})
-"enable the <tab> and shift <tab> to cycle through completion pop up menu
-"execture expression pumvisible, when pressing tap
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 "}}}
 "------------------------------NERDTREE CONFIGURATION------------------------------{{{
 "try fc-cache -v -f in terminal to reset font buffer
@@ -587,7 +620,7 @@ vmap , <Plug>RDSendSelection
 "------------------------------ULTISNIPS CONFIGURATION------------------------------{{{
 let g:UltiSnipsEditSplit="context"
 "dont use <Tab> key to expand snippet
-""""""""     let g:UltiSnipsExpandTrigger = "<nop>"
+let g:UltiSnipsExpandTrigger = "<cr>"
 "let snippet displayed in the completion pop up be expanded by hitting Carriage Return
 let g:ulti_expand_or_jump_res = 0
 function ExpandSnippetOrCarriageReturn()
