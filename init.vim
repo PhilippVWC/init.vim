@@ -1,6 +1,5 @@
-"Ini.vim from Philipp van Wickevoort Crommelin.
+"Neovim resource file from Philipp van Wickevoort Crommelin.
 "Contact me by email: philippcrommelin@googlemail.com.
-"
 "------------------------------PLUGINS------------------------------{{{
 call plug#begin()
 "Plug 'ncm2/ncm2'
@@ -24,7 +23,7 @@ Plug  'ryanoasis/vim-devicons'
 Plug 'vim-airline/vim-airline' "fancy vim status bar
 "Plug 'vim-airline/vim-airline-themes'
 Plug 'jiangmiao/auto-pairs' "set matching quotation marks, braces, etc.
-Plug 'davidhalter/jedi-vim' "python go-to function and completion
+"Plug 'davidhalter/jedi-vim' "python go-to function and completion
 Plug 'sbdchd/neoformat' "code formatting
 Plug 'neomake/neomake'
 "Plug 'Vigemus/iron.nvim'
@@ -38,6 +37,7 @@ execute ":source ".'/Users/Philipp/.config/nvim/autoload/grep-operator.vim'
 "------------------------------GLOBAL VARIABLES------------------------------{{{
 "Global indicator variable for more verbose output
 let s:verbose = 0
+let g:VIMRC_DIR = "/Users/Philipp/Developer/Vimscript/init.vim"
 let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
 let g:python_host_prog="/usr/bin/python"
 let mapleader = '\'|			"set the leader key to the hyphen character
@@ -379,7 +379,7 @@ nnoremap t <c-w><c-w>
 "go to previous window
 nnoremap <silent> <S-t> :call Pvwc_GoToPrevWin()<esc>
 "Edit vimrc file
-nnoremap <silent> <localleader>ev :split $MYVIMRC<CR>
+nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC."\|:lcd ".g:VIMRC_DIR<cr>
 "source (aka. "reload") vimrc file
 nnoremap <silent> <localleader>r :source $MYVIMRC<CR>
 "open terminal emulator
@@ -571,6 +571,11 @@ nnoremap <silent> , <Plug>(iron-send-line)<CR>
 "nmap <localleader>c    <Plug>(iron-clear)
 "}}}
 "------------------------------NVIM-R CONFIGURATION------------------------------{{{
+"Show function arguments
+let R_show_args = 1
+let R_complete = 2 " Always include names of objects
+let R_hi_fun_globenv = 1
+let R_show_arg_help = 1
 let R_assign = 0
 "remap the 'send line' command of Nvim-R plugin"
 nmap , <Plug>RDSendLine
