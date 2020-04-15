@@ -52,11 +52,16 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 function! s:OpenOmni()
 	if !pumvisible()
 		let minLength = 3
-		let l = getline(".")
+		let ln = line(".")
+		let l = getline(ln)
 		let g:lineUntilCursor = strpart(l,0,col(".")-1)
 		let g:wordUntilCursor = matchstr(g:lineUntilCursor,'\v[^ \t][^^ \t]*$')
+		let wordIsLongEnough = len(g:wordUntilCursor)>=minLength
+		let cursorIsWithinFunctionArgs = match(getline(ln-1),'\v\(\s*$')>=0 && len(g:wordUntilCursor)==0
 		call Pvwc_c("wordUntilCursor = ".g:wordUntilCursor)
-		if len(g:wordUntilCursor)>=minLength
+		let L = len(g:wordUntilCursor)
+		let wantsToGetNewFunArg = strpart(g:wordUntilCursor,L-1,1)==#','
+		if (wordIsLongEnough || cursorIsWithinFunctionArgs || wantsToGetNewFunArg)
 			return "\<c-x>\<c-o>"
 		else
 			return "\<tab>"
@@ -518,6 +523,7 @@ augroup r
 	autocmd!
 	autocmd FileType r nnoremap <buffer> <localleader>c I#<esc>
 	autocmd FileType r :iabbrev iff if()<left>
+	autocmd FileType r :call StartR("R")
 	autocmd FileType r :iabbrev fnn = function()<left><left><left><left><left><left><left><left><left><left><left><left><left><left>
 augroup END
 "}}}
