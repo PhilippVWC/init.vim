@@ -51,17 +51,22 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "Open adequate completion menu
 function! s:OpenOmni()
 	if !pumvisible()
-		let minLength = 3
+		let minLength = 1
 		let ln = line(".")
 		let l = getline(ln)
 		let g:lineUntilCursor = strpart(l,0,col(".")-1)
 		let g:wordUntilCursor = matchstr(g:lineUntilCursor,'\v[^ \t][^^ \t]*$')
-		let wordIsLongEnough = len(g:wordUntilCursor)>=minLength
+		let g:wordIsLongEnough = len(g:wordUntilCursor)>=minLength
 		let cursorIsWithinFunctionArgs = match(getline(ln-1),'\v\(\s*$')>=0 && len(g:wordUntilCursor)==0
 		call Pvwc_c("wordUntilCursor = ".g:wordUntilCursor)
 		let L = len(g:wordUntilCursor)
 		let wantsToGetNewFunArg = strpart(g:wordUntilCursor,L-1,1)==#','
-		if (wordIsLongEnough || cursorIsWithinFunctionArgs || wantsToGetNewFunArg)
+		let g:wordIsFilePath = match(g:wordUntilCursor,'\v\/')>=0
+		if len(g:wordUntilCursor)>=3
+			return "\<c-x>\<c-o>"
+		elseif len(g:wordUntilCursor)>=1 && g:wordIsFilePath
+			return "\<c-x>\<c-f>"
+		elseif(cursorIsWithinFunctionArgs || wantsToGetNewFunArg)
 			return "\<c-x>\<c-o>"
 		else
 			return "\<tab>"
