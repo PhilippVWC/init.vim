@@ -371,8 +371,8 @@ nnoremap <silent> ä :cprevious<cr>
 nnoremap <silent> ü :cnext<cr>
 "Cycle through all listed buffers
 nnoremap <localleader>f :call <SID>FoldColumnToggle()<cr>
-noremap <silent> <tab> :call <SID>Pvwc_bufferCycle("up")<cr>
-noremap <silent> <s-tab> :call <SID>Pvwc_bufferCycle("down")<cr>
+noremap <silent> t :call <SID>Pvwc_bufferCycle("up")<cr>
+noremap <silent> <s-T> :call <SID>Pvwc_bufferCycle("down")<cr>
 "echo cword
 nnoremap <localleader>ee :execute "echom shellescape(expand(\"\<cword>\"))"<cr>
 "echo cWORD
@@ -404,9 +404,9 @@ nnoremap <silent> <localleader>b :bnext<cr>
 "go to previous buffer
 nnoremap <silent> <localleader>B :bprevious<cr>
 "go to next window
-nnoremap t <c-w><c-w>
+nnoremap <silent> <tab> <c-w><c-w>
 "go to previous window
-nnoremap <silent> <S-t> :call Pvwc_GoToPrevWin()<esc>
+nnoremap <silent> <S-tab> :call Pvwc_GoToPrevWin()<esc>
 "Edit vimrc file
 nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC."\|:lcd ".g:VIMRC_DIR<cr>
 "source (aka. "reload") vimrc file
@@ -620,7 +620,7 @@ vmap , <Plug>RDSendSelection
 "------------------------------ULTISNIPS CONFIGURATION------------------------------{{{
 let g:UltiSnipsEditSplit="context"
 "dont use <Tab> key to expand snippet
-let g:UltiSnipsExpandTrigger = "<cr>"
+let g:UltiSnipsExpandTrigger = "<nop>"
 "let snippet displayed in the completion pop up be expanded by hitting Carriage Return
 let g:ulti_expand_or_jump_res = 0
 function ExpandSnippetOrCarriageReturn()
