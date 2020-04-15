@@ -37,7 +37,7 @@ execute ":source ".'/Users/Philipp/.config/nvim/autoload/grep-operator.vim'
 "------------------------------GLOBAL VARIABLES------------------------------{{{
 "Global indicator variable for more verbose output
 let g:SPELL_LANG = "en_us"
-let s:verbose = 1
+let s:verbose = 0
 let g:VIMRC_DIR = "/Users/Philipp/Developer/Vimscript/init.vim"
 let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
 let g:python_host_prog="/usr/bin/python"
@@ -48,6 +48,22 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
+"Format 
+function! s:FormatAndFeedToRepl(mode)
+	if a:mode ==# 'v'
+		let [startpos_l,startpos_c] =  getpos("'<")[1:2]
+		let [endpos_l,endpos_c] =  getpos("'>")[1:2]
+		let numbLines = endpos_l-startpos_l
+		let curLine = startpos_l
+		let funArgsRaw = []
+		while curLine <= endpos_l
+			call add(funArgsRaw,getline(curLine))
+			echo curLine
+			let curLine += 1
+		endwhile
+		echo funArgsRaw
+	endif
+endfunction
 "Open adequate completion menu
 function! s:OpenOmni()
 	if !pumvisible()
@@ -433,6 +449,8 @@ noremap <silent> <localleader>ll :let &tabstop += (&tabstop < 10) ? 1 : 0 <CR>
 noremap <silent> <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
 "}}}
 "------------------------------VISUAL MODE{{{
+"feed to REPL
+vnoremap <localleader>, <esc><c-u>:call <SID>FormatAndFeedToRepl(visualmode())<cr>
 "Enclose/surround visually selected area with/by angle brackets
 vnoremap <localleader>e< <esc>`<i<<esc>`>la><esc>
 "Enclose/surround visually selected area with/by brackets
