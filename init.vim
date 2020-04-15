@@ -48,7 +48,13 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
-"Format 
+"set local working directory
+function! s:setLocalWorkDir()
+	if !(&buftype ==? 'terminal' || &buftype ==? 'help')
+		execute ":lcd " . expand("%:p:h")
+	endif
+endfunction
+"Format and Feed to Read-Eval-Print-Loop
 function! s:FormatAndFeedToRepl(mode)
 	if a:mode ==? 'v'
 		let [startpos_l,startpos_c] =  getpos("'<")[1:2]
@@ -583,6 +589,7 @@ augroup miscellaneous
 	autocmd FileType plaintex :setlocal spell spelllang=de|	"check spelling automatically for tex files
 	autocmd BufWinEnter * call ResCur()|			"reset cursor position
 	autocmd BufWinEnter * execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
+	autocmd BufWinEnter * call <SID>setLocalWorkDir()|	"Set working directory local to buffer
 augroup END
 "}}}
 "}}}
