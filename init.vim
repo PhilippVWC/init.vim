@@ -50,7 +50,8 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "TODO: create formatter for r function arguments
 "set local working directory
 function! s:setLocalWorkDir()
-	if !(&buftype ==? 'terminal' || &buftype ==? 'help')
+	echom &buftype
+	if len(&buftype) == 0	"normal buffer has empty option &buftype (see :help buftype)
 		execute ":lcd " . expand("%:p:h")
 	endif
 endfunction
@@ -252,19 +253,34 @@ function! Pvwc_c(comment)
 		echo a:comment
 	endif
 endfunction
-"Go to window with window numbe r
-function! Pvwc_GoToWin(winNumb)
-	call win_gotoid(win_getid(a:winNumb))
+
+"Go to a window with given window number and reload current working dir of
+"NERDTree
+function! s:GoToWinAndRefreshNerdtree(winNumber)
+	call win_gotoid(win_getid(a:winNumber))
+	if(&buftype==#'')	"empty buftype option corresponds to normal buffer (see help buftype)
+		NERDTreeCWD
+		call win_gotoid(win_getid(a:winNumber))
+	endif
 endfunction
 
-"Go to previous window
-function! Pvwc_GoToPrevWin()
-	let l = winnr()-1
-	let n = winnr('$')
-	if( l==0 )
-		call Pvwc_GoToWin(n)
-	else
-		call Pvwc_GoToWin(l%n)
+"Go to previous/next window if direction is 'backward'/'forward'
+function! s:GoToNeighbourWin(direction)
+	let c = winnr('$')
+	if a:direction ==# "backward"
+		let p = winnr()-1
+		if( p==0 )
+			call <SID>GoToWinAndRefreshNerdtree(c)
+		else
+			call <SID>GoToWinAndRefreshNerdtree(p%c)
+		endif
+	else	"forward
+		let p = winnr()+1
+		if( p==c )
+			call <SID>GoToWinAndRefreshNerdtree(c)
+		else
+			call <SID>GoToWinAndRefreshNerdtree(p%c)
+		endif
 	endif
 endfunction
 
@@ -446,9 +462,9 @@ nnoremap <silent> <localleader>b :bnext<cr>
 "go to previous buffer
 nnoremap <silent> <localleader>B :bprevious<cr>
 "go to next window
-nnoremap <silent> <tab> <c-w><c-w>
+nnoremap <silent> <tab> :call <SID>GoToNeighbourWin("forward")<esc>
 "go to previous window
-nnoremap <silent> <S-tab> :call Pvwc_GoToPrevWin()<esc>
+nnoremap <silent> <S-tab> :call <SID>GoToNeighbourWin("backward")<esc>
 "Edit vimrc file
 nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC."\|:lcd ".g:VIMRC_DIR<cr>
 "source (aka. "reload") vimrc file
@@ -589,7 +605,7 @@ augroup miscellaneous
 	autocmd FileType plaintex :setlocal spell spelllang=de|	"check spelling automatically for tex files
 	autocmd BufWinEnter * call ResCur()|			"reset cursor position
 	autocmd BufWinEnter * execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
-	autocmd BufWinEnter * call <SID>setLocalWorkDir()|	"Set working directory local to buffer
+	autocmd BufReadPost * call <SID>setLocalWorkDir()|	"Set working directory local to buffer
 augroup END
 "}}}
 "}}}
@@ -622,7 +638,7 @@ call deoplete#custom#option({
 augroup nerdtree
 	autocmd!
 	autocmd FileType nerdtree set ignorecase | call Pvwc_c("Ignorecase option set for nerdtree")
-	autocmd FileType nerdtree nnoremap <buffer> t <c-w><c-w>
+	autocmd FileType nerdtree nnoremap <silent> <buffer> t <c-w><c-w>
 	"Trigger nerdtree file system browser automatically, when starting vim session
 	"autocmd vimenter * NERDTree0
 augroup END
@@ -633,7 +649,7 @@ let NERDTreeShowLineNumbers = 0
 "show hidden files per default
 let NERDTreeShowHidden = 1
 "nnoremap <localleader>n :NERDTreeToggle<CR>|if &ignorecase\|set noignorecase\|else\|set ignorecase<cr>
-nnoremap <localleader>n :NERDTreeToggle<cr>
+nnoremap <localleader>n :NERDTreeCWD<cr>
 "nnoremap <localleader>h :call <Plug>NERDTreeMapOpenSplit()<CR>
 let g:webdevicons_enable_nerdtree = 1
 "}}}
