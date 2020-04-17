@@ -48,6 +48,13 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
+"------------------------------OpenOrRefreshNerdTree{{{
+"Open the NERDTree if it is not visible, or refresh its working directory
+"otherwise
+function! s:OpenOrRefreshNerdTree()
+	NERDTreeToggle
+endfunction
+"}}}"
 "------------------------------setLocalWorkDir{{{
 "set local working directory
 function! s:setLocalWorkDir()
@@ -81,7 +88,8 @@ function! s:FormatAndFeedToRepl(mode)
 
 		let trimmed = substitute(funArgsRaw,'\v[ \t]','','g')
 		let splitted = split(trimmed,',')
-		echo splitted
+		call SendCmdToR_Buffer(join(splitted,"\n"))
+		execute "normal! `>"
 	endif
 endfunction
 "}}}"
@@ -279,7 +287,8 @@ endfunction
 "NERDTree
 function! s:GoToWinAndRefreshNerdtree(winNumber)
 	call win_gotoid(win_getid(a:winNumber))
-	if(&buftype==#'')	"empty buftype option corresponds to normal buffer (see help buftype)
+	if (&buftype==#'' && g:NERDTree.IsOpen()) "empty buftype option corresponds to normal buffer (see help buftype)
+							"variable g:NERDTree.IsOpen may be invalid after updating NERDTree
 		NERDTreeCWD
 		call win_gotoid(win_getid(a:winNumber))
 	endif
@@ -367,6 +376,7 @@ function! s:MaxCurWin()
 		call extend(g:minMaxPairs,{g:minWinID:g:maxWinID})
 		call extend(g:maxMinPairs,{g:maxWinID:g:minWinID})
 		call setpos(".",g:cursorPosition)
+		setlocal foldcolumn=0
 	endfunction
 	if g:maxWinID!=#0 && !empty(getwininfo(g:maxWinID))
 		call <SID>Cmt("Max window does already exist. MaxWinID is\t".g:maxWinID)
@@ -394,7 +404,7 @@ function! s:MinCurWin()
 		else
 			call <SID>Cmt("Close maximized window and go to minimized version")
 			let g:cursorPosition = getcurpos()
-			execute ":close"
+			execute ":tabclose"
 			call win_gotoid(g:minWinID)
 			call setpos(".",g:cursorPosition)
 			call remove(g:maxMinPairs,g:maxWinID)
@@ -674,7 +684,7 @@ let NERDTreeShowLineNumbers = 0
 "show hidden files per default
 let NERDTreeShowHidden = 1
 "nnoremap <localleader>n :NERDTreeToggle<CR>|if &ignorecase\|set noignorecase\|else\|set ignorecase<cr>
-nnoremap <localleader>n :NERDTreeCWD<cr>
+nnoremap <localleader>n :call <SID>OpenOrRefreshNerdTree()<cr>
 "nnoremap <localleader>h :call <Plug>NERDTreeMapOpenSplit()<CR>
 let g:webdevicons_enable_nerdtree = 1
 "}}}
@@ -707,7 +717,7 @@ vmap , <Plug>RDSendSelection
 "------------------------------ULTISNIPS CONFIGURATION------------------------------{{{
 let g:UltiSnipsEditSplit="context"
 "dont use <Tab> key to expand snippet
-let g:UltiSnipsExpandTrigger = "<cr>"
+let g:UltiSnipsExpandTrigger = "<localleader><cr>"
 "let snippet displayed in the completion pop up be expanded by hitting Carriage Return
 let g:ulti_expand_or_jump_res = 0
 function ExpandSnippetOrCarriageReturn()

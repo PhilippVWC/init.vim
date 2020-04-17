@@ -9,7 +9,7 @@ function! s:GrepOperator(type)
 	else
 		return
 	endif
-	silent execute "grep ".shellescape(@@)." *.txt"
+	silent execute "grep -R ".shellescape(@@)." ."
 	copen
 	let @@ = unnamed_reg
 endfunction
