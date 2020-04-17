@@ -48,6 +48,7 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
+"------------------------------setLocalWorkDir{{{
 "set local working directory
 function! s:setLocalWorkDir()
 	echom &buftype
@@ -55,6 +56,8 @@ function! s:setLocalWorkDir()
 		execute ":lcd " . expand("%:p:h")
 	endif
 endfunction
+"}}}"
+"------------------------------FormatAndFeedToRepl{{{
 "Format and Feed to Read-Eval-Print-Loop
 function! s:FormatAndFeedToRepl(mode)
 	if a:mode ==? 'v'
@@ -81,6 +84,8 @@ function! s:FormatAndFeedToRepl(mode)
 		echo splitted
 	endif
 endfunction
+"}}}"
+"------------------------------OpenOmni{{{
 "Open adequate completion menu
 function! s:OpenOmni()
 	if !pumvisible()
@@ -91,7 +96,7 @@ function! s:OpenOmni()
 		let g:wordUntilCursor = matchstr(g:lineUntilCursor,'\v[^ \t][^^ \t]*$')
 		let g:wordIsLongEnough = len(g:wordUntilCursor)>=minLength
 		let cursorIsWithinFunctionArgs = match(getline(ln-1),'\v\(\s*$')>=0 && len(g:wordUntilCursor)==0
-		call Pvwc_c("wordUntilCursor = ".g:wordUntilCursor)
+		call <SID>Cmt("wordUntilCursor = ".g:wordUntilCursor)
 		let L = len(g:wordUntilCursor)
 		let wantsToGetNewFunArg = strpart(g:wordUntilCursor,L-1,1)==#','
 		let g:wordIsFilePath = match(g:wordUntilCursor,'\v\/')>=0
@@ -108,6 +113,8 @@ function! s:OpenOmni()
 		return "\<C-n>"
 	endif
 endfunction
+"}}}"
+"------------------------------SpellCheckToggle{{{
 "Toggle spell check
 function! s:SpellCheckToggle()
 	if &spell
@@ -116,6 +123,8 @@ function! s:SpellCheckToggle()
 		execute "set spell spelllang=".g:SPELL_LANG
 	endif
 endfunction
+"}}}"
+"------------------------------QuickFixToggle{{{
 "Toggle quickfix window
 function! s:QuickFixToggle()
 	if exists("g:quickfix_window_is_open") && g:quickfix_window_is_open
@@ -130,6 +139,8 @@ function! s:QuickFixToggle()
 	endif
 	return
 endfunction
+"}}}"
+"------------------------------FoldColumnToggle{{{
 "Function to toggle the foldcolumn
 function! s:FoldColumnToggle()
 	if &foldcolumn
@@ -138,29 +149,34 @@ function! s:FoldColumnToggle()
 		setlocal foldcolumn=4
 	endif
 endfunction
-
-function! Pvwc_checkBuf(bufNr)
+"}}}"
+"------------------------------CheckBuf{{{
+"Helper function to check, whether a given buffer is listed and within contained
+"within g:bufNumbrs
+function! s:CheckBuf(bufNr)
 	function! Local_addBuf(_bufNr)
 		let g:numOfBufs += 1
 		let g:bufNumbrs += [a:_bufNr]
 		let g:tabBufNames += [bufname(a:_bufNr)]
-		call Pvwc_c("Buffer nr. ".a:_bufNr." with name ".bufname(a:_bufNr)." will be added")
+		call <SID>Cmt("Buffer nr. ".a:_bufNr." with name ".bufname(a:_bufNr)." will be added")
 	endfunction
 	function! Local_rmBuf(_bufNr)
 		let bufNumbrsInd = index(g:bufNumbrs,a:_bufNr)
 		let tabBufNamesInd = index(g:tabBufNames,bufname(a:_bufNr))
-		call Pvwc_c("Buffer nr. ".a:_bufNr." with name ".bufname(a:_bufNr)." will be removed")
+		call <SID>Cmt("Buffer nr. ".a:_bufNr." with name ".bufname(a:_bufNr)." will be removed")
 		call remove(g:bufNumbrs,bufNumbrsInd)
 		call remove(g:tabBufNames,tabBufNamesInd)
 	endfunction
 	if buflisted(a:bufNr) && index(g:bufNumbrs,a:bufNr)<0
 		call Local_addBuf(a:bufNr)
 	else
-		call Pvwc_c("Buffer nr. ".a:bufNr." with name ".bufname(a:bufNr)." will be ignored")
+		call <SID>Cmt("Buffer nr. ".a:bufNr." with name ".bufname(a:bufNr)." will be ignored")
 	endif
 endfunction
+"}}}"
+"------------------------------BufferCycle{{{
 "Open a new window and cycle through all listed buffers (A)
-function! s:Pvwc_bufferCycle(direction)
+function! s:BufferCycle(direction)
 	function! Local_incrementIndex()
 		if g:curBufIndex ==# (g:numOfBufs-1)
 			let g:curBufIndex = 0
@@ -213,20 +229,22 @@ function! s:Pvwc_bufferCycle(direction)
 		let g:bufNumbrs = []
 		let g:tabBufNames = []
 		for bufNr in range(1,g:numOfTrialBufs)
-			call Pvwc_checkBuf(bufNr)
+			call <SID>CheckBuf(bufNr)
 		endfor
 		call Local_cycleIndex(a:direction)
 		call Local_openNewWindow()
 		augroup startBufferCyclerAutomation
 			autocmd!
-			autocmd BufReadPost * call Pvwc_checkBuf(bufnr())
-			"autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())<0"."\n"."call Pvwc_checkBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
-			"autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())>0"."\n"."call Pvwc_checkBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
+			autocmd BufReadPost * call <SID>CheckBuf(bufnr())
+			"autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())<0"."\n"."call <SID>CheckBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
+			"autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())>0"."\n"."call <SID>CheckBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
 		augroup END
 	endif
 endfunction
+"}}}"
+"------------------------------HlTrlWsp{{{
 "Function that toggles highlighting trailing white-space characters
-function! Pvwc_hlTrlWsp()
+function! s:HlTrlWsp()
 	highlight trlWspGroup ctermbg=green guibg=green
 	function! Local_hl()
 		execute ":match trlWspGroup /".g:trlWspPattern."/"
@@ -247,13 +265,16 @@ function! Pvwc_hlTrlWsp()
 		call Local_hl()
 	endif
 endfunction
+"}}}"
+"------------------------------Cmt{{{
 "Print a comment if boolean script variable s:verbose is set
-function! Pvwc_c(comment)
+function! s:Cmt(comment)
 	if s:verbose
 		echo a:comment
 	endif
 endfunction
-
+"}}}"
+"------------------------------GoToWinAndRefreshNerdtree{{{
 "Go to a window with given window number and reload current working dir of
 "NERDTree
 function! s:GoToWinAndRefreshNerdtree(winNumber)
@@ -263,7 +284,8 @@ function! s:GoToWinAndRefreshNerdtree(winNumber)
 		call win_gotoid(win_getid(a:winNumber))
 	endif
 endfunction
-
+"}}}"
+"------------------------------GoToNeighbourWin{{{
 "Go to previous/next window if direction is 'backward'/'forward'
 function! s:GoToNeighbourWin(direction)
 	let c = winnr('$')
@@ -283,22 +305,25 @@ function! s:GoToNeighbourWin(direction)
 		endif
 	endif
 endfunction
-
+"}}}"
+"------------------------------ToggleSyntax{{{
 "Toggle syntax coloring
-function! Pvwc_ToggleSyntax()
+function! s:ToggleSyntax()
 	if(exists("g:syntax_on"))
 		syntax off
 	else
 		syntax enable
 	endif
 endfunction
-
+"}}}"
+"------------------------------GR{{{
 function GR(replacementString)
 	  %s/{expand("<cword>")}/{a:replacementString}/gc
 endfunction
-
+"}}}"
+"------------------------------RangeSearch{{{
 "Perform search with "/" within visually selected range
-function! RangeSearch(direction)
+function! s:RangeSearch(direction)
   call inputsave()
   let g:srchstr = input(a:direction)
   call inputrestore()
@@ -310,7 +335,8 @@ function! RangeSearch(direction)
     let g:srchstr = ''
   endif
 endfunction
-
+"}}}"
+"------------------------------ResCur{{{
 "Reset cursor position
 function! ResCur()
 	try
@@ -320,13 +346,10 @@ function! ResCur()
 		endif
 	endtry
 endfunction
-
+"}}}"
+"------------------------------MaxCurWin{{{
 "Maximize current window
-"TODO: if a buffer change occurs in either window mirror
-"that in the other one
-"TODO: if a split occurs in maximized window connect that split to the minimized
-"window somehow
-function! Pvwc_MaxCurWin()
+function! s:MaxCurWin()
 	let g:cursorPosition = getcurpos()
 	"let g:cursorRow = g:cp[1]
 	"let g:cursorCol = g:cp[4]
@@ -336,7 +359,7 @@ function! Pvwc_MaxCurWin()
 	endif
 	let g:minWinID = win_getid()
 	let g:minBn = bufname(bufnr())
-	call Pvwc_c("Pvwc: Current window ID = ".g:minWinID."\tbuffer name\t".g:minBn)
+	call <SID>Cmt("Pvwc: Current window ID = ".g:minWinID."\tbuffer name\t".g:minBn)
 	let g:maxWinID = get(g:minMaxPairs,g:minWinID,0)
 	function! NewTab()
 		execute ":tabedit ".g:minBn
@@ -346,28 +369,30 @@ function! Pvwc_MaxCurWin()
 		call setpos(".",g:cursorPosition)
 	endfunction
 	if g:maxWinID!=#0 && !empty(getwininfo(g:maxWinID))
-		call Pvwc_c("Max window does already exist. MaxWinID is\t".g:maxWinID)
+		call <SID>Cmt("Max window does already exist. MaxWinID is\t".g:maxWinID)
 		call win_gotoid(g:maxWinID)
 		call setpos(".",g:cursorPosition)
 	elseif g:maxWinID!=#0 && empty(getwininfo(g:maxWinID))
-		call Pvwc_c("remove invalid entries")
+		call <SID>Cmt("remove invalid entries")
 		call remove(g:minMaxPairs,g:minWinID)
 		call remove(g:maxMinPairs,g:maxWinID)
 		call NewTab()
 	else
-		call Pvwc_c("Max window does not exist")
+		call <SID>Cmt("Max window does not exist")
 		call NewTab()
 	endif
 endfunction
-
-function! Pvwc_MinCurWin()
+"}}}"
+"------------------------------MinCurWin{{{
+"Minimize current window (Close tab and return to minimized Window)
+function! s:MinCurWin()
 	if exists("g:maxMinPairs")
 		let g:maxWinID = win_getid()
 		let g:minWinID = get(g:maxMinPairs,g:maxWinID,0)
 		if g:minWinID==#0
-			call Pvwc_c("There is not minimized window that belongs to the current window. Nothing done")
+			call <SID>Cmt("There is not minimized window that belongs to the current window. Nothing done")
 		else
-			call Pvwc_c("Close maximized window and go to minimized version")
+			call <SID>Cmt("Close maximized window and go to minimized version")
 			let g:cursorPosition = getcurpos()
 			execute ":close"
 			call win_gotoid(g:minWinID)
@@ -377,6 +402,7 @@ function! Pvwc_MinCurWin()
 		endif
 	endif
 endfunction
+"}}}"
 "}}}
 "------------------------------SETTINGS------------------------------{{{
 "TODO:command that repeats last command
@@ -403,7 +429,6 @@ filetype plugin indent on
 
 "------------------------------ABBREVIATIONS------------------------------{{{
 iabbrev 'van\ W' van Wickevoort Crommelin
-"
 "}}}
 
 "------------------------------MAPPINGS------------------------------{{{
@@ -429,8 +454,8 @@ nnoremap <silent> ä :cprevious<cr>
 nnoremap <silent> ü :cnext<cr>
 "Cycle through all listed buffers
 nnoremap <localleader>f :call <SID>FoldColumnToggle()<cr>
-noremap <silent> t :call <SID>Pvwc_bufferCycle("up")<cr>
-noremap <silent> <s-T> :call <SID>Pvwc_bufferCycle("down")<cr>
+noremap <silent> t :call <SID>BufferCycle("up")<cr>
+noremap <silent> <s-T> :call <SID>BufferCycle("down")<cr>
 "echo cword
 nnoremap <localleader>ee :execute "echom shellescape(expand(\"\<cword>\"))"<cr>
 "echo cWORD
@@ -443,16 +468,16 @@ nnoremap <silent> <localleader>l :nohlsearch<cr>
 "perl, python and ruby.
 nnoremap / /\v
 "Highlight all trailing white space charactes before end-of-line character
-nnoremap <silent> <localleader>w :call Pvwc_hlTrlWsp()<cr>
+nnoremap <silent> <localleader>w :call <SID>HlTrlWsp()<cr>
 "Delete all trailing white space charactes before end-of-line character
 nnoremap <silent> <localleader>W :execute "normal! mq:%s/".trlWspPattern."//g\r:nohl\r`q"<cr>
 "Write and close all windows in all tabs und quit vim
 nnoremap <localleader>Z :wqall<cr>
 "maximize window
 "nnoremap <localleader>M :tabedit %<cr>
-nnoremap <silent> <localleader>M :call Pvwc_MaxCurWin()<cr>
+nnoremap <silent> <localleader>M :call <SID>MaxCurWin()<cr>
 "minimize window
-nnoremap <silent> <localleader>m :call Pvwc_MinCurWin()<cr>
+nnoremap <silent> <localleader>m :call <SID>MinCurWin()<cr>
 "write and close
 nnoremap Z ZZ|	"write and close
 "map redo to capital u
@@ -498,9 +523,9 @@ vnoremap <localleader>e" di"<esc>pa"<esc>
 "go to the last printable character of current line (skip newline char)
 vnoremap $ g_
 "Search constrained to visually selected range.
-vnoremap <silent> / :<C-U>call RangeSearch('/')<CR>:if strlen(g:srchstr) > 0\|execute '/'.g:srchstr\|endif<CR>
+vnoremap <silent> / :<C-U>call <SID>RangeSearch('/')<CR>:if strlen(g:srchstr) > 0\|execute '/'.g:srchstr\|endif<CR>
 "Backward search constrained to visually selected range
-vnoremap <silent> ? :<C-U>call RangeSearch('?')<CR>:if strlen(g:srchstr) > 0\|execute '?'.g:srchstr\|endif<CR> <lsflaksjfd>
+vnoremap <silent> ? :<C-U>call <SID>RangeSearch('?')<CR>:if strlen(g:srchstr) > 0\|execute '?'.g:srchstr\|endif<CR> <lsflaksjfd>
 "constrain selection to content of next emerging pair of paranthesis
 vnoremap n( <esc>:<c-u>execute "normal! /".'\v\('."\rlvi("<cr>
 "constrain selection to content of previously emerging pair of paranthesis
@@ -637,7 +662,7 @@ call deoplete#custom#option({
 "try fc-cache -v -f in terminal to reset font buffer
 augroup nerdtree
 	autocmd!
-	autocmd FileType nerdtree set ignorecase | call Pvwc_c("Ignorecase option set for nerdtree")
+	autocmd FileType nerdtree set ignorecase | call <SID>Cmt("Ignorecase option set for nerdtree")
 	autocmd FileType nerdtree nnoremap <silent> <buffer> t <c-w><c-w>
 	"Trigger nerdtree file system browser automatically, when starting vim session
 	"autocmd vimenter * NERDTree0
@@ -682,7 +707,7 @@ vmap , <Plug>RDSendSelection
 "------------------------------ULTISNIPS CONFIGURATION------------------------------{{{
 let g:UltiSnipsEditSplit="context"
 "dont use <Tab> key to expand snippet
-let g:UltiSnipsExpandTrigger = "<nop>"
+let g:UltiSnipsExpandTrigger = "<cr>"
 "let snippet displayed in the completion pop up be expanded by hitting Carriage Return
 let g:ulti_expand_or_jump_res = 0
 function ExpandSnippetOrCarriageReturn()
