@@ -35,9 +35,15 @@ execute ":source ".'/Users/Philipp/.config/nvim/autoload/grep-operator.vim'
 "}}}
 "	================================================= Personal configuration ===================={{{
 "------------------------------GLOBAL VARIABLES------------------------------{{{
-"Global indicator variable for more verbose output
-let g:SPELL_LANG = "en_us"
-let s:verbose = 0
+"comment character for different programming languages
+let s:CommentChar = {'python':'#',
+			\'r':'#',
+			\'vim':'"',
+			\'sql':'--',
+			\'plaintex':'%',
+			\'c':'//'}
+let g:SPELL_LANG = "en_us"|	"global spelling language
+let s:verbose = 0|	"Global indicator variable for more verbose output
 let g:VIMRC_DIR = "/Users/Philipp/Developer/Vimscript/init.vim"
 let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
 let g:python_host_prog="/usr/bin/python"
@@ -48,6 +54,15 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
+function! s:CommentLines(type)
+	let c = get(s:CommentChar,&filetype,'?')
+	let cl = getline('.')
+	if match(cl,c) >= 0
+		call setline('.',substitute(cl,'\v^'.escape(c,'%?').'\v (.*$)','\1',""))
+	else
+		call setline('.',c.' '.cl)
+	endif
+endfunction
 "------------------------------OpenOrRefreshNerdTree{{{
 "Open the NERDTree if it is not visible, or refresh its working directory
 "otherwise
@@ -449,8 +464,8 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
-"Search operator
-"nnoremap <silent> <leader>g :execute "grep! -iR ".shellescape(expand("<cWORD>"))." /Users/Philipp/Desktop/pythonOutput"<cr>:copen<cr>
+"Comment the line of the cursor
+nnoremap <localleader>c :call <SID>CommentLines('char')<cr>
 "toggle number option
 nnoremap <silent> <localleader>N :setlocal number!<cr>
 "toggle spell control
@@ -503,7 +518,7 @@ nnoremap <silent> <S-tab> :call <SID>GoToNeighbourWin("backward")<esc>
 "Edit vimrc file
 nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC."\|:lcd ".g:VIMRC_DIR<cr>
 "source (aka. "reload") vimrc file
-nnoremap <silent> <localleader>r :source $MYVIMRC<CR>
+nnoremap <localleader>r :source $MYVIMRC<CR>
 "open terminal emulator
 nnoremap <silent> <localleader>C :<c-u>execute "split term://zsh"<cr>:startinsert<cr>
 "select word with space key
@@ -516,8 +531,10 @@ noremap <silent> <localleader>ll :let &tabstop += (&tabstop < 10) ? 1 : 0 <CR>
 noremap <silent> <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
 "}}}
 "------------------------------VISUAL MODE{{{
+"comment visually selected lines
+vnoremap <localleader>c :call <SID>CommentLines(visualmode())<cr>
 "feed to REPL
-vnoremap <localleader>, <esc><c-u>:call <SID>FormatAndFeedToRepl(visualmode())<cr>
+vnoremap <localleader>p <esc><c-u>:call <SID>FormatAndFeedToRepl(visualmode())<cr>
 "Enclose/surround visually selected area with/by angle brackets
 vnoremap <localleader>e< <esc>`<i<<esc>`>la><esc>
 "Enclose/surround visually selected area with/by brackets
@@ -601,7 +618,6 @@ augroup END
 "------------------------------Filetype python{{{
 augroup python
 	autocmd!|	"Delete all comands from group first
-	autocmd FileType python nnoremap <buffer> <localleader>c I#<esc>
 	autocmd FileType python :iabbrev iff if:<left>
 	autocmd FileType python :iabbrev fnn def ()<left><left>
 	autocmd FileType python setlocal foldmethod=indent
@@ -611,7 +627,6 @@ augroup END
 "------------------------------Filetype r{{{
 augroup r
 	autocmd!
-	autocmd FileType r nnoremap <buffer> <localleader>c I#<esc>
 	autocmd FileType r :iabbrev iff if()<left>
 	autocmd FileType r :call StartR("R")
 	autocmd FileType r :iabbrev fnn = function()<left><left><left><left><left><left><left><left><left><left><left><left><left><left>
@@ -630,7 +645,6 @@ augroup vim
 	autocmd!
 	autocmd FileType vim setlocal foldmethod=marker
 	autocmd FileType vim setlocal foldlevelstart=0
-	autocmd FileType vim nnoremap <buffer> <localleader>c I"<esc>
 augroup END
 "}}}
 "------------------------------miscellaneous{{{
@@ -683,7 +697,6 @@ set encoding=utf-8
 let NERDTreeShowLineNumbers = 0
 "show hidden files per default
 let NERDTreeShowHidden = 1
-"nnoremap <localleader>n :NERDTreeToggle<CR>|if &ignorecase\|set noignorecase\|else\|set ignorecase<cr>
 nnoremap <localleader>n :call <SID>OpenOrRefreshNerdTree()<cr>
 "nnoremap <localleader>h :call <Plug>NERDTreeMapOpenSplit()<CR>
 let g:webdevicons_enable_nerdtree = 1
