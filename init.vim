@@ -54,6 +54,8 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
+"------------------------------CommentLines{{{
+"Function to comment lines according to filetype/programming language used
 function! s:CommentLines(type)
 	let c = get(s:CommentChar,&filetype,'?')
 	let cl = getline('.')
@@ -63,6 +65,7 @@ function! s:CommentLines(type)
 		call setline('.',c.' '.cl)
 	endif
 endfunction
+"}}}"
 "------------------------------OpenOrRefreshNerdTree{{{
 "Open the NERDTree if it is not visible, or refresh its working directory
 "otherwise
