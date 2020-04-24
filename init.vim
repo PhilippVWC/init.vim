@@ -60,7 +60,7 @@ function! s:CommentLines()
 	let c = get(s:CommentChar,&filetype,'?')
 	let cl = getline('.')
 	if match(cl,c) >= 0 && match(cl,c) <= 1
-		call setline('.',substitute(cl,'\v^'.escape(c,'%?').' (.*$)','\1',""))
+		call setline('.',substitute(cl,'\v^'.escape(c,'%?').'(.*$)','\1',""))
 	else
 		call setline('.',c.' '.cl)
 	endif
@@ -84,31 +84,65 @@ endfunction
 "}}}"
 "------------------------------FormatAndFeedToRepl{{{
 "Format and Feed to Read-Eval-Print-Loop
-function! s:FormatAndFeedToRepl(mode)
-	if a:mode ==? 'v'
-		let [startpos_l,startpos_c] =  getpos("'<")[1:2]
-		let [endpos_l,endpos_c] =  getpos("'>")[1:2]
-		let firstLn = substitute(getline(startpos_l),'\v(.*\()(.*)','\2','')
-		let currLnNum = startpos_l + 1
-		let funArgsRaw = ""
-		let currLn = ""
-		if startpos_l == endpos_l
-			let funArgsRaw = substitute(firstLn,'\v(.*)(\).*)','\1','')
-		else
-			while currLnNum < endpos_l
-				let currLn = getline(currLnNum)
-				let funArgsRaw .= " ".currLn
-				let currLnNum += 1
-			endwhile
-			let lastLn = substitute(getline(endpos_l),'\v(.*)(\).*)','\1','')
-			let funArgsRaw = firstLn . funArgsRaw . lastLn
+"This function is for Users of the statistical programming language R, that use
+"the plugin Nvim-R. When the cursor is positioned within a function block and
+"FormatAndFeedToRepl is called the function arguments are parsed into the REPL 
+"(== the R language console). As a consequence, they are loaded into the 
+"global namespace.
+"This function is handy, if the inner code block of an R function is to be
+"tested, but the function arguments are not known whithin the global namespace
+function! s:FormatAndFeedToRepl()
+	let cursPos = getcurpos()
+	let save_reg = @"
+	execute "normal! ?function\r"
+	execute "normal! /(\ryi("
+	let funcArgsRaw = substitute(@",'\v[ \t\n]','','g')|	"remove newline and space characters
+	let fArgs = []
+	let n = 0 
+	let l = len(funcArgsRaw)
+	let c = 0
+	let p = 0
+	while l > 0
+		let p = match(funcArgsRaw,'(')|	"look for a function argument (starts with an opening paranthesis), that is a call for an R function
+		if p >= 0
+			let c = match(funcArgsRaw,',')|	"Identify position of a comma	
+			if c >= 0|	"A comma was found
+				if( c < p )
+					if(c!=0)
+						call extend(fArgs,[strcharpart(funcArgsRaw,0,c)])
+						let funcArgsRaw = strcharpart(funcArgsRaw,c+1,l)|	"+1 to skip ,
+						let l = len(funcArgsRaw)
+					else|	"remove leading comma
+						let funcArgsRaw = strcharpart(funcArgsRaw,1,l)
+						let l = len(l)
+					endif
+				else
+					let pc = match(funcArgsRaw,')')
+					let functionCallArg = strcharpart(funcArgsRaw,0,pc+1)
+					let funcArgsRaw = strcharpart(funcArgsRaw,pc+1,l)|	"+1 to skip )
+					let l = len(funcArgsRaw)
+					let numNested = len(substitute(functionCallArg,'\v[^\(]','','g'))|	"count left paranethesis
+					while numNested > 1|	"enter nested function argument
+						let np = match(funcArgsRaw,')')
+						let functionCallArg .= strcharpart(funcArgsRaw,0,np+1)
+						let funcArgsRaw = strcharpart(funcArgsRaw,np+1,l)
+						let l = len(funcArgsRaw)
+						let numNested -= 1
+					endwhile
+					call extend(fArgs,[functionCallArg])
+				endif
+			else|	"No comma found -- Only one single argument left to be parsed
+				let fArgs = extend(fArgs,[funcArgsRaw])
+				let l = 0|	"exit loop
+			endif
+		else|	"no functions called among function arguments
+			let fArgs = split(funcArgsRaw,',')
+			let l = 0|	"exit loop
 		endif
-
-		let trimmed = substitute(funArgsRaw,'\v[ \t]','','g')
-		let splitted = split(trimmed,',')
-		call SendCmdToR_Buffer(join(splitted,"\n"))
-		execute "normal! `>"
-	endif
+	endwhile
+	call SendCmdToR_Buffer(join(fArgs,"\n"))
+	let @" = save_reg
+	call setpos('.',cursPos)
 endfunction
 "}}}"
 "------------------------------OpenOmni{{{
@@ -306,7 +340,7 @@ endfunction
 function! s:GoToWinAndRefreshNerdtree(winNumber)
 	call win_gotoid(win_getid(a:winNumber))
 	if (&buftype==#'' && g:NERDTree.IsOpen()) "empty buftype option corresponds to normal buffer (see help buftype)
-							"variable g:NERDTree.IsOpen may be invalid after updating NERDTree
+		"variable g:NERDTree.IsOpen may be invalid after updating NERDTree
 		NERDTreeCWD
 		call win_gotoid(win_getid(a:winNumber))
 	endif
@@ -345,22 +379,22 @@ endfunction
 "}}}"
 "------------------------------GR{{{
 function GR(replacementString)
-	  %s/{expand("<cword>")}/{a:replacementString}/gc
+	%s/{expand("<cword>")}/{a:replacementString}/gc
 endfunction
 "}}}"
 "------------------------------RangeSearch{{{
 "Perform search with "/" within visually selected range
 function! s:RangeSearch(direction)
-  call inputsave()
-  let g:srchstr = input(a:direction)
-  call inputrestore()
-  if strlen(g:srchstr) > 0
-    let g:srchstr = g:srchstr.
-          \ '\%>'.(line("'<")-1).'l'.
-          \ '\%<'.(line("'>")+1).'l'
-  else
-    let g:srchstr = ''
-  endif
+	call inputsave()
+	let g:srchstr = input(a:direction)
+	call inputrestore()
+	if strlen(g:srchstr) > 0
+		let g:srchstr = g:srchstr.
+					\ '\%>'.(line("'<")-1).'l'.
+					\ '\%<'.(line("'>")+1).'l'
+	else
+		let g:srchstr = ''
+	endif
 endfunction
 "}}}"
 "------------------------------ResCur{{{
@@ -431,29 +465,29 @@ function! s:MinCurWin()
 	endif
 endfunction
 "}}}"
-"}}}
-"------------------------------SETTINGS------------------------------{{{
-"TODO:command that repeats last command
-command! Tex :w|:!pdflatex -shell-escape %
-set omnifunc=syntaxcomplete#Complete
-set foldcolumn=4|
-set ignorecase|		"Ignore case for vim search function / or ?
-set hlsearch incsearch|	"highlight all matching search patterns while typing
-set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
-set splitright|		"make new vertical splits appear to the right
-set splitbelow|		"make new horizontal splits appear below
-			"consider command <<aboveleft>> for vertical/horizontal splits to open to the left/top of the
-"current active window
-set wrap|		"let lines break, if their lengths exceed the window size
-set mouse=a
-set shiftround|		"round value for indentation to multiple of shiftwidth
-set number
-set laststatus=2
-set autoindent
-set smartindent
-"set autowriteall 	"automatically write buffers when required
-filetype plugin indent on
-"}}}
+	"}}}
+	"------------------------------SETTINGS------------------------------{{{
+	"TODO:command that repeats last command
+	command! Tex :w|:!pdflatex -shell-escape %
+	set omnifunc=syntaxcomplete#Complete
+	set foldcolumn=4|
+	set ignorecase|		"Ignore case for vim search function / or ?
+	set hlsearch incsearch|	"highlight all matching search patterns while typing
+	set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
+	set splitright|		"make new vertical splits appear to the right
+	set splitbelow|		"make new horizontal splits appear below
+	"consider command <<aboveleft>> for vertical/horizontal splits to open to the left/top of the
+	"current active window
+	set wrap|		"let lines break, if their lengths exceed the window size
+	set mouse=a
+	set shiftround|		"round value for indentation to multiple of shiftwidth
+	set number
+	set laststatus=2
+	set autoindent
+	set smartindent
+	"set autowriteall 	"automatically write buffers when required
+	filetype plugin indent on
+	"}}}
 
 "------------------------------ABBREVIATIONS------------------------------{{{
 iabbrev 'van\ W' van Wickevoort Crommelin
@@ -467,6 +501,8 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
+"Read local scope R function arguments and send to R-REPL
+nnoremap <silent> <localleader>p :call <SID>FormatAndFeedToRepl()<cr>
 "Comment the line of the cursor
 nnoremap <silent> <localleader>c :call <SID>CommentLines()<cr>
 "toggle number option
@@ -536,8 +572,6 @@ noremap <silent> <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
 "------------------------------VISUAL MODE{{{
 "comment visually selected lines
 vnoremap <silent> <localleader>c :call <SID>CommentLines()<cr>
-"feed to REPL
-vnoremap <localleader>p <esc><c-u>:call <SID>FormatAndFeedToRepl(visualmode())<cr>
 "Enclose/surround visually selected area with/by angle brackets
 vnoremap <localleader>e< <esc>`<i<<esc>`>la><esc>
 "Enclose/surround visually selected area with/by brackets
