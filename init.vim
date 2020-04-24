@@ -56,11 +56,11 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "TODO: create formatter for r function arguments
 "------------------------------CommentLines{{{
 "Function to comment lines according to filetype/programming language used
-function! s:CommentLines(type)
+function! s:CommentLines()
 	let c = get(s:CommentChar,&filetype,'?')
 	let cl = getline('.')
-	if match(cl,c) >= 0
-		call setline('.',substitute(cl,'\v^'.escape(c,'%?').'\v (.*$)','\1',""))
+	if match(cl,c) >= 0 && match(cl,c) <= 1
+		call setline('.',substitute(cl,'\v^'.escape(c,'%?').' (.*$)','\1',""))
 	else
 		call setline('.',c.' '.cl)
 	endif
@@ -468,7 +468,7 @@ noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
 "Comment the line of the cursor
-nnoremap <localleader>c :call <SID>CommentLines('char')<cr>
+nnoremap <silent> <localleader>c :call <SID>CommentLines()<cr>
 "toggle number option
 nnoremap <silent> <localleader>N :setlocal number!<cr>
 "toggle spell control
@@ -535,7 +535,7 @@ noremap <silent> <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
 "}}}
 "------------------------------VISUAL MODE{{{
 "comment visually selected lines
-vnoremap <localleader>c :call <SID>CommentLines(visualmode())<cr>
+vnoremap <silent> <localleader>c :call <SID>CommentLines()<cr>
 "feed to REPL
 vnoremap <localleader>p <esc><c-u>:call <SID>FormatAndFeedToRepl(visualmode())<cr>
 "Enclose/surround visually selected area with/by angle brackets
