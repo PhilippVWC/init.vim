@@ -8,8 +8,8 @@ Plug 'jalvesaq/Nvim-R'
 "Plug 'gaalcaras/ncm-R'
 "Plug 'ncm2/ncm2-bufword'
 "Plug 'ncm2/ncm2-path'
-"Plug 'lervag/vimtex'
-"Plug 'junegunn/vim-easy-align'
+Plug 'lervag/vimtex'
+Plug 'junegunn/vim-easy-align'
 Plug 'Shougo/deoplete.nvim'
 Plug 'SirVer/ultisnips'
 "Plug 'honza/vim-snippets'
@@ -35,12 +35,24 @@ execute ":source ".'/Users/Philipp/.config/nvim/autoload/grep-operator.vim'
 "}}}
 "	================================================= Personal configuration ===================={{{
 "------------------------------GLOBAL VARIABLES------------------------------{{{
+"characters to enclose/surround a word
+let s:surroundChar = {
+      \'{':'}',
+      \'[':']',
+      \'(':')',
+      \'$':'$',
+      \'/':'/',
+      \'\\':'\\',
+      \'<':'>',
+      \"'":"'",
+      \'"':'"',
+      \' ':' '}
 "comment character for different programming languages
 let s:CommentChar = {'python':'#',
 			\'r':'#',
 			\'vim':'"',
 			\'sql':'--',
-			\'plaintex':'%',
+			\'tex':'%',
 			\'c':'//'}
 let g:SPELL_LANG = "en_us"|	"global spelling language
 let s:verbose = 0|	"Global indicator variable for more verbose output
@@ -54,25 +66,64 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
+"Delete the current swap file
+function! s:RemoveSwapFile()
+	execute ":!rm ".swapname(bufname())
+endfunction
+"------------------------------DeleteLine{{{
+function! s:DeleteLine()
+  call setline(".",'')
+  startinsert!
+endfunction
+"}}}
+"------------------------------changeSurroundingChar{{{
+"change surrounding character
+function! s:changeSurroundingChar(char)
+  let s:p = [line("."),col(".")]
+  echo s:p
+  let s:savedReg = @"
+  let s:word = expand("<cword>")
+  execute "normal! byh"
+  let s:oldDelimiter = @"
+  let s:col_l = col(".")
+  let s:cl = getline(".")
+  let s:leftHandSide = strcharpart(s:cl,0,s:col_l-1)
+  execute "normal! el"
+  let s:col_r = col(".")
+  let s:rightHandSide = strcharpart(s:cl,s:col_r,len(s:cl))
+  call setline(line("."),s:leftHandSide.a:char.s:word.get(s:surroundChar,a:char,'#').s:rightHandSide)
+  let @" = s:savedReg
+  call cursor(s:p)
+endfunction   
+"}}}
+"------------------------------Surround{{{
+"Surround by character
+function! s:Surround(char)
+  let s:p = [line("."),col(".")+1]
+  execute "normal! bi".a:char."\<esc>ea".get(s:surroundChar,a:char,'#')."\<esc>"
+  call cursor(s:p)
+endfunction
+"}}}   
 "------------------------------CommentLines{{{
-"Function to comment lines according to filetype/programming language used
+"Function to comment "lines" according to filetype/programming language used
 function! s:CommentLines()
 	let c = get(s:CommentChar,&filetype,'?')
 	let cl = getline('.')
-	if match(cl,c) >= 0 && match(cl,c) <= 1
-		call setline('.',substitute(cl,'\v^'.escape(c,'%?').'(.*$)','\1',""))
+	if match(cl,c) >= 0 && match(cl,c) <= 1|	"Comment sign was identified
+		call setline('.',substitute(cl,'\v^'.escape(c,'%?').' (.*$)','\1',""))
 	else
+		"Comment sign has not been identified
 		call setline('.',c.' '.cl)
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------OpenOrRefreshNerdTree{{{
 "Open the NERDTree if it is not visible, or refresh its working directory
 "otherwise
 function! s:OpenOrRefreshNerdTree()
 	NERDTreeToggle
 endfunction
-"}}}"
+"}}}
 "------------------------------setLocalWorkDir{{{
 "set local working directory
 function! s:setLocalWorkDir()
@@ -81,7 +132,7 @@ function! s:setLocalWorkDir()
 		execute ":lcd " . expand("%:p:h")
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------FormatAndFeedToRepl{{{
 "Format and Feed to Read-Eval-Print-Loop
 "This function is for Users of the statistical programming language R, that use
@@ -144,7 +195,7 @@ function! s:FormatAndFeedToRepl()
 	let @" = save_reg
 	call setpos('.',cursPos)
 endfunction
-"}}}"
+"}}}
 "------------------------------OpenOmni{{{
 "Open adequate completion menu
 function! s:OpenOmni()
@@ -173,7 +224,7 @@ function! s:OpenOmni()
 		return "\<C-n>"
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------SpellCheckToggle{{{
 "Toggle spell check
 function! s:SpellCheckToggle()
@@ -183,7 +234,7 @@ function! s:SpellCheckToggle()
 		execute "set spell spelllang=".g:SPELL_LANG
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------QuickFixToggle{{{
 "Toggle quickfix window
 function! s:QuickFixToggle()
@@ -199,7 +250,7 @@ function! s:QuickFixToggle()
 	endif
 	return
 endfunction
-"}}}"
+"}}}
 "------------------------------FoldColumnToggle{{{
 "Function to toggle the foldcolumn
 function! s:FoldColumnToggle()
@@ -209,7 +260,7 @@ function! s:FoldColumnToggle()
 		setlocal foldcolumn=4
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------CheckBuf{{{
 "Helper function to check, whether a given buffer is listed and within contained
 "within g:bufNumbrs
@@ -233,7 +284,7 @@ function! s:CheckBuf(bufNr)
 		call <SID>Cmt("Buffer nr. ".a:bufNr." with name ".bufname(a:bufNr)." will be ignored")
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------BufferCycle{{{
 "Open a new window and cycle through all listed buffers (A)
 function! s:BufferCycle(direction)
@@ -301,7 +352,7 @@ function! s:BufferCycle(direction)
 		augroup END
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------HlTrlWsp{{{
 "Function that toggles highlighting trailing white-space characters
 function! s:HlTrlWsp()
@@ -325,7 +376,7 @@ function! s:HlTrlWsp()
 		call Local_hl()
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------Cmt{{{
 "Print a comment if boolean script variable s:verbose is set
 function! s:Cmt(comment)
@@ -333,7 +384,7 @@ function! s:Cmt(comment)
 		echo a:comment
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------GoToWinAndRefreshNerdtree{{{
 "Go to a window with given window number and reload current working dir of
 "NERDTree
@@ -345,7 +396,7 @@ function! s:GoToWinAndRefreshNerdtree(winNumber)
 		call win_gotoid(win_getid(a:winNumber))
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------GoToNeighbourWin{{{
 "Go to previous/next window if direction is 'backward'/'forward'
 function! s:GoToNeighbourWin(direction)
@@ -366,7 +417,7 @@ function! s:GoToNeighbourWin(direction)
 		endif
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------ToggleSyntax{{{
 "Toggle syntax coloring
 function! s:ToggleSyntax()
@@ -376,12 +427,12 @@ function! s:ToggleSyntax()
 		syntax enable
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------GR{{{
 function GR(replacementString)
 	%s/{expand("<cword>")}/{a:replacementString}/gc
 endfunction
-"}}}"
+"}}}
 "------------------------------RangeSearch{{{
 "Perform search with "/" within visually selected range
 function! s:RangeSearch(direction)
@@ -396,7 +447,7 @@ function! s:RangeSearch(direction)
 		let g:srchstr = ''
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------ResCur{{{
 "Reset cursor position
 function! ResCur()
@@ -407,7 +458,7 @@ function! ResCur()
 		endif
 	endtry
 endfunction
-"}}}"
+"}}}
 "------------------------------MaxCurWin{{{
 "Maximize current window
 function! s:MaxCurWin()
@@ -444,7 +495,7 @@ function! s:MaxCurWin()
 		call NewTab()
 	endif
 endfunction
-"}}}"
+"}}}
 "------------------------------MinCurWin{{{
 "Minimize current window (Close tab and return to minimized Window)
 function! s:MinCurWin()
@@ -464,11 +515,14 @@ function! s:MinCurWin()
 		endif
 	endif
 endfunction
-"}}}"
+"}}}
 	"}}}
 	"------------------------------SETTINGS------------------------------{{{
 	"TODO:command that repeats last command
+" 	set wildmenu
+" 	set path+=**
 	command! Tex :w|:!pdflatex -shell-escape %
+	command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
 	set omnifunc=syntaxcomplete#Complete
 	set foldcolumn=4|
 	set ignorecase|		"Ignore case for vim search function / or ?
@@ -480,9 +534,13 @@ endfunction
 	"current active window
 	set wrap|		"let lines break, if their lengths exceed the window size
 	set mouse=a
+	set clipboard=unnamedplus
 	set shiftround|		"round value for indentation to multiple of shiftwidth
 	set number
 	set laststatus=2
+	set expandtab
+        set shiftwidth=2
+        set softtabstop=2
 	set autoindent
 	set smartindent
 	"set autowriteall 	"automatically write buffers when required
@@ -501,6 +559,33 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
+"Surround word by given character
+nnoremap <silent> <localleader>e{ :call <SID>Surround('{')<cr>
+nnoremap <silent> <localleader>e[ :call <SID>Surround('[')<cr>
+nnoremap <silent> <localleader>e( :call <SID>Surround('(')<cr>
+nnoremap <silent> <localleader>e$ :call <SID>Surround('$')<cr>
+nnoremap <silent> <localleader>e/ :call <SID>Surround('/')<cr>
+nnoremap <silent> <localleader>e\ :call <SID>Surround('\\')<cr>
+nnoremap <silent> <localleader>e< :call <SID>Surround('<')<cr>
+nnoremap <silent> <localleader>e' :call <SID>Surround("'")<cr>
+nnoremap <silent> <localleader>e" :call <SID>Surround('"')<cr>
+nnoremap <silent> <localleader>es :call <SID>Surround(' ')<cr>
+
+"Change surrounding character
+nnoremap <silent> ce{ :call <SID>changeSurroundingChar('{')<cr>
+nnoremap <silent> ce[ :call <SID>changeSurroundingChar('[')<cr>
+nnoremap <silent> ce( :call <SID>changeSurroundingChar('(')<cr>
+nnoremap <silent> ce$ :call <SID>changeSurroundingChar('$')<cr>
+nnoremap <silent> ce/ :call <SID>changeSurroundingChar('/')<cr>
+nnoremap <silent> ce\ :call <SID>changeSurroundingChar('\\')<cr>
+nnoremap <silent> ce< :call <SID>changeSurroundingChar('<')<cr>
+nnoremap <silent> ce' :call <SID>changeSurroundingChar("'")<cr>
+nnoremap <silent> ce" :call <SID>changeSurroundingChar('"')<cr>
+nnoremap <silent> ces :call <SID>changeSurroundingChar(' ')<cr>
+"Reindent entire file
+nnoremap <silent> <localleader>i mqgg=G`q<cr>
+"Read local scope R function arguments and send to R-REPL
+nnoremap <silent> <localleader>u :UltiSnipsEdit<cr>
 "Read local scope R function arguments and send to R-REPL
 nnoremap <silent> <localleader>p :call <SID>FormatAndFeedToRepl()<cr>
 "Comment the line of the cursor
@@ -508,7 +593,7 @@ nnoremap <silent> <localleader>c :call <SID>CommentLines()<cr>
 "toggle number option
 nnoremap <silent> <localleader>N :setlocal number!<cr>
 "toggle spell control
-nnoremap <localleader>s :call <SID>SpellCheckToggle()<cr>
+nnoremap <silent> <localleader>s :call <SID>SpellCheckToggle()<cr>
 "Enter insert mode automatically after Deletion from cursor to EOL character
 nnoremap <silent> D Da
 "toggle quickfix window
@@ -563,27 +648,19 @@ nnoremap <silent> <localleader>C :<c-u>execute "split term://zsh"<cr>:startinser
 "select word with space key
 nnoremap <space> viw
 "clear current line
-nnoremap <localleader>d ddO
+nnoremap <silent> <localleader>d :call <sid>DeleteLine()<cr>
 "Increase tabstop
 noremap <silent> <localleader>ll :let &tabstop += (&tabstop < 10) ? 1 : 0 <CR>
 "Decrease tabsto
 noremap <silent> <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
 "}}}
 "------------------------------VISUAL MODE{{{
+"Indent with tab
+vnoremap <silent> <tab> >
+"Unindent with tab
+vnoremap <silent> <s-tab> <
 "comment visually selected lines
 vnoremap <silent> <localleader>c :call <SID>CommentLines()<cr>
-"Enclose/surround visually selected area with/by angle brackets
-vnoremap <localleader>e< <esc>`<i<<esc>`>la><esc>
-"Enclose/surround visually selected area with/by brackets
-vnoremap <localleader>e[ <esc>`<i[<esc>`>la]<esc>
-"Enclose/surround visually selected area with/by braces
-vnoremap <localleader>e{ <esc>`<i{<esc>`>la}<esc>
-"Enclose/surround visually selected area with/by parenthesis
-vnoremap <localleader>e( <esc>`<i(<esc>`>la)<esc>
-"Enclose/surround visually selected area with/by single quotes
-vnoremap <localleader>e' <esc>`<i'<esc>`>la'<esc>
-"Enclose/surround visually selected area with/by single quotes
-vnoremap <localleader>e" di"<esc>pa"<esc>
 "go to the last printable character of current line (skip newline char)
 vnoremap $ g_
 "Search constrained to visually selected range.
@@ -688,7 +765,7 @@ augroup END
 augroup miscellaneous
 	autocmd!
 	autocmd Filetype help setlocal number|			"show line numbers for vim documentation files
-	autocmd FileType plaintex :setlocal spell spelllang=de|	"check spelling automatically for tex files
+	autocmd FileType tex :setlocal spell spelllang=de|	"check spelling automatically for tex files
 	autocmd BufWinEnter * call ResCur()|			"reset cursor position
 	autocmd BufWinEnter * execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
 	autocmd BufReadPost * call <SID>setLocalWorkDir()|	"Set working directory local to buffer
