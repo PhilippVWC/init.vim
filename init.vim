@@ -655,6 +655,18 @@ noremap <silent> <localleader>ll :let &tabstop += (&tabstop < 10) ? 1 : 0 <CR>
 noremap <silent> <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
 "}}}
 "------------------------------VISUAL MODE{{{
+"Enclose/surround visually selected area with/by angle brackets
+vnoremap <localleader>e< <esc>`<i<<esc>`>la><esc>
+"Enclose/surround visually selected area with/by brackets
+vnoremap <localleader>e[ <esc>`<i[<esc>`>la]<esc>
+"Enclose/surround visually selected area with/by braces
+vnoremap <localleader>e{ <esc>`<i{<esc>`>la}<esc>
+"Enclose/surround visually selected area with/by parenthesis
+vnoremap <localleader>e( <esc>`<i(<esc>`>la)<esc>
+"Enclose/surround visually selected area with/by single quotes
+vnoremap <localleader>e' <esc>`<i'<esc>`>la'<esc>
+"Enclose/surround visually selected area with/by single quotes
+vnoremap <localleader>e" di"<esc>pa"<esc>
 "Indent with tab
 vnoremap <silent> <tab> >
 "Unindent with tab
