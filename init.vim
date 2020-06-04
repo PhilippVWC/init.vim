@@ -1,4 +1,4 @@
-"Neovim resource file from Philipp van Wickevoort Crommelin.
+﻿"Neovim resource file from Philipp van Wickevoort Crommelin.
 "Please send bug reports to philippcrommelin@googlemail.com.
 "------------------------------PLUGINS------------------------------{{{
 call plug#begin()
@@ -30,9 +30,7 @@ Plug 'neomake/neomake'
 Plug 'tpope/vim-fugitive'
 Plug 'edkolev/tmuxline.vim'
 call plug#end()
-"------------------------------CUSTOM PLUGINS
-execute ":source ".'/Users/Philipp/.config/nvim/autoload/grep-operator.vim'
-"}}}
+
 "	================================================= Personal configuration ===================={{{
 "------------------------------GLOBAL VARIABLES------------------------------{{{
 "characters to enclose/surround a word
@@ -56,13 +54,19 @@ let s:CommentChar = {'python':'#',
 			\'c':'//'}
 let g:SPELL_LANG = "en_us"|	"global spelling language
 let s:verbose = 0|	"Global indicator variable for more verbose output
-let g:VIMRC_DIR = "/Users/Philipp/Developer/Vimscript/init.vim"
-let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
-let g:python_host_prog="/usr/bin/python"
+let g:VIMRC_DIR = escape('C:\Users\pvwc\init.vim','\')
+let g:python3_host_prog=escape('C:\Users\pvwc\AppData\Local\Programs\Python\Python38\python.exe','\')
+let g:python_host_prog =escape('C:\Users\pvwc\AppData\Local\Programs\Python\Python27\python.exe','\')
 let mapleader = '\'|			"set the leader key to the hyphen character
 let maplocalleader = '-'|		"map the localleader key to a backslash
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "}}}
+
+"------------------------------CUSTOM PLUGINS
+
+execute ":source ".'C:\Users\pvwc\init.vim\grep-operator.vim'
+"}}}
+
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
