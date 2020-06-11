@@ -8,7 +8,7 @@ Plug 'jalvesaq/Nvim-R'
 "Plug 'gaalcaras/ncm-R'
 "Plug 'ncm2/ncm2-bufword'
 "Plug 'ncm2/ncm2-path'
-Plug 'lervag/vimtex'
+" Plug 'lervag/vimtex'
 Plug 'junegunn/vim-easy-align'
 Plug 'Shougo/deoplete.nvim'
 Plug 'SirVer/ultisnips'
@@ -31,7 +31,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'edkolev/tmuxline.vim'
 call plug#end()
 "------------------------------CUSTOM PLUGINS
-execute ":source ".'/Users/Philipp/.config/nvim/autoload/grep-operator.vim'
+execute ":source ".'~/developer/init.vim/grep-operator.vim'
 "}}}
 "	================================================= Personal configuration ===================={{{
 "------------------------------GLOBAL VARIABLES------------------------------{{{
@@ -57,8 +57,8 @@ let s:CommentChar = {'python':'#',
 let g:SPELL_LANG = "en_us"|	"global spelling language
 let s:verbose = 0|	"Global indicator variable for more verbose output
 let g:VIMRC_DIR = "/Users/Philipp/Developer/Vimscript/init.vim"
-let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
-let g:python_host_prog="/usr/bin/python"
+let g:python3_host_prog="/usr/bin/python3"
+let g:python_host_prog="/usr/bin/python2"
 let mapleader = '\'|			"set the leader key to the hyphen character
 let maplocalleader = '-'|		"map the localleader key to a backslash
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
@@ -644,7 +644,7 @@ nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC."\|:lcd ".g:VIMRC_
 "source (aka. "reload") vimrc file
 nnoremap <localleader>r :source $MYVIMRC<CR>
 "open terminal emulator
-nnoremap <silent> <localleader>C :<c-u>execute "split term://zsh"<cr>:startinsert<cr>
+nnoremap <silent> <localleader>C :<c-u>execute "split term://bash"<cr>:startinsert<cr>
 "select word with space key
 nnoremap <space> viw
 "clear current line
