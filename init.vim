@@ -98,9 +98,14 @@ endfunction
 "}}}
 "------------------------------Surround{{{
 "Surround by character
-function! s:Surround(char)
+function! s:Surround(char,type)
+  if a:type ==? 'char'
   let s:p = [line("."),col(".")+1]
   execute "normal! bi".a:char."\<esc>ea".get(s:surroundChar,a:char,'#')."\<esc>"
+else
+  let s:p = [line("`>"),col("`>")+1]
+  execute "normal! `<i".a:char."\<esc>`>la".get(s:surroundChar,a:char,'#')."\<esc>"
+endif
   call cursor(s:p)
 endfunction
 "}}}   
@@ -347,8 +352,6 @@ function! s:BufferCycle(direction)
 		augroup startBufferCyclerAutomation
 			autocmd!
 			autocmd BufReadPost * call <SID>CheckBuf(bufnr())
-			"autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())<0"."\n"."call <SID>CheckBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
-			"autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())>0"."\n"."call <SID>CheckBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
 		augroup END
 	endif
 endfunction
@@ -521,7 +524,7 @@ endfunction
 	"TODO:command that repeats last command
 " 	set wildmenu
 " 	set path+=**
-	command! Tex :w|:!pdflatex -shell-escape %
+	command! Tex :w|:!pdflatex -shell-escape main.tex
 	command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
 	set omnifunc=syntaxcomplete#Complete
 	set foldcolumn=4|
@@ -560,16 +563,16 @@ noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
 "Surround word by given character
-nnoremap <silent> <localleader>e{ :call <SID>Surround('{')<cr>
-nnoremap <silent> <localleader>e[ :call <SID>Surround('[')<cr>
-nnoremap <silent> <localleader>e( :call <SID>Surround('(')<cr>
-nnoremap <silent> <localleader>e$ :call <SID>Surround('$')<cr>
-nnoremap <silent> <localleader>e/ :call <SID>Surround('/')<cr>
-nnoremap <silent> <localleader>e\ :call <SID>Surround('\\')<cr>
-nnoremap <silent> <localleader>e< :call <SID>Surround('<')<cr>
-nnoremap <silent> <localleader>e' :call <SID>Surround("'")<cr>
-nnoremap <silent> <localleader>e" :call <SID>Surround('"')<cr>
-nnoremap <silent> <localleader>es :call <SID>Surround(' ')<cr>
+nnoremap <silent> <localleader>e{ :call <SID>Surround('{','char')<cr>
+nnoremap <silent> <localleader>e[ :call <SID>Surround('[','char')<cr>
+nnoremap <silent> <localleader>e( :call <SID>Surround('(','char')<cr>
+nnoremap <silent> <localleader>e$ :call <SID>Surround('$','char')<cr>
+nnoremap <silent> <localleader>e/ :call <SID>Surround('/','char')<cr>
+nnoremap <silent> <localleader>e\ :call <SID>Surround('\\','char')<cr>
+nnoremap <silent> <localleader>e< :call <SID>Surround('<','char')<cr>
+nnoremap <silent> <localleader>e' :call <SID>Surround("'",'char')<cr>
+nnoremap <silent> <localleader>e" :call <SID>Surround('"','char')<cr>
+nnoremap <silent> <localleader>es :call <SID>Surround(' ','char')<cr>
 
 "Change surrounding character
 nnoremap <silent> ce{ :call <SID>changeSurroundingChar('{')<cr>
@@ -655,18 +658,17 @@ noremap <silent> <localleader>ll :let &tabstop += (&tabstop < 10) ? 1 : 0 <CR>
 noremap <silent> <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
 "}}}
 "------------------------------VISUAL MODE{{{
-"Enclose/surround visually selected area with/by angle brackets
-vnoremap <localleader>e< <esc>`<i<<esc>`>la><esc>
-"Enclose/surround visually selected area with/by brackets
-vnoremap <localleader>e[ <esc>`<i[<esc>`>la]<esc>
-"Enclose/surround visually selected area with/by braces
-vnoremap <localleader>e{ <esc>`<i{<esc>`>la}<esc>
-"Enclose/surround visually selected area with/by parenthesis
-vnoremap <localleader>e( <esc>`<i(<esc>`>la)<esc>
-"Enclose/surround visually selected area with/by single quotes
-vnoremap <localleader>e' <esc>`<i'<esc>`>la'<esc>
-"Enclose/surround visually selected area with/by single quotes
-vnoremap <localleader>e" di"<esc>pa"<esc>
+"Surround word by given character
+vnoremap <silent> <localleader>e{ <esc><c-u>:call <SID>Surround('{','v')<cr>
+vnoremap <silent> <localleader>e[ <esc><c-u>:call <SID>Surround('[','v')<cr>
+vnoremap <silent> <localleader>e( <esc><c-u>:call <SID>Surround('(','v')<cr>
+vnoremap <silent> <localleader>e$ <esc><c-u>:call <SID>Surround('$','v')<cr>
+vnoremap <silent> <localleader>e/ <esc><c-u>:call <SID>Surround('/','v')<cr>
+vnoremap <silent> <localleader>e\ <esc><c-u>:call <SID>Surround('\\','v')<cr>
+vnoremap <silent> <localleader>e< <esc><c-u>:call <SID>Surround('<','v')<cr>
+vnoremap <silent> <localleader>e' <esc><c-u>:call <SID>Surround("'",'v')<cr>
+vnoremap <silent> <localleader>e" <esc><c-u>:call <SID>Surround('"','v')<cr>
+vnoremap <silent> <localleader>es <esc><c-u>:call <SID>Surround(' ','v')<cr>
 "Indent with tab
 vnoremap <silent> <tab> >
 "Unindent with tab
@@ -780,7 +782,7 @@ augroup miscellaneous
 	autocmd FileType tex :setlocal spell spelllang=de|	"check spelling automatically for tex files
 	autocmd BufWinEnter * call ResCur()|			"reset cursor position
 	autocmd BufWinEnter * execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
-	autocmd BufReadPost * call <SID>setLocalWorkDir()|	"Set working directory local to buffer
+" 	autocmd BufReadPost * call <SID>setLocalWorkDir()|	"Set working directory local to buffer
 augroup END
 "}}}
 "}}}
