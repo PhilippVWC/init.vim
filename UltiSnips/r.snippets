@@ -1,0 +1,118 @@
+snippet sap "sapply" 
+sapply(X = $1
+	,FUN = function(${2:i}){
+	$0
+})
+endsnippet
+
+snippet pltn "plot NULL"
+plot(
+   x = NULL
+  ,y = NULL
+  ,main = $1
+  ,xlim = $2
+  ,ylim = $3
+  ,xlab = $4
+  ,ylab = $5
+)
+endsnippet
+
+snippet gr "draw grid"
+grid(lwd = $1)
+endsnippet
+
+snippet com "comment"
+print("...${1:comment}...")
+endsnippet
+
+snippet gsmIter "iterated gsm"
+gsm_iter_cpp(
+		  N = ${1:Number of iterations}
+		 ,x0 = ${2:Initial condition}
+		 ,r = ${3:Bifurcation parameter}
+		 ,alpha = ${4:Smoothness parameter}
+		 ,N_discr = ${5:0}
+		 ,skipFirst = ${6:TRUE}
+		 ,method = ${7:1}
+)
+endsnippet
+ 
+snippet points "draw points"
+points(
+   x = ${1: x coordinates}
+  ,y = ${2: y coordinates}
+  ,cex = ${3: size of points}
+  ,pch = ${4: point character}
+  ,col = ${5: color}
+)
+endsnippet
+
+snippet lines "draw points"
+lines(
+   x = ${1: x coordinates}
+  ,y = ${2: y coordinates}
+  ,lwd = ${3: line witdh}
+  ,lty = ${4: line type}
+  ,col = ${5: color}
+)
+endsnippet
+
+snippet pointsLines "draw points and lines"
+lines(
+   x = ${1: x coordinates}
+  ,y = ${2: y coordinates}
+  ,lwd = ${3:1}
+  ,lty = ${4:1}
+  ,col = ${5:"purple"}
+)
+points(
+   x = $1
+  ,y = $2
+  ,cex = ${6:2}
+  ,pch = ${7:16}
+  ,col = $5
+)
+endsnippet
+
+
+snippet leg	"legend"
+legend(
+   x = "${1:topleft}"
+  ,leg = "${2:a line}"
+  ,lwd = ${3:1}
+  ,lty = ${4:1}
+  ,cex = ${5:NA}
+  ,pch = ${6:NA}
+  ,bg = "${7:#FFFFFF77}"
+)
+endsnippet
+
+
+
+snippet fun "function"
+${1:myFunction} = function(
+  ${2:parameters}
+  ){
+  $0
+}
+endsnippet
+
+snippet pas "paste0"
+paste0($1)
+endsnippet
+
+########################################
+########## visual mode snippets ########
+########################################
+
+snippet pasv "paste0"
+paste0("${VISUAL}",$0)
+endsnippet
+
+
+
+
+
+
+
+

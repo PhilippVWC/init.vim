@@ -1,0 +1,28 @@
+snippet aug "augroup environment"
+augroup $1
+	autocmd!
+	$0
+augroup END
+endsnippet
+
+snippet fn "function environment"
+function! s:${1:Function name}
+	${2:Function body}
+endfunction
+endsnippet
+
+snippet if "conditional environment"
+if ${1:condition}
+	${2:true}
+else
+	${3:false}
+endif
+endsnippet
+
+snippet mark "set fold marker"
+"------------------------------${1:marker}{{{
+${VISUAL}
+"}}}
+endsnippet
+
+
