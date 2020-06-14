@@ -56,7 +56,7 @@ let s:CommentChar = {'python':'#',
 			\'c':'//'}
 let g:SPELL_LANG = "en_us"|	"global spelling language
 let s:verbose = 0|	"Global indicator variable for more verbose output
-let g:VIMRC_DIR = "/Users/Philipp/Developer/Vimscript/init.vim"
+let g:VIMRC_DIR="/root/developer/init.vim"
 let g:python3_host_prog="/usr/bin/python3"
 let g:python_host_prog="/usr/bin/python2"
 let mapleader = '\'|			"set the leader key to the hyphen character
@@ -559,6 +559,9 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
+"jump to tag - Don't forget to create a tag file with ctags and import it in
+"neovim with the command 'set tags+=/path/to/my/tags/file'
+nnoremap <silent> <localleader>F :execute "tag ".expand("<cword>")<cr>
 "Surround word by given character
 nnoremap <silent> <localleader>e{ :call <SID>Surround('{')<cr>
 nnoremap <silent> <localleader>e[ :call <SID>Surround('[')<cr>
