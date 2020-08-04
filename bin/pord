@@ -1,0 +1,145 @@
+#!/usr/bin/perl -w
+#
+# pord "puts in order" the given directories. Every inputpath must be a directory. 
+# Every file is put into a newly created directory according to its path name.
+#
+use warnings;
+use English;
+use Cwd;						# get current working directories
+use File::Path;					# use the rmtree function
+#######################################################################
+############################## VARIABLES ##############################
+#######################################################################
+my $userName=getpwuid($UID);
+my $currentWD=getcwd;
+my $parentWD = $currentWD;
+$parentWD =~ s/(^.*)(\/\w.+$)/$1/;
+my $TransformIndicationFlagIsSet=0;
+my $TransformIndicationFlagIsSet_ref=\$TransformIndicationFlagIsSet;
+my @extensions=();
+my $newName="untitled";
+my $specialFile=0;				#indicates a file without extension
+my @filesToSkip=();				#Array of Files, which should not be ordered anyway
+############################## OPTIONS ##############################
+my $oFlag=0;			### "overwrite" - option: if "overwrite" - Flag IS SET, duplicate files are not ordered
+						###			if NOT SET, the user will be prompted, to rename the file to get it ordered
+my $rFlag=0;			### "recursive": if set, The content of directories will be ordered as well
+my $uFlag=0;			### "undo": if set, the order process is reversed
+
+#######################################################################
+####################### Gather User Information #######################
+#######################################################################
+
+my @paths=grep(!/^-\w$/,@ARGV);
+if (@paths == 0) {
+	printUsageInformation();
+	exit;
+}
+if ( grep(/-o/,@ARGV) ) {$oFlag=1}
+if ( grep(/-r/,@ARGV) ) {$rFlag=1}
+if ( grep(/-u/,@ARGV) ) {$uFlag=1}
+
+
+
+$i = 0;
+foreach my $path (@paths) {
+	my $dirName="Dir_".$i;
+	if (not -d $path) { die "$!:\t$path\n"}; #### Test, wether given Path is a directory
+	opendir($dirName,$path) or die "$!\n";
+
+	####### create Folders ########
+	#print"*** ORDERING CONTENT OF $path ***\n";
+	my $name=$path;					# cut out last part of path to name the destination directory
+	$name =~ s/^.+\/(.+$)/$1/;		# e.g. /path/to/myFolder -----> /path/to/myFolder/myFolder ordered
+	my $destinationDir=$path."/".$name." ordered"; 
+	mkdir $destinationDir; #### create Destination Folder
+	my $uncategorizedDir;  #### create <Uncategorized> Folder 
+	$uncategorizedDir=$destinationDir."/Uncategorized";
+	mkdir $uncategorizedDir; ### creates only when does not exist by default
+	@filesToSkip=(".","..","$destinationDir",".DS_Store",".localized");
+	#### SCAN DIRECTORY ####
+	foreach my $file (readdir($dirName)){
+		if (not grep(/$file/,@filesToSkip)) { ### skip pseudo files "." and ".."
+			my $filePath=$path."/".$file; ### create canonical path for current file
+			
+			#### FILE WITHOUT EXTENSION ####
+			if (not $file =~ /(^.+\.)(.+$)/) { ### if file has no extension
+				#print "No Extension:\t\" $file \" -> Uncategorized\n";
+				$specialFile=1;
+			}
+			if (not $specialFile) {
+				my $fileExt = assignExt($file);
+				if (not grep(/$fileExt/i, @extensions)) { push(@extensions,$fileExt) } ### list new extension
+				$extDirName=$destinationDir."/".uc($fileExt);
+			}
+			else {
+				$extDirName=$uncategorizedDir;
+			}
+			if (not -e $extDirName) { mkdir($extDirName) }	
+			if (not -e $extDirName."/".$file) {	rename($filePath,$extDirName."/".$file) }
+			else { #RENAME File if oFlag is not set
+					if ($oFlag) {
+						if (-d $extDirName."/".$file) { rmtree($extDirName."/".$file)
+								or print"Directory:\t\" $extDirName/$file  \"\t could not be deleted: $!\n" }
+						rename($filePath,$extDirName."/".$file) or print"File\t\" $filePath \"\t could not be moved\n";
+					}
+					else {
+						print"WARNING: File \" $file \" already exists in \"$extDirName\"\n";
+						$newName=renameNonEmpty($file);
+						if (not $newName =~ /s/) { rename($filePath,$extDirName."/".$newName) }
+						else { print"File\t\" $file \"\t skipped\n\n" }
+						if ($newName =~ /S/) { die "*** PROGRAM ABORTED ***\n" }
+					}
+			}
+		}
+		$specialFile=0;
+	}
+	closedir($dirName) or die "Directory $path could not be closed: $!\n";
+	@extensions=(); #### reset after every directory
+	#print"*** CONTENT OF \" $path \" ORDERED ***\n";
+}#iterate through given paths
+
+
+
+############################### subroutines ##############################
+
+# Function <TransMessage> sets the IndicatorFlag to prevent multiple state messages of the pathtransformation
+sub TransMessage { ## input argument is the reference of the $TransformationIndicatorFlagIsSet variable
+	my $FlagIsSet_ref=$_[0];
+	my $FlagIsSet=$$FlagIsSet_ref;
+	if (not $FlagIsSet) {
+		print"*** transform relative paths to absolute paths ***\n";
+		$$FlagIsSet_ref=1;
+	}
+}
+
+
+sub renameNonEmpty { ### prompts the user to rename the given path. Repeats if user gives an empty string
+			# firstArgument:	old Name
+	my $old=$_[0];
+	my $new="";
+	until(length($new) and ($old ne $new)) {
+		print"Please rename file in order to move it (Enter \"s\" to skip file or \"S\" to abort)\n";
+		$new=<STDIN>;
+		chomp($new);
+	}
+	return $new;
+}
+
+sub printUsageInformation {
+	print"PORD - \"put in order\"\n";
+	print"PORD orderes the content of any given input paths in a per file extension fashion\n";
+	print"Files without extension are all put into the same folder named \"Uncategorized\"\n";
+	print"USAGE:\n";
+	print"\t-o\t\t:\"overwrite\"\t\t - overwrites duplicate entries of filenames (USE WITH CAUTION)\n";
+	print"\t-r\t\t:\"recursive\"\t\t - opens inner directories to sort their content as well (otherwise put into \"Uncategorized\" directory)\n"; 
+	
+	return;
+}
+
+sub assignExt {
+	my $fExt = $_[0];
+	$fExt =~ s/(^.+\.)(.+$)/$2/;
+	if ($fExt =~ /jpeg/i) {$fExt = "jpg"}; # Don't make two separate folders JPG and JPEG (case insensitive search)
+	return $fExt;
+}

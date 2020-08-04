@@ -59,6 +59,7 @@ let s:verbose = 0|	"Global indicator variable for more verbose output
 let g:VIMRC_DIR = "/Users/Philipp/Developer/Vimscript/init.vim"
 let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
 let g:python_host_prog="/usr/bin/python"
+let g:ruby_host_prog="/usr/local/bin/ruby"
 let mapleader = '\'|			"set the leader key to the hyphen character
 let maplocalleader = '-'|		"map the localleader key to a backslash
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace

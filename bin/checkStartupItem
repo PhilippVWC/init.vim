@@ -1,0 +1,27 @@
+#!/bin/zsh
+# checkStartupItem is searching for an existing launchAgent/
+# launchDaemon with the given argument as name.
+
+StartupItem="$1"
+
+if grep -ir $StartupItem /Library/LaunchAgents
+then	
+	echo "$StartupItem exists in /Library/LaunchAgents/"
+fi
+if grep -ir $StartupItem /System/Library/LaunchAgents
+then	
+	echo "$StartupItem exists in /System/Library/LaunchAgents/"
+fi
+
+if (grep -ir $StartupItem /Library/LaunchDaemons)
+then	
+	echo "$StartupItem exists in /Library/LaunchDaemons/"
+fi
+if (grep -ir $StartupItem /System/Library/LaunchDaemons)
+then	
+	echo "$StartupItem exists in /System/Library/LaunchDaemons/"
+fi
+if grep -ir $StartupItem ~/Library/LaunchAgents
+then	
+	echo "$StartupItem exists in ~/Library/LaunchAgents/"
+fi

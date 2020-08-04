@@ -1,0 +1,11 @@
+#!/bin/zsh
+# USAGE: searchGroup <userName>
+#
+# searchGroup takes as input an existing user name and prints out
+# the groups <user> belongs to.
+
+if dscacheutil -q group | grep -iC 3 "users.*$1" > /dev/null ; then
+	dscacheutil -q group | grep -iB 3 "users.*$1"
+else
+	echo "$1 is not a registered user on your system"
+fi

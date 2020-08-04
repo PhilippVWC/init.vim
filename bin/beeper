@@ -1,0 +1,26 @@
+#!/usr/bin/perl -w
+#### beeper creates a system sound periodically
+use warnings;
+use english;
+my $intervall=2;
+if (@ARGV == 0) {
+	print"Beeping... (default time intervall 2 seconds, ^C to quit)\n";
+}
+if (@ARGV >= 2) {
+	print"Usage: beeper t (beeping every \"t\" seconds, ^C to quit)";
+	$intervall = $ARGV[0];
+}
+if (@ARGV == 1) {
+	$intervall = $ARGV[0];
+}
+my $var=0;
+#eval {
+#    local $SIG{INFO} = sub { print "You sent Signal INFO\n" };
+#    sleep;
+#};
+until($var){
+    local $SIG{INT} = sub { die "You sent Signal INT\n" };
+	#system("afplay /System/Library/sounds/Funk.aiff");
+	system("say -v Moira o");
+	sleep ($intervall);
+}
