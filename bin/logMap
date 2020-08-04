@@ -1,0 +1,285 @@
+#!/Users/Philipp/anaconda3/bin/python
+# -*- coding: utf-8 -*-
+'''
+FP Stability analysis of the logistic map
+Philipp van Wickevoort Crommelin
+Matr.Nr. 446 309
+'''
+######################## modules ###########################
+import numpy as np
+import multiprocessing as mp
+import time as tm
+import logging as log
+import sys
+import os
+
+############################################################
+####### create Directory for output media ##################
+############################################################
+outputPath = "./logMapMedia/"
+if not os.path.exists(outputPath):
+    os.mkdir(outputPath)
+else:
+    for file in os.listdir(outputPath):
+        file_path = os.path.join(outputPath,file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except EXECPTION as e:
+            print(e)
+############################################################
+######### receive input arguments from command line ########
+############################################################
+
+N,x0,r  =   0.,0.,0.
+args    =   np.asarray(sys.argv[1:],dtype=np.float32)
+if len(args)==0:
+    print("########################################")
+    print("Usage of script as follows:\n")
+    print("logMap N x0 r A τ σ\n")
+    print("N\t=\tNumber of iterations")
+    print("x0\t=\tStarting value (Within [0,1])")
+    print("r\t=\tControl parameter (Within [0,1])")
+    print("A\t=\tLogical\t0:No animation\t1:Automatic Animation\t2:Step-by-step animation")
+    print("τ\t=\tTime step between iterations (in seconds)")
+    print("σ\t=\tStandard deviation of measurement noise")
+    print("########################################")
+    exit()
+else:
+    N=  np.int(args[0])
+    x0= args[1]
+    r=  args[2]
+    ANIMATED = np.int(args[3]) # cobweb plot runs interactively
+    p_tm            = args[4] # time step
+    sigma           = args[5] #standard deviation of measurement noise
+                
+
+
+
+############################################################
+################ global Variables ##########################
+############################################################
+MULT_PROCESSING = False # speed things up
+M               = 2 # Anzahl an Hintereinanderausfuehrung der 
+#logistischen Abbildung - für das Feigenbaumdiagramm
+
+############################################################
+#################### functions #############################
+############################################################
+# logistic map
+def f(x,r):
+    return 4*r*x*(1-x)
+
+def cobweb():
+    import matplotlib.pyplot as plt
+    cp=mp.current_process()
+    pname=cp.name
+    print("Process ",pname," is starting")
+    print("\n...build cobweb plot")
+    a=  0        #left intervall bound
+    b=  1        #right intervall bound
+    num=40       #numb of steps
+    id=np.linspace(a,b,num)
+    y0= np.amin(f(id,r)) #lower intervall bound
+    ye= np.amax(f(id,r)) #upper intervall bound
+    fs = 22      # font size
+    ############################################################
+    ########### FP Iteration and stability analysis ############
+    ############################################################
+    xFP_2=1.-1./(4*r)
+    text=['Stable FP = 0','Stable FP = '+str(round(xFP_2,2)),'Lin. stab. anal. not further valid']
+    up=1 # upper bound of second figure
+    plt.figure(
+            num = 'Fixpoint-iteration'
+            ,figsize = (12.7,7.9)
+            )
+    plt.subplots_adjust(
+        left  = 0.125   # the left side of the subplots of the figure
+        ,right = 0.9    # the right side of the subplots of the figure
+        ,bottom = 0.1   # the bottom of the subplots of the figure
+        ,top = 0.9      # the top of the subplots of the figure
+        ,wspace = 0.2   # the amount of width reserved for blank space between subplots
+        ,hspace = 0.3   # the amount of height reserved for white space between subplots
+    )
+    ############################################################
+    ax1 = plt.subplot(211)
+    ax1.set_xlabel(r'$x_i$'
+            ,fontsize = fs)
+    ax1.set_ylabel(r'$x_{i+1}$'
+            ,fontsize = fs)
+    plt.title('iteration 0/'+str(N)+r'         $x_0=$ '+str(x0) + r', $r=$' + str(r) + r', $\sigma=$' + str(sigma),fontsize = fs)
+    #if xFP_2 <= 0.75:
+    #    plt.hlines([xFP_2],a,b,linestyle='-.')
+    #    plt.vlines([xFP_2],y0,ye,linestyle='-.')
+    plt.ylim([y0,1])#1.2*ye])  #set screen size to max of logistic map
+    px=np.array([x0,x0])
+    py=np.array([0,f(x0,r)])
+    handle1,=plt.plot(id,f(id,r),'b-',label=r'$4rx_i(1-x_i)$',color='orange')               #plot logistic map
+    handle2,=plt.plot(id,id,'-',color='black',label='identity')                                      #plot identity line
+
+    ax2 = plt.subplot(212) 
+    ax2.set_ylabel(r'$f^{(i)}(x_0,\theta)$',
+            fontsize = fs
+            )
+    ax2.set_xlabel(r'iteration $i$',
+            fontsize = fs)
+    plt.xlim((0,1))
+    plt.title('')
+    plt.axis([0,N,0,up]) #set axis of second plot (ymin=0 lowest FP, ymax=up=1 because 2/3 is highest FP
+#    if r < .25:
+#        plt.text((3./5.)*N,0.8*up,text[0],style='italic',bbox={'facecolor':'yellow','alpha':0.5,'pad':10})
+#    elif r >= .25 and r < .75:
+#        plt.text((3./5.)*N,0.8*up,text[1],style='italic',bbox={'facecolor':'yellow','alpha':0.5,'pad':10})
+#    elif r >= .75:
+#        plt.text((1./5.)*N,0.8*up,text[2],style='italic',bbox={'facecolor':'red','alpha':0.5,'pad':10})
+    plt.vlines(range(1,N),0,1,linestyle='-')
+
+    if ANIMATED==1:
+        plt.pause(p_tm)
+
+    plt.subplot(211)
+    handle0,=plt.plot(x0,0,'b-' ,marker='o' ,mec='black' ,mfc='blue') #,label='FP iteration')#draw iteration zero
+    plt.legend(
+            fontsize = fs)
+    plt.subplot(212) 
+    x00=x0
+    handle1a, = plt.plot(
+            0
+            ,x00
+            ,'b-'
+            ,marker='o'
+            ,mfc='blue'
+            ,mec='black'
+            ,label=r'$\mathbf{x}$'
+            )#draw iteration zero
+    plt.legend(
+            loc = 'upper left'
+            ,fontsize = fs
+            )
+
+    
+    for i in np.arange(N):
+        ### second step - go vertically
+        if ANIMATED==1:
+            plt.pause(p_tm)
+        elif ANIMATED==2:
+            plt.pause(p_tm)
+            sys.stdin.readline()
+        plt.subplot(211)
+        py[1]=f(px[1],r)
+        plt.title('iteration '+str(i+1)+'/'+str(N)+r'         $x_0=$ '+str(x0) + r', $r=$' + str(r) + r', $\sigma=$' + str(sigma)
+                ,fontsize = fs
+                )
+        plt.plot(px,py,'b-',marker='o',mec='black',mfc='blue')
+    
+        ### draw evolution of point x
+        plt.subplot(212)
+        plt.plot([i,i+1],[x00,f(x00,r)],linewidth=2.0,color='b',linestyle='-',marker='o',mfc='blue',mec='black')
+        x00=f(x00,r)
+    
+        plt.subplot(211)
+        ### first step - go horizontally to identity
+        px[0]=f(px[0],r)
+        py[0]=px[0]
+        if ANIMATED==1:
+            plt.pause(0.4*p_tm)
+        plt.plot(px,py,'g-',marker='o',mec='black',mfc='blue',color='blue')
+        px[1]=f(px[1],r)
+
+    x = [x0] 
+    for i in range(0,N):
+        x.append(f(x[i],r))
+    y = np.array(x) + np.random.normal(0, sigma, N+1)
+    plt.subplot(212)
+    if ANIMATED==1:
+        plt.pause(p_tm)
+    elif(ANIMATED==2):
+        plt.pause(p_tm)
+        sys.stdin.readline()
+    handle2a, = plt.plot(
+            np.arange(N+1)
+            ,y
+            ,marker='o'
+            ,mec='black'
+            ,mfc='green'
+            ,color='green'
+            ,label=r'$\mathbf{y}$'
+            )
+    plt.legend(
+            loc = 'upper left'
+            ,fontsize = fs
+            )
+    plt.savefig(outputPath + 'FP_iteration_and_stabilityAna.pdf')
+    plt.show()
+    print("process ",pname," is exiting")
+
+
+# bifurcation diagram
+def feigenbaum(m):
+
+    import matplotlib.pyplot as plt
+    p      = mp.current_process()
+    pname   = p.name
+    print("Process",pname," is starting")
+    #print("...Calculate Feigenbaum diagram")
+
+    dr=0.01
+    re=4.
+    r0=0.
+    Nr=np.int((re-r0)/dr)
+    rRange=np.zeros(Nr)
+    H=0
+    exN=np.zeros(N)
+    plt.figure(m)
+    for i in np.arange(Nr-1):
+        plt.title(r'Feigenbaum diagram mit $r=$ ' + str(np.round(r,1)))
+        rRange[i+1]=rRange[i]+dr
+        x00=0.01            #starting Value (should never be a FP)
+        evol=np.zeros(N)    #array containing the evolution from x00 under logistic map
+        evol+=x00           #starting value for evol
+        exN=np.zeros(N)     #reset exN
+        exN+=(i*dr)
+
+        ##################################################
+        #################### FP Iteration (N times):  ####
+        #################### calculate evolution of x ####
+        #################### N times and plot every   ####
+        #################### point                    ####
+        ##################################################
+        for a in np.arange(N-1):
+            evol[a+1]=f(x00,rRange[i])
+            x00=f(x00,rRange[i])
+        if m == 0:
+            plt.plot(exN[-1:],evol[-1:],marker='o',linestyle='',mfc='green')
+        else:
+            plt.plot(exN[-m:],evol[-m:],marker='o',linestyle='',mfc='green')
+
+    if m==0:
+        plt.text(0.1,0.9,'Consider FP\'s of f',bbox={'facecolor':'yellow','pad':10})
+        plt.savefig( outputPath + 'Bifurcation_period'+str(1)+'.png')
+    else:
+        plt.text(0.1,0.9,'Consider FP\'s of f^('+str(m)+')',bbox={'facecolor':'yellow','pad':10})
+        plt.savefig( outputPath + 'Bifurcation_period'+str(m)+'.png')
+    print("process ",pname," is exiting")
+
+############################################################
+################## MAIN PROGRAM ############################
+############################################################
+
+start=tm.time()
+if MULT_PROCESSING:
+    #mp.log_to_stderr(log.DEBUG)
+    p_cobweb        =   mp.Process( target = cobweb,
+                                    name = "Service_StabilityAnalysis" )
+    p_cobweb.start()
+
+    feigenbaum_pool = mp.Pool(processes=4)
+    results = feigenbaum_pool.map( func = feigenbaum,
+                                   iterable = range(0,M,2) )
+    p_cobweb.join()
+
+else:
+    cobweb()
+    #for x in range(0,M,2):
+    #    feigenbaum(x)
+print('\nconsumed time =' + str(np.round(tm.time()-start,3)) + ' seconds')

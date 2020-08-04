@@ -1,0 +1,16 @@
+#!/bin/zsh
+#### switches between finder simple- and finder
+#### standart mode
+#### prevents from filebrowsing
+
+#### IMPORTANT OUTSTANDING IMPROVEMENT:
+#### DISABLE FILEBROWSING VIA SPOTLIGHT
+
+if [ "$1" = "simple" ] || [ "$1" = "standart" ]; then
+	defaults write com.apple.finder InterfaceLevel "$1"
+	killall Finder
+else
+	echo "possible options are:\n"
+	echo "standart	&	simple"
+	exit 1
+fi
