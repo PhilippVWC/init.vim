@@ -1,5 +1,5 @@
 "Neovim resource file from Philipp van Wickevoort Crommelin.
-"Please send bug reports to philippcrommelin@googlemail.com.
+"Please send bug reports to philippcrommelin@wwu.de.
 "------------------------------PLUGINS------------------------------{{{
 call plug#begin()
 "Plug 'ncm2/ncm2'

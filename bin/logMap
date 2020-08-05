@@ -1,9 +1,8 @@
 #!/Users/Philipp/anaconda3/bin/python
 # -*- coding: utf-8 -*-
 '''
-FP Stability analysis of the logistic map
+Fixpoint Stability analysis of the logistic map
 Philipp van Wickevoort Crommelin
-Matr.Nr. 446 309
 '''
 ######################## modules ###########################
 import numpy as np
