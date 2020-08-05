@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+#Perl-Skript, um deutsche Umlaute in ASCII-Zeichen umzuwandeln
+#Philipp van Wickevoort Crommelin
+my $inputFile = @ARGV[0];
+open(input,"<".$inputFile) or die $!;
+my $outputFile = $inputFile."temp";
+open(output,">".$outputFile) or die $!;
+while(<input>){
+  $_ =~ s/([^#]*)(#[^#]*)ö/\1\2oe/g;
+  $_ =~ s/([^#]*)(#[^#]*)ä/\1\2ae/g;
+  $_ =~ s/([^#]*)(#[^#]*)ü/\1\2ue/g;
+  $_ =~ s/([^#]*)(#[^#]*)Ä/\1\2Ae/g;
+  $_ =~ s/([^#]*)(#[^#]*)Ö/\1\2Oe/g;
+  $_ =~ s/([^#]*)(#[^#]*)Ü/\1\2Ue/g;
+  $_ =~ s/([^#]*)(#[^#]*)ß/\1\2ss/g;
+  print output $_;
+}
+close(input);
+unlink(input);
+rename($outputFile,$inputFile);
+close(output);

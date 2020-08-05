@@ -1,6 +1,3 @@
-# Path to your oh-my-zsh installation.
-export ZSH=/Users/Philipp/.oh-my-zsh
-
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
@@ -56,9 +53,7 @@ plugins=(git colorize colored-man-pages)
 # export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 
-source $ZSH/oh-my-zsh.sh
-source /Users/Philipp/bin/aliasesAndFunctions.sh
-source /Users/Philipp/bin/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /home/philipp/aliasesAndFunctions.sh
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
 
@@ -79,19 +74,4 @@ fi
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-# __conda_setup="$('/Users/Philipp/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-# if [ $? -eq 0 ]; then
-#     eval "$__conda_setup"
-# else
-#     if [ -f "/Users/Philipp/anaconda3/etc/profile.d/conda.sh" ]; then
-#         . "/Users/Philipp/anaconda3/etc/profile.d/conda.sh"
-#     else
-#         export PATH="/Users/Philipp/anaconda3/bin:$PATH"
-#     fi
-# fi
-# unset __conda_setup
-# <<< conda initialize <<<
 
