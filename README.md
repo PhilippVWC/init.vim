@@ -7,7 +7,9 @@ personal use.
 ## Neovim and vimscript
 This git project contains a neovim resource file **init.vim**,
 that depends on the installation of [Junegunns Vim-plug plugin](https://github.com/Junegunn/vim-plug).
-It contains some functions and keymaps, that I prefer.
+It contains some functions and keymaps, that I prefer and many code lines are
+inspired by Steve Losh's awesome book [Learn Vimscript the Hard
+Way](https://learnvimscriptthehardway.stevelosh.com).
 
 ## Binaries
 The directory **bin** is composed of some executables in first place made for Darwin
