@@ -17,7 +17,7 @@ and Linux. The file **zsh.rc** contains personal configuration for the z-shell.
 The [OH-MY-ZSH-framework](https://ohmyz.sh) is to be installed first.
 
 ## Branches
-There are two branches: **UbuntuOnWindows** and **Master**. The first branch contains
+There are two main branches: **UbuntuOnWindows** and **Master**. The first branch contains
 a version suitable for Ubuntu installed on a [WSL2](https://docs.microsoft.com/en-us/windows/wsl/) on Windows and the latter is made for
 Apple's [Darwin](https://en.wikipedia.org/wiki/Darwin_(operating_system)).
 
