@@ -1,13 +1,13 @@
 # Neovim resource file and binaries
 This project serves as a personal container for self-made binaries and
 command-line utilities. Additionally it comes with Vimscript resource files
-and snippets that are in cross platform use. This project is basically for
+and snippets that are in cross-platform use. This project is basically made for
 personal use.
 
 ## Neovim and vimscript
 This git project contains a neovim resource file **init.vim**,
 that depends on the installation of [Junegunns Vim-plug plugin](https://github.com/Junegunn/vim-plug).
-It contains some functions and key maps, that I prefer.
+It contains some functions and keymaps, that I prefer.
 
 ## Binaries
 The directory **bin** is composed of some executables in first place made for Darwin
@@ -16,8 +16,8 @@ The [OH-MY-ZSH-framework](https://ohmyz.sh) is to be installed first.
 
 ## Branches
 There are two branches: **UbuntuOnWindows** and **Master**. The first branch contains
-a version suitable for Ubuntu installed on a WSL2 on Windows and the latter is made for
-Apple's Darwin OS.
+a version suitable for Ubuntu installed on a [WSL2](https://docs.microsoft.com/en-us/windows/wsl/) on Windows and the latter is made for
+Apple's [Darwin](https://en.wikipedia.org/wiki/Darwin_(operating_system)).
 
 Please send remarks to philippcrommelin@wwu.de,
 
