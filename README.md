@@ -1,7 +1,7 @@
 # Neovim resource file and binaries
-This project serves as a personal container for self-made binaries and
-command-line utilities. Additionally it comes with Vimscript resource files
-and snippets that are in cross-platform use. This project is basically made for
+This project comes with Vimscript resource files
+and snippets that are in cross-platform use. Furthermore, this repository serves as a personal container for self-made binaries and
+command-line utilities. This project is basically for
 personal use.
 
 ## Neovim and vimscript
