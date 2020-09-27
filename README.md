@@ -18,7 +18,7 @@ The [OH-MY-ZSH-framework](https://ohmyz.sh) is to be installed first.
 
 ## Branches
 There are essentially two main branches: **UbuntuOnWindows** and **Master**. The first branch contains
-a version suitable for Ubuntu installed on a [WSL2](https://docs.microsoft.com/en-us/windows/wsl/) on Windows 10 and the Master branch is made for Apple's [Darwin](https://en.wikipedia.org/wiki/Darwin_(operating_system)).
+a version suitable for Ubuntu installed on [WSL2](https://docs.microsoft.com/en-us/windows/wsl/) on Windows 10 and the Master branch is made for Apple's [Darwin](https://en.wikipedia.org/wiki/Darwin_(operating_system)).
 
 Please send remarks to philippcrommelin@wwu.de,
 
