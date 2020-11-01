@@ -392,7 +392,10 @@ function! s:GoToWinAndRefreshNerdtree(winNumber)
 	call win_gotoid(win_getid(a:winNumber))
 	if (&buftype==#'' && g:NERDTree.IsOpen()) "empty buftype option corresponds to normal buffer (see help buftype)
 		"variable g:NERDTree.IsOpen may be invalid after updating NERDTree
-		NERDTreeCWD
+		"NERDTreeCWD| "No need to set NERDTree working directory since 
+                              "working directory is no more set to directory of 
+                              "currently loaded file in buffer in autocomd
+                              "BufReadPost
 		call win_gotoid(win_getid(a:winNumber))
 	endif
 endfunction
@@ -783,7 +786,7 @@ augroup miscellaneous
 	autocmd FileType tex :setlocal spell spelllang=de|	"check spelling automatically for tex files
 	autocmd BufWinEnter * call ResCur()|			"reset cursor position
 	autocmd BufWinEnter * execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
-	autocmd BufReadPost * call <SID>setLocalWorkDir()|	"Set working directory local to buffer
+" 	autocmd BufReadPost * call <SID>setLocalWorkDir()|	"Set working directory local to buffer
 augroup END
 "}}}
 "}}}
