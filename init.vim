@@ -66,10 +66,12 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
+"------------------------------RemoveSwapFile{{{
 "Delete the current swap file
 function! s:RemoveSwapFile()
 	execute ":!rm ".swapname(bufname())
 endfunction
+"}}}
 "------------------------------DeleteLine{{{
 function! s:DeleteLine()
   call setline(".",'')
@@ -717,6 +719,8 @@ inoremap <c-u>  <esc>viwgUea
 "inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <localleader><tab> <tab>
+"expand R pipe 
+inoremap <<CR> %>%<CR>
 "}}}
 "------------------------------TERMINAL MODE{{{
 "terminal mode: escape key --> exit insert mode
