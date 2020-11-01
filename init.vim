@@ -1,6 +1,6 @@
 "Neovim resource file from Philipp van Wickevoort Crommelin.
 "Please send bug reports to philippcrommelin@googlemail.com.
-"------------------------------PLUGINS------------------------------{{{
+"================================================= PLUGINS ==================================={{{
 call plug#begin()
 "Plug 'ncm2/ncm2'
 "Plug 'roxma/nvim-yarp'
@@ -33,7 +33,7 @@ call plug#end()
 "------------------------------CUSTOM PLUGINS
 " execute ":source ".'~/developer/init.vim/grep-operator.vim'
 "}}}
-"	================================================= Personal configuration ===================={{{
+"================================================= Personal configuration ===================={{{
 "------------------------------GLOBAL VARIABLES------------------------------{{{
 "characters to enclose/surround a word
 let s:surroundChar = {
@@ -552,6 +552,7 @@ endfunction
 
 "------------------------------ABBREVIATIONS------------------------------{{{
 iabbrev 'van\ W' van Wickevoort Crommelin
+iabbrev ^- <-
 "}}}
 
 "------------------------------MAPPINGS------------------------------{{{
@@ -791,7 +792,7 @@ augroup END
 "}}}
 "}}}
 "}}}
-"================================================== PLugin configuration ===================={{{
+"================================================= PLugin configuration ======================{{{
 "------------------------------NCM CONFIGURATION------------------------------{{{
 " IMPORTANT: :help Ncm2PopupOpen for more information
 " enable ncm2 for all buffers
