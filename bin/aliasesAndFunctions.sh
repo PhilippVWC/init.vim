@@ -16,11 +16,10 @@ alias hist='nvim /home/philipp/.bash_history'
 alias conf='nvim /home/philipp/aliasesAndFunctions.sh'
 alias e="exit"
 alias mlr="cd /home/philipp/Developer/R/mlr-val"
+alias vimrc="cd /home/philipp/Developer/Vimscript/init.vim"
 BLOCKSIZE=1024
 export EDITOR=nvim 
 export PATH="$PATH:/home/philipp/bin/"
-export vimrc="/home/philipp/Developer/Vimscript/init.vim/init.vim"
-export dvimrc="cd /home/philipp/Developer/Vimscript/init.vim"
 export DYLD_LIBRARY_PATH="$MAGICK_HOME/lib/"
 
 function mkd () {

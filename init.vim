@@ -59,8 +59,8 @@ let s:verbose = 0|	"Global indicator variable for more verbose output
 let g:VIMRC_DIR="/home/philipp/Developer/Vimscript/init.vim"
 let g:python3_host_prog="/usr/bin/python3"
 let g:python_host_prog="/usr/bin/python2"
-let g:mapleader = '\'|			"set the leader key to the hyphen character
-let g:maplocalleader = '-'|		"map the localleader key to a backslash
+let g:mapleader = '\'|			"Set the leader key to the hyphen character
+let g:maplocalleader = '-'|		"Map the localleader key to a backslash
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "}}}
 "------------------------------FUNCTIONS------------------------------{{{
@@ -770,6 +770,7 @@ augroup r
 	autocmd FileType r :iabbrev iff if()<left>
 	autocmd FileType r :call StartR("R")
 	autocmd FileType r :iabbrev fnn = function()<left><left><left><left><left><left><left><left><left><left><left><left><left><left>
+        autocmd Filetype r :set colorcolumn=80|                    "Display a coloured vertical bar
 augroup END
 "}}}
 "------------------------------Filetype html{{{
