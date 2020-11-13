@@ -15,6 +15,7 @@ alias wh="cd /mnt/c/Users/pvwc/"
 alias hist='nvim /home/philipp/.bash_history'
 alias conf='nvim /home/philipp/aliasesAndFunctions.sh'
 alias e="exit"
+alias mlr="cd /home/philipp/Developer/R/mlr-val"
 BLOCKSIZE=1024
 export EDITOR=nvim 
 export PATH="$PATH:/home/philipp/bin/"

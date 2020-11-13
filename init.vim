@@ -59,8 +59,8 @@ let s:verbose = 0|	"Global indicator variable for more verbose output
 let g:VIMRC_DIR="/home/philipp/Developer/Vimscript/init.vim"
 let g:python3_host_prog="/usr/bin/python3"
 let g:python_host_prog="/usr/bin/python2"
-let mapleader = '\'|			"set the leader key to the hyphen character
-let maplocalleader = '-'|		"map the localleader key to a backslash
+let g:mapleader = '\'|			"set the leader key to the hyphen character
+let g:maplocalleader = '-'|		"map the localleader key to a backslash
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "}}}
 "------------------------------FUNCTIONS------------------------------{{{
@@ -69,7 +69,7 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------RemoveSwapFile{{{
 "Delete the current swap file
 function! s:RemoveSwapFile()
-	execute ":!rm ".swapname(bufname())
+eexecute ":!rm ".swapname(bufname())
 endfunction
 "}}}
 "------------------------------DeleteLine{{{
@@ -100,6 +100,9 @@ endfunction
 "}}}
 "------------------------------Surround{{{
 "Surround by character
+"TODO: Bug identified: Surround visually selected area with leading equal sign
+"on the left hand side: Equal sign is moved to the right of surrounded area.
+"
 function! s:Surround(char)
   let s:p = [line("."),col(".")+1]
   execute "normal! bi".a:char."\<esc>ea".get(s:surroundChar,a:char,'#')."\<esc>"
