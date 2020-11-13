@@ -770,7 +770,7 @@ augroup r
 	autocmd FileType r :iabbrev iff if()<left>
 	autocmd FileType r :call StartR("R")
 	autocmd FileType r :iabbrev fnn = function()<left><left><left><left><left><left><left><left><left><left><left><left><left><left>
-        autocmd Filetype r :set colorcolumn=80|                    "Display a coloured vertical bar
+        autocmd Filetype r :setlocal colorcolumn=80|                    "Display a coloured vertical bar
 augroup END
 "}}}
 "------------------------------Filetype html{{{
