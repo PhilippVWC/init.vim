@@ -101,14 +101,63 @@ snippet pas "paste0"
 paste0($1)
 endsnippet
 
+snippet head "Title of an R script"
+#======================================================
+# $1
+# JIRA-Ticket $2
+#------------------------------------------------------
+# Philipp van Wickevoort Crommelin (pvwc)
+# parcIT GmbH
+#======================================================
+# Pakete und globale Konfigurationen {{{
+library(tidyverse)
+if (!exists("projectPath")) {
+  stop(
+    paste0(
+      "Im Urverzeichnis des Git-Projektes muss die Datei ",
+      "\".Rprofile\" existieren und folgende Zeile ",
+      "R-Code enthalten:\n",
+      "projectPath <- \"pfad/zu/meinem/Git-Projekt-Ordner/\"\n",
+      "Der Pfadname sollte ein abschliessenden Slash (\"/\") ",
+      "beinhalten."
+    )
+  )
+} else {
+  setwd(projectPath)
+}
+plots <-
+  paste0(
+    projectPath,
+    "$3"
+  )
+if (!(dir.exists(paths = plots))) {
+  dir.create(path = plots)
+}
+excels <-
+  paste0(
+    projectPath,
+    "$4"
+  )
+if (!(dir.exists(paths = excels))) {
+  dir.create(path = excels)
+}
+# }}}
+endsnippet
+
 ########################################
 ########## visual mode snippets ########
 ########################################
 
 snippet pasv "paste0"
-paste0("${VISUAL}",$0)
+paste0(${VISUAL},$0)
 endsnippet
 
+
+snippet marker "vimscript marker"
+# $0 {{{
+${VISUAL}
+#}}}
+endsnippet
 
 
 

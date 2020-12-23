@@ -2,31 +2,35 @@
 "Please send bug reports to philippcrommelin@googlemail.com.
 "================================================= PLUGINS ==================================={{{
 call plug#begin()
-"Plug 'ncm2/ncm2'
-"Plug 'roxma/nvim-yarp'
+" Plug 'ncm2/ncm2'
+" Plug 'roxma/nvim-yarp'
 Plug 'jalvesaq/Nvim-R'
-"Plug 'gaalcaras/ncm-R'
-"Plug 'ncm2/ncm2-bufword'
-"Plug 'ncm2/ncm2-path'
+Plug 'preservim/tagbar'
+Plug 'sheerun/vim-polyglot'
+" Plug 'brooth/far.vim'
+" Plug 'gaalcaras/ncm-R'
+" Plug 'ncm2/ncm2-bufword'
+" Plug 'ncm2/ncm2-path'
 " Plug 'lervag/vimtex'
-Plug 'junegunn/vim-easy-align'
+" Plug 'junegunn/vim-easy-align'
 Plug 'Shougo/deoplete.nvim'
 Plug 'SirVer/ultisnips'
-"Plug 'honza/vim-snippets'
-"Plug 'garbas/vim-snipmate'
+" Plug 'honza/vim-snippets'
+" Plug 'garbas/vim-snipmate'
 Plug 'preservim/nerdtree'
 Plug  'ryanoasis/vim-devicons'
-"Plug  'vim-syntastic/syntastic'
-"Plug 'Lokaltog/powerline'
-"Plug 'tpope/vim-surround'
-"Plug 'zchee/deoplete-jedi' "
-Plug 'vim-airline/vim-airline' "fancy vim status bar
-"Plug 'vim-airline/vim-airline-themes'
+" Plug  'vim-syntastic/syntastic'
+" Plug 'Lokaltog/powerline'
+" Plug 'tpope/vim-surround'
+" Plug 'zchee/deoplete-jedi' "
+" Plug 'vim-airline/vim-airline' "fancy vim status bar
+Plug 'itchyny/lightline.vim' "fancy vim status bar
+" Plug 'vim-airline/vim-airline-themes'
 Plug 'jiangmiao/auto-pairs' "set matching quotation marks, braces, etc.
-"Plug 'davidhalter/jedi-vim' "python go-to function and completion
-Plug 'sbdchd/neoformat' "code formatting
-Plug 'neomake/neomake'
-"Plug 'Vigemus/iron.nvim'
+" Plug 'davidhalter/jedi-vim' "python go-to function and completion
+" Plug 'sbdchd/neoformat' "code formatting
+" Plug 'neomake/neomake'
+" Plug 'Vigemus/iron.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'edkolev/tmuxline.vim'
 call plug#end()
@@ -35,6 +39,15 @@ call plug#end()
 "}}}
 "================================================= Personal configuration ===================={{{
 "------------------------------GLOBAL VARIABLES------------------------------{{{
+"Configuration to use ctags for R with neovim
+let g:tagbar_type_r = {
+      \ 'ctagstype' : 'r',
+      \ 'kinds' : [
+      \ 'f:Functions',
+      \ 'g:GlobalVariables',
+      \ 'v:FunctionVariables',
+      \]
+      \}
 "characters to enclose/surround a word
 let s:surroundChar = {
       \'{':'}',
@@ -56,7 +69,9 @@ let s:CommentChar = {'python':'#',
 			\'c':'//'}
 let g:SPELL_LANG = "en_us"|	"global spelling language
 let s:verbose = 0|	"Global indicator variable for more verbose output
-let g:VIMRC_DIR="/home/philipp/Developer/Vimscript/init.vim"
+let g:VIMRC_DIR="/home/philipp/Developer/Vimscript/init.vim/"
+let g:RFUNS_DIR="/home/philipp/Developer/R/"
+let g:RFUNS="/home/philipp/Developer/R/nuetzlicheFunktionen.R"
 let g:python3_host_prog="/usr/bin/python3"
 let g:python_host_prog="/usr/bin/python2"
 let g:mapleader = '\'|			"Set the leader key to the hyphen character
@@ -146,7 +161,8 @@ endfunction
 "(== the R language console). As a consequence, they are loaded into the 
 "global namespace.
 "This function is handy, if the inner code block of an R function is to be
-"tested, but the function arguments are not known whithin the global namespace
+"tested, but the function arguments are not known whithin the namespace
+"outside the function
 function! s:FormatAndFeedToRepl()
 	let cursPos = getcurpos()
 	let save_reg = @"
@@ -531,6 +547,9 @@ endfunction
 " 	set path+=**
 	command! Tex :w|:!pdflatex -shell-escape %
 	command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
+  set nocompatible| "Required by the vim-polyglot plugin
+  colorscheme koehler
+"   colorscheme pablo
 	set omnifunc=syntaxcomplete#Complete
 	set foldcolumn=4|
 	set ignorecase|		"Ignore case for vim search function / or ?
@@ -554,12 +573,10 @@ endfunction
 	"set autowriteall 	"automatically write buffers when required
 	filetype plugin indent on
 	"}}}
-
 "------------------------------ABBREVIATIONS------------------------------{{{
 iabbrev 'van\ W' van Wickevoort Crommelin
 iabbrev ^- <-
 "}}}
-
 "------------------------------MAPPINGS------------------------------{{{
 "------------------------------GLOBAL{{{
 "move cursor just before found character
@@ -651,6 +668,8 @@ nnoremap <silent> <localleader>B :bprevious<cr>
 nnoremap <silent> <tab> :call <SID>GoToNeighbourWin("forward")<esc>
 "go to previous window
 nnoremap <silent> <S-tab> :call <SID>GoToNeighbourWin("backward")<esc>
+"Edit R function collection
+nnoremap <silent> <localleader>er :execute ":split ".g:RFUNS."\|:lcd ".g:RFUNS_DIR<cr>
 "Edit vimrc file
 nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC."\|:lcd ".g:VIMRC_DIR<cr>
 "source (aka. "reload") vimrc file
@@ -770,7 +789,9 @@ augroup r
 	autocmd FileType r :iabbrev iff if()<left>
 	autocmd FileType r :call StartR("R")
 	autocmd FileType r :iabbrev fnn = function()<left><left><left><left><left><left><left><left><left><left><left><left><left><left>
-        autocmd Filetype r :setlocal colorcolumn=80|                    "Display a coloured vertical bar
+        autocmd Filetype r :setlocal colorcolumn=81|                    "Display a coloured vertical bar
+        autocmd Filetype r :setlocal foldmethod=marker|                    "Display a coloured vertical bar
+"         autocmd Filetype r :setlocal syntax=r|                          "Syntax is sometimes not set automatically when file is opened with NERDtree. That is why it needs to be set explicitly here.
 augroup END
 "}}}
 "------------------------------Filetype html{{{
@@ -858,7 +879,11 @@ nnoremap <silent> , <Plug>(iron-send-line)<CR>
 "Show function arguments
 let R_show_args = 1
 let R_complete = 2 " Always include names of objects
-let R_hi_fun_globenv = 1
+let R_hi_fun = 1 " Activated by Default: Highlight R functions that are
+                 " loaded into the global environment
+let R_hi_fun_paren = 1  " Highlight R functions only if followed by a (
+let R_hi_fun_globenv = 0
+" let Rout_more_colors = 1
 let R_show_arg_help = 1
 let R_assign = 0
 "remap the 'send line' command of Nvim-R plugin"
@@ -903,4 +928,15 @@ let g:neomake_python_enabled_makers = ['pylint']
 let g:airline#extensions#tabline#enabled = 1
 "enable modified detection
 let g:airline_detect_modified=1
+"}}}
+"------------------------------LIGHTLINE CONFIGURATION------------------------------{{{
+		let g:lightline = {
+			\ 'active': {
+			\   'left': [ [ 'mode', 'paste' ],
+			\             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+			\ },
+			\ 'component_function': {
+			\   'gitbranch': 'FugitiveHead'
+			\ },
+			\ }
 "}}}
