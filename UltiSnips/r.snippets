@@ -144,6 +144,16 @@ if (!(dir.exists(paths = excels))) {
 # }}}
 endsnippet
 
+snippet doc "roxygen documentation"
+#' @title ${1:title}
+#' @description ${2:description}
+#' @param ${3:parameter name} ${4:Datentyp} - ${5:parameter description}
+#' @details ${6:details}
+#' @importFrom ${7:R package} ${8:function}
+#' @author Philipp van Wickevoort Crommelin - parcIT GmbH
+#' @export
+endsnippet
+
 ########################################
 ########## visual mode snippets ########
 ########################################
@@ -155,7 +165,9 @@ endsnippet
 
 snippet marker "vimscript marker"
 # $0 {{{
+
 ${VISUAL}
+
 #}}}
 endsnippet
 

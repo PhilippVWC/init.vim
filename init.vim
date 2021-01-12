@@ -18,6 +18,7 @@ Plug 'SirVer/ultisnips'
 " Plug 'honza/vim-snippets'
 " Plug 'garbas/vim-snipmate'
 Plug 'preservim/nerdtree'
+Plug 'ivalkeen/nerdtree-execute'
 Plug  'ryanoasis/vim-devicons'
 " Plug  'vim-syntastic/syntastic'
 " Plug 'Lokaltog/powerline'
@@ -142,6 +143,7 @@ endfunction
 "otherwise
 function! s:OpenOrRefreshNerdTree()
 	NERDTreeToggle
+  NERDTreeRefreshRoot
 endfunction
 "}}}
 "------------------------------setLocalWorkDir{{{
@@ -575,6 +577,7 @@ endfunction
 	"}}}
 "------------------------------ABBREVIATIONS------------------------------{{{
 iabbrev 'van\ W' van Wickevoort Crommelin
+iabbrev ppp Philipp van Wickevoort Crommelin
 iabbrev ^- <-
 "}}}
 "------------------------------MAPPINGS------------------------------{{{
@@ -882,7 +885,7 @@ let R_complete = 2 " Always include names of objects
 let R_hi_fun = 1 " Activated by Default: Highlight R functions that are
                  " loaded into the global environment
 let R_hi_fun_paren = 1  " Highlight R functions only if followed by a (
-let R_hi_fun_globenv = 0
+" let R_hi_fun_globenv = 0
 " let Rout_more_colors = 1
 let R_show_arg_help = 1
 let R_assign = 0
@@ -892,6 +895,11 @@ nmap , <Plug>RDSendLine
 vmap , <Plug>RDSendSelection
 "remap the 'check code before sending and then send' command of Nvim-R plugin"
 "vmap ,c <Plug>RESendSelection
+" Set R's current working directory to 
+" neovim's current working directory
+" (and not to the directory of the R file
+" being opened, i.e. the default behaviour)
+let R_nvim_wd = 1
 "}}}
 "------------------------------ULTISNIPS CONFIGURATION------------------------------{{{
 let g:UltiSnipsEditSplit="context"
