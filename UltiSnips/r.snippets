@@ -1,3 +1,47 @@
+snippet ggs "ggsave standard png"
+ggsave(filename = "$0.png",
+       path = plots,
+       device = "png",
+       width = 11,
+       height = 7)
+endsnippet
+
+snippet theme "parcIT theme"
+theme_minimal(base_size = 24,
+              base_family = "Calibri") +
+theme(legend.position = "bottom",
+      axis.line.y = element_line(color = "black")) +
+geom_hline(yintercept = 0,
+           size = 0.4) +
+scale_y_continuous(labels = scales::number_format(accuracy = 0.01,
+                                          big.mark = ".",
+                                          decimal.mark = ',')) +
+endsnippet
+
+snippet cols "parcIT colors"
+# Farben der parcIT {{{
+COL_PARCIT <- c(  
+  # Blau
+  grDevices::rgb(red = 0  , green =  102, blue = 179, maxColorValue = 255)
+  # Orange
+  ,grDevices::rgb(red = 255, green =  102, blue = 0  , maxColorValue = 255)
+  # Gruen
+  ,grDevices::rgb(red = 138, green =  192, blue = 86 , maxColorValue = 255)
+  # Hellblau
+  ,grDevices::rgb(red = 135, green =  208, blue = 234, maxColorValue = 255)
+  # Kaffee
+  ,grDevices::rgb(red = 173, green =  159, blue = 129, maxColorValue = 255)
+  # Silber
+  ,grDevices::rgb(red = 178, green =  178, blue = 178, maxColorValue = 255)
+  # Turquoise
+  ,grDevices::rgb(red = 86 , green =  188, blue = 177, maxColorValue = 255)
+)
+# }}}
+endsnippet
+snippet lib "library" 
+library($0)
+endsnippet
+
 snippet sap "sapply" 
 sapply(X = $1
 	,FUN = function(${2:i}){
@@ -110,7 +154,8 @@ snippet head "Title of an R script"
 # parcIT GmbH
 #======================================================
 # Pakete und globale Konfigurationen {{{
-library(tidyverse)
+# Einzubindende Pakete
+# Anzulegende Verzeichnisse
 if (!exists("projectPath")) {
   stop(
     paste0(
@@ -128,7 +173,8 @@ if (!exists("projectPath")) {
 plots <-
   paste0(
     projectPath,
-    "$3"
+    "$3",
+    "Grafiken/"
   )
 if (!(dir.exists(paths = plots))) {
   dir.create(path = plots)
@@ -136,7 +182,8 @@ if (!(dir.exists(paths = plots))) {
 excels <-
   paste0(
     projectPath,
-    "$4"
+    "$4",
+    "ExcelTabellen/"
   )
 if (!(dir.exists(paths = excels))) {
   dir.create(path = excels)

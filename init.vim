@@ -64,6 +64,7 @@ let s:surroundChar = {
 "comment character for different programming languages
 let s:CommentChar = {'python':'#',
 			\'r':'#',
+      \'sh':'#',
 			\'vim':'"',
 			\'sql':'--',
 			\'tex':'%',
@@ -563,6 +564,7 @@ endfunction
 	"current active window
 	set wrap|		"let lines break, if their lengths exceed the window size
 	set mouse=a
+" 	set ttymouse=xterm2|  "when used inside tmux
 	set clipboard=unnamedplus
 	set shiftround|		"round value for indentation to multiple of shiftwidth
 	set number
@@ -900,6 +902,7 @@ vmap , <Plug>RDSendSelection
 " (and not to the directory of the R file
 " being opened, i.e. the default behaviour)
 let R_nvim_wd = 1
+nmap <localleader>rc :call RAction("getwd")
 "}}}
 "------------------------------ULTISNIPS CONFIGURATION------------------------------{{{
 let g:UltiSnipsEditSplit="context"
