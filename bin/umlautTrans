@@ -1,21 +1,118 @@
 #!/usr/bin/perl
-#Perl-Skript, um deutsche Umlaute in ASCII-Zeichen umzuwandeln
-#Philipp van Wickevoort Crommelin
-my $inputFile = @ARGV[0];
-open(input,"<".$inputFile) or die $!;
-my $outputFile = $inputFile."temp";
-open(output,">".$outputFile) or die $!;
-while(<input>){
-  $_ =~ s/([^#]*)(#[^#]*)ö/\1\2oe/g;
-  $_ =~ s/([^#]*)(#[^#]*)ä/\1\2ae/g;
-  $_ =~ s/([^#]*)(#[^#]*)ü/\1\2ue/g;
-  $_ =~ s/([^#]*)(#[^#]*)Ä/\1\2Ae/g;
-  $_ =~ s/([^#]*)(#[^#]*)Ö/\1\2Oe/g;
-  $_ =~ s/([^#]*)(#[^#]*)Ü/\1\2Ue/g;
-  $_ =~ s/([^#]*)(#[^#]*)ß/\1\2ss/g;
-  print output $_;
+#================================================================================
+# Perl-Skript, um deutsche Umlaute/Diakritika in R-Skripten
+# in ihrer Anzahl zu minimieren.
+# Die Umlaute werden daher ggf. nach folgenden Regeln umgewandelt:
+#
+#1. In den R-Kommentaren Umwandlung in 2 ASCII-Zeichen (ö -> oe, etc.)
+#2. In den Roxygen-Kommentaren passiert nichts
+#3. Im R-Code werden die Umlaute in ihre zugehoerigen Hexadezimalen 
+#   Unicodes uebersetzt (ö -> \u00f6, etc.)
+#
+# Philipp van Wickevoort Crommelin
+#================================================================================
+# Pragmas
+use warnings;
+use strict;
+#================================================================================
+# Read filename
+my $inputFile = $ARGV[0]; 
+
+if (not $inputFile =~ m/\.*[rR]/) {
+  print qq{ The file "$inputFile" is not an R script (file left unchanged).};
+  exit 1;
 }
-close(input);
-unlink(input);
+# 0 .. false = no verbose output
+# 1 .. true = verbose output
+my $verbose = 0;
+
+# 0 .. false = dont translate within R code
+# 1 .. true = translate in hex code, e.g. ö --> \u00f6, etc. 
+my $substituteInCode = 0;
+
+# open file (subject to subsequent replacement)
+my $iHandle;
+open($iHandle,"<".$inputFile) or die $!;
+my $outputFile = $inputFile."temp";
+
+# open cache file 
+my $oHandle;
+open($oHandle,">".$outputFile) or die $!;
+if ($verbose) {print("Translate German diacritic marks in ".$inputFile."\n");}
+my $pattern_r_comment = q{^([^#]*?)(#.*)$};
+
+# Parse file on a per-line basis
+
+# Declare loop variables:
+my $code = "";
+my $comment = "";
+while(<$iHandle>){
+
+  if (( $_ =~ m/#/ ) && (not $_ =~ m/^\s*#'/ )) {# Line has normal comment
+
+    if ($verbose) {print "Line ".$..": Comment.\n";}
+
+    if ( $_ =~ m/$pattern_r_comment/ ){
+        # Substitute in code
+        $code = $_;
+        $code =~ s/$pattern_r_comment/$1/;
+        chomp $code; # remove line ending (cr of lf or whatever)
+      if ($substituteInCode) {
+        # TODO: Detect only German diacritic mark in quoted environment
+        # The following code line detects an ö BETWEEN two quoted environments
+        # but not WITHIN a quoted environment.
+#         $code =~ s/("[^"]*?)ö+([^"]*?")/$1\\u00f6$2/g;
+        $code =~ s/ö/\\u00f6/g;
+        $code =~ s/ä/\\u00e4/g;
+        $code =~ s/ü/\\u00fc/g;
+        $code =~ s/Ö/\\u00d6/g;
+        $code =~ s/Ä/\\u00c4/g;
+        $code =~ s/Ü/\\u00dc/g;
+        $code =~ s/ß/\\u00df/g;
+      }
+      # Substitute in comment
+      $comment = $_;
+      $comment =~ s/$pattern_r_comment/$2/;
+      $comment =~ s/ö/oe/g;
+      $comment =~ s/ä/ae/g;
+      $comment =~ s/ü/ue/g;
+      $comment =~ s/Ö/Oe/g;
+      $comment =~ s/Ä/Ae/g;
+      $comment =~ s/Ü/Ue/g;
+      $comment =~ s/ß/ss/g;
+      print $oHandle $code.$comment;
+    } else {
+      if ($verbose) {print qq{Warning in line $.: Comment-character "#" found but could not parse line.\n};}
+      print $oHandle $_;
+    }
+
+  } elsif ( $_ =~ m/^\s*#'/ ) { # Roxygen comment - do nothing
+
+    if ($verbose) {print "Line ".$..": Roxygen comment.\n";}
+    print $oHandle $_;
+
+  } else { # Substitute in code
+
+    if ($verbose) {print "Line ".$..": code.\n";}
+    if ($substituteInCode) {
+      $_ =~ s/ö/\\u00f6/g;
+      $_ =~ s/ä/\\u00e4/g;
+      $_ =~ s/ü/\\u00fc/g;
+      $_ =~ s/Ö/\\u00d6/g;
+      $_ =~ s/Ä/\\u00c4/g;
+      $_ =~ s/Ü/\\u00dc/g;
+      $_ =~ s/ß/\\u00df/g;
+    }
+    print $oHandle $_;
+  }
+}
+
+# close input file
+close($iHandle);
+# delete inpute file 
+unlink($iHandle);
+# rename cache-File
 rename($outputFile,$inputFile);
-close(output);
+close($oHandle);
+# Exit with success
+exit 0;

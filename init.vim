@@ -27,6 +27,7 @@ Plug  'ryanoasis/vim-devicons'
 " Plug 'vim-airline/vim-airline' "fancy vim status bar
 Plug 'itchyny/lightline.vim' "fancy vim status bar
 " Plug 'vim-airline/vim-airline-themes'
+Plug 'Raimondi/delimitMate'
 Plug 'jiangmiao/auto-pairs' "set matching quotation marks, braces, etc.
 " Plug 'davidhalter/jedi-vim' "python go-to function and completion
 " Plug 'sbdchd/neoformat' "code formatting
@@ -40,6 +41,25 @@ call plug#end()
 "}}}
 "================================================= Personal configuration ===================={{{
 "------------------------------GLOBAL VARIABLES------------------------------{{{
+"clipboard, pasteboard, copy and paste, Zwischenablage
+"Clipboard interaction Windows and WSL
+"It would suffice, to deposit win32yank.exe into the search path
+"The unix command line tool win32yank.exe 
+"is available at https://www.github.com/equalsraf/win32yank/releases
+"The following global variable defines a more explicit way 
+"to control the behaviour of the copy and paste mechanism
+let g:clipboard = {
+                  \'name' : 'win32yank-wsl',
+                  \'copy' : {
+                  \'+' : 'win32yank.exe -i --crlf',
+                  \'*' : 'win32yank.exe -i --crlf'
+                  \},
+                  \'paste' : {
+                  \'+' : 'win32yank.exe -o --lf',
+                  \'*' : 'win32yank.exe -o --lf'
+                  \},
+                  \'cache_enabled' : 0
+                  \}
 "Configuration to use ctags for R with neovim
 let g:tagbar_type_r = {
       \ 'ctagstype' : 'r',
@@ -60,15 +80,19 @@ let s:surroundChar = {
       \'<':'>',
       \"'":"'",
       \'"':'"',
-      \' ':' '}
+      \' ':' '
+      \}
 "comment character for different programming languages
-let s:CommentChar = {'python':'#',
+let s:CommentChar = {
+      \'python':'#',
+      \'perl':'#',
 			\'r':'#',
       \'sh':'#',
 			\'vim':'"',
 			\'sql':'--',
 			\'tex':'%',
-			\'c':'//'}
+			\'c':'//'
+      \}
 let g:SPELL_LANG = "en_us"|	"global spelling language
 let s:verbose = 0|	"Global indicator variable for more verbose output
 let g:VIMRC_DIR="/home/philipp/Developer/Vimscript/init.vim/"
@@ -565,7 +589,12 @@ endfunction
 	set wrap|		"let lines break, if their lengths exceed the window size
 	set mouse=a
 " 	set ttymouse=xterm2|  "when used inside tmux
-	set clipboard=unnamedplus
+"Zwischenablage, clipboard, pasteboard, copy and paste
+"Es reicht einfach das Hinterlegen des Unix-Programms
+"win32yank.exe
+"Dieses ist unter https://www.github.com/equalsraf/win32yank/releases
+"herunterzuladen
+  set clipboard=unnamedplus
 	set shiftround|		"round value for indentation to multiple of shiftwidth
 	set number
 	set laststatus=2
@@ -581,6 +610,8 @@ endfunction
 iabbrev 'van\ W' van Wickevoort Crommelin
 iabbrev ppp Philipp van Wickevoort Crommelin
 iabbrev ^- <-
+iabbrev ~  ~<space>|    " Replace NON-BRAKE-SPACE character (Hex-Code c2a0)
+                        " with regular space character (Hex-code a0)
 "}}}
 "------------------------------MAPPINGS------------------------------{{{
 "------------------------------GLOBAL{{{
@@ -590,8 +621,17 @@ noremap f t
 noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
-"jump to tag - Don't forget to create a tag file with ctags and import it in
-"neovim with the command 'set tags+=/path/to/my/tags/file'
+"jump to tag - Don't forget to create a tag file with ctags, like
+"ctags myDirectoryWithRFiles --exclude renv
+"and import it in
+"neovim with the command 'set tags+=/path/to/tags'
+"For R language support of ctags create a .ctags file in the $HOME
+"directory and fill it with:
+" --langdef=R
+" --langmap=r:.R.r
+" --regex-R=/^[ \t]*"?([.A-Za-z][.A-Za-z0-9_]*)"?[ \t]*<-[ \t]function/\1/f,Functions/
+" --regex-R=/^"?([.A-Za-z][.A-Za-z0-9_]*)"?[ \t]*<-[ \t][^f][^u][^n][^c][^t][^i][^o][^n]/\1/g,GlobalVars/
+" --regex-R=/[ \t]"?([.A-Za-z][.A-Za-z0-9_]*)"?[ \t]*<-[ \t][^f][^u][^n][^c][^t][^i][^o][^n]/\1/v,FunctionVariables/
 nnoremap <silent> <localleader>F :execute "tag ".expand("<cword>")<cr>
 "Surround word by given character
 nnoremap <silent> <localleader>e{ :call <SID>Surround('{')<cr>
@@ -807,6 +847,11 @@ augroup markdown
 	autocmd FileType markdown onoremap <buffer> ah :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_j"<cr>|	"delete around heading
 augroup END
 "}}}
+
+augroup perl
+      autocmd!
+      autocmd FileType perl :iabbrev '/' //<left>|"Create matching slash in regular expression environments
+augroup END
 "------------------------------Filetype vim{{{
 augroup vim
 	autocmd!
@@ -817,10 +862,11 @@ augroup END
 "------------------------------miscellaneous{{{
 augroup miscellaneous
 	autocmd!
-	autocmd Filetype help setlocal number|			"show line numbers for vim documentation files
-	autocmd FileType tex :setlocal spell spelllang=de|	"check spelling automatically for tex files
-	autocmd BufWinEnter * call ResCur()|			"reset cursor position
-	autocmd BufWinEnter * execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
+  autocmd vimenter * :NERDTree|           "Display Nerdtree after vim startup
+	autocmd Filetype help :setlocal number|	"show line numbers for vim documentation files
+" 	autocmd FileType tex :setlocal spell spelllang=de|	"check spelling automatically for tex files
+	autocmd BufWinEnter * :call ResCur()|			          "reset cursor position
+	autocmd BufWinEnter * :execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
 " 	autocmd BufReadPost * call <SID>setLocalWorkDir()|	"Set working directory local to buffer
 augroup END
 "}}}
@@ -903,6 +949,7 @@ vmap , <Plug>RDSendSelection
 " being opened, i.e. the default behaviour)
 let R_nvim_wd = 1
 nmap <localleader>rc :call RAction("getwd")
+nmap <localleader>rs :call RAction("str")
 "}}}
 "------------------------------ULTISNIPS CONFIGURATION------------------------------{{{
 let g:UltiSnipsEditSplit="context"
@@ -950,4 +997,10 @@ let g:airline_detect_modified=1
 			\   'gitbranch': 'FugitiveHead'
 			\ },
 			\ }
+"}}}
+"------------------------------FUGITIVE CONFIGURATION------------------------------{{{
+"Git add file that corresponds to current buffer
+nnoremap <silent> <localleader>ga :Git add %<cr>
+"Git rebase --continue
+nnoremap <silent> <localleader>grc :Git rebase --continue<cr>
 "}}}
