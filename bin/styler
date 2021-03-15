@@ -1,0 +1,70 @@
+#!/usr/bin/Rscript --vanilla
+# ======================================================
+# Command line formatter for R scripts
+#------------------------------------------------------
+# Philipp van Wickevoort Crommelin
+# ======================================================
+ARGV <- commandArgs(trailingOnly = TRUE)
+
+# Install dependencies if required {{{
+
+if (!"styler" %in% installed.packages()[, "Package"]) {
+  tryCatch(
+    expr = {
+      remotes::install_github("r-lib/styler")
+    },
+    warning = function(w) {
+      simpleWarning(message = w)
+    },
+    error = function(e) {
+      stop(e)
+    }
+  )
+}
+if (!"cli" %in% installed.packages()[, "Package"]) {
+  tryCatch(
+    expr = {
+      remotes::install_github("r-lib/cli")
+    },
+    warning = function(w) {
+      simpleWarning(message = w)
+    },
+    error = function(e) {
+      stop(e)
+    }
+  )
+}
+
+# }}}
+
+Nargs <- length(ARGV)
+
+filename <- file.path(paste0(getwd(), "/", ARGV[Nargs]))
+if (file.exists(filename)) {
+  styler::style_file(
+    path = filename,
+    scope = "tokens"
+  )
+} else {
+  cli::cli_div(theme = list(
+    span.green = list(color = "green"),
+    span.red = list(color = "red")
+  ))
+  cli::cli_h1("Problem:")
+  cli::cli_alert(paste0(
+    "cannot access '{.green ",
+    filename,
+    "}': ",
+    "{.red No such file}"
+  ))
+  cli::cli_end()
+  {
+    cli::cli_div(theme = list(
+      span.orange = list(color = "orange"),
+      span.green = list(color = "green")
+    ))
+    cli::cli_text("Usage: {.orange styler} {.green file}")
+    cli::cli_end()
+  }
+  quit(save = "no")
+}

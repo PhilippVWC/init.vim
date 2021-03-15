@@ -1,3 +1,35 @@
+snippet cli_color "Colorfull command line output"
+    cli::cli_div(theme = list(span.orange = list(color = "orange"),
+                              span.green = list(color = "green")))
+    cli::cli_text("Usage: {.orange styler} {.green file}")
+    cli::cli_end()
+endsnippet
+
+snippet commandLine "R command line tool header"
+#!/usr/bin/Rscript --vanilla
+#======================================================
+# Command line formatter for R scripts
+#------------------------------------------------------
+# Philipp van Wickevoort Crommelin
+#======================================================
+ARGV <- commandArgs(trailingOnly = TRUE)
+
+# Install dependencies if required {{{
+
+if (! "cli" %in% installed.packages()[,"Package"]) {
+  tryCatch(expr = {
+  remotes::install_github("r-lib/cli")
+},
+warning = function(w){
+  simpleWarning(message = w)
+},
+error = function(e){
+  stop(e)
+})
+}
+
+#}}}
+endsnippet
 snippet ggs "ggsave standard png"
 ggsave(filename = "$0.png",
        path = plots,
