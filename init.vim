@@ -119,9 +119,18 @@ function! s:DeleteLine()
   startinsert!
 endfunction
 "}}}
-"------------------------------changeSurroundingChar{{{
+"------------------------------OpenTagInNewSplit{{{
+function! s:OpenTagInNewSplit(myTag)
+      " Todo: quit if a tag does not exist
+      split
+      " TODO: memorize window to display future tag-jumps
+      " herein
+      execute ":tag ".a:myTag
+endfunction
+"}}}
+"------------------------------ChangeSurroundingChar{{{
 "change surrounding character
-function! s:changeSurroundingChar(char)
+function! s:ChangeSurroundingChar(char)
   let s:p = [line("."),col(".")]
   echo s:p
   let s:savedReg = @"
@@ -632,7 +641,20 @@ noremap F T
 " --regex-R=/^[ \t]*"?([.A-Za-z][.A-Za-z0-9_]*)"?[ \t]*<-[ \t]function/\1/f,Functions/
 " --regex-R=/^"?([.A-Za-z][.A-Za-z0-9_]*)"?[ \t]*<-[ \t][^f][^u][^n][^c][^t][^i][^o][^n]/\1/g,GlobalVars/
 " --regex-R=/[ \t]"?([.A-Za-z][.A-Za-z0-9_]*)"?[ \t]*<-[ \t][^f][^u][^n][^c][^t][^i][^o][^n]/\1/v,FunctionVariables/
-nnoremap <silent> <localleader>F :execute "tag ".expand("<cword>")<cr>
+"  install module tagbar
+"  and insert into init.vim the following global dictionary:
+" let g:tagbar_type_r = {
+"       \ 'ctagstype' : 'r',
+"       \ 'kinds' : [
+"       \ 'f:Functions',
+"       \ 'g:GlobalVariables',
+"       \ 'v:FunctionVariables',
+"       \]
+"       \}
+"       
+"Now jump to a tag with :tag /pattern or use the following mapping
+" nnoremap <silent> <localleader>F :execute "tag ".expand("<cword>")<cr>
+nnoremap <silent> <localleader>F :call <SID>OpenTagInNewSplit(expand("<cword>"))<cr>
 "Surround word by given character
 nnoremap <silent> <localleader>e{ :call <SID>Surround('{')<cr>
 nnoremap <silent> <localleader>e[ :call <SID>Surround('[')<cr>
@@ -646,16 +668,16 @@ nnoremap <silent> <localleader>e" :call <SID>Surround('"')<cr>
 nnoremap <silent> <localleader>es :call <SID>Surround(' ')<cr>
 
 "Change surrounding character
-nnoremap <silent> ce{ :call <SID>changeSurroundingChar('{')<cr>
-nnoremap <silent> ce[ :call <SID>changeSurroundingChar('[')<cr>
-nnoremap <silent> ce( :call <SID>changeSurroundingChar('(')<cr>
-nnoremap <silent> ce$ :call <SID>changeSurroundingChar('$')<cr>
-nnoremap <silent> ce/ :call <SID>changeSurroundingChar('/')<cr>
-nnoremap <silent> ce\ :call <SID>changeSurroundingChar('\\')<cr>
-nnoremap <silent> ce< :call <SID>changeSurroundingChar('<')<cr>
-nnoremap <silent> ce' :call <SID>changeSurroundingChar("'")<cr>
-nnoremap <silent> ce" :call <SID>changeSurroundingChar('"')<cr>
-nnoremap <silent> ces :call <SID>changeSurroundingChar(' ')<cr>
+nnoremap <silent> ce{ :call <SID>ChangeSurroundingChar('{')<cr>
+nnoremap <silent> ce[ :call <SID>ChangeSurroundingChar('[')<cr>
+nnoremap <silent> ce( :call <SID>ChangeSurroundingChar('(')<cr>
+nnoremap <silent> ce$ :call <SID>ChangeSurroundingChar('$')<cr>
+nnoremap <silent> ce/ :call <SID>ChangeSurroundingChar('/')<cr>
+nnoremap <silent> ce\ :call <SID>ChangeSurroundingChar('\\')<cr>
+nnoremap <silent> ce< :call <SID>ChangeSurroundingChar('<')<cr>
+nnoremap <silent> ce' :call <SID>ChangeSurroundingChar("'")<cr>
+nnoremap <silent> ce" :call <SID>ChangeSurroundingChar('"')<cr>
+nnoremap <silent> ces :call <SID>ChangeSurroundingChar(' ')<cr>
 "Reindent entire file
 nnoremap <silent> <localleader>i mqgg=G`q<cr>
 "Read local scope R function arguments and send to R-REPL
