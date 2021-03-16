@@ -1,3 +1,31 @@
+snippet rproj "insert dummy .Rproj-file"
+Version: 1.0
+
+RestoreWorkspace: No
+SaveWorkspace: No
+AlwaysSaveHistory: No
+
+EnableCodeIndexing: Yes
+UseSpacesForTab: Yes
+NumSpacesForTab: 2
+Encoding: UTF-8
+
+RnwWeave: knitr
+LaTeX: XeLaTeX
+endsnippet
+snippet cli_list "list command line output"
+{
+  cli::cli_ol()
+  cli::cli_li("Item 1")
+  cli::ulid <- cli_ul()
+  cli::cli_li("Subitem 1")
+  cli::cli_li("Subitem 2")
+  cli::cli_end(ulid)
+  cli::cli_li("Item 2")
+  cli::cli_end()
+}
+endsnippet
+
 snippet cli_color "Colorfull command line output"
     cli::cli_div(theme = list(span.orange = list(color = "orange"),
                               span.green = list(color = "green")))
