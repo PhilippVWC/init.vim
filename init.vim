@@ -122,10 +122,7 @@ endfunction
 "------------------------------OpenTagInNewSplit{{{
 function! s:OpenTagInNewSplit(myTag)
       " Todo: quit if a tag does not exist
-      split
-      " TODO: memorize window to display future tag-jumps
-      " herein
-      execute ":tag ".a:myTag
+      execute ":ptag ".a:myTag
 endfunction
 "}}}
 "------------------------------ChangeSurroundingChar{{{
@@ -580,7 +577,7 @@ endfunction
 	"------------------------------SETTINGS------------------------------{{{
 	"TODO:command that repeats last command
 " 	set wildmenu
-" 	set path+=**
+	set path+=**
 	command! Tex :w|:!pdflatex -shell-escape %
 	command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
   set nocompatible| "Required by the vim-polyglot plugin
@@ -596,6 +593,7 @@ endfunction
 	"consider command <<aboveleft>> for vertical/horizontal splits to open to the left/top of the
 	"current active window
 	set wrap|		"let lines break, if their lengths exceed the window size
+  "Enable mouse for all modes (visual, insert, command-line mode, etc.)
 	set mouse=a
 " 	set ttymouse=xterm2|  "when used inside tmux
 "Zwischenablage, clipboard, pasteboard, copy and paste
@@ -949,6 +947,9 @@ nnoremap <silent> , <Plug>(iron-send-line)<CR>
 "nmap <localleader>c    <Plug>(iron-clear)
 "}}}
 "------------------------------NVIM-R CONFIGURATION------------------------------{{{
+"Disable all Nvim-R key maps (Each Nvim-R key map has to be configured manually
+"then)
+let R_user_maps_only = 1
 "Show function arguments
 let R_show_args = 1
 let R_complete = 2 " Always include names of objects
@@ -970,8 +971,9 @@ vmap , <Plug>RDSendSelection
 " (and not to the directory of the R file
 " being opened, i.e. the default behaviour)
 let R_nvim_wd = 1
-nmap <localleader>rc :call RAction("getwd")
-nmap <localleader>rs :call RAction("str")
+nmap <localleader>rw :call g:SendCmdToR("getwd()")<CR>
+nmap <localleader>rs :call RAction("str")<CR>
+nmap <localleader>rh :call RAction("help")<CR>
 "}}}
 "------------------------------ULTISNIPS CONFIGURATION------------------------------{{{
 let g:UltiSnipsEditSplit="context"
