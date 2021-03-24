@@ -1,3 +1,31 @@
+snippet clih3 "cli header 3 message"
+cli::cli_h3(paste0("$1"))
+endsnippet
+snippet clih2 "cli header 2 message"
+cli::cli_h2(paste0("$1"))
+endsnippet
+snippet clih1 "cli header 1 message"
+cli::cli_h1(paste0("$1"))
+endsnippet
+snippet clisuc "cli alert success message"
+cli::cli_alert_success(paste0("$1"))
+endsnippet
+snippet cliwar "cli alert alert"
+cli::cli_alert_info(paste0("$1"))
+endsnippet
+snippet clidan "cli warning"
+cli::cli_alert_danger(paste0("$1"))
+endsnippet
+snippet clidiv "set theme from R cli package"
+{
+cli::cli_div(theme = list(span.$1 = list(color = "$1")))
+$2
+cli::cli_end()
+}
+endsnippet
+snippet clitex "write text - R cli package"
+cli::cli_text(paste0("$0"))
+endsnippet
 snippet rproj "insert dummy .Rproj-file"
 Version: 1.0
 
@@ -13,24 +41,25 @@ Encoding: UTF-8
 RnwWeave: knitr
 LaTeX: XeLaTeX
 endsnippet
-snippet cli_list "list command line output"
+snippet clilis "cli list"
 {
-  cli::cli_ol()
-  cli::cli_li("Item 1")
-  cli::ulid <- cli_ul()
-  cli::cli_li("Subitem 1")
-  cli::cli_li("Subitem 2")
-  cli::cli_end(ulid)
-  cli::cli_li("Item 2")
-  cli::cli_end()
+cli::cli_ol()
+cli::cli_li("Item 1")
+cli::ulid <- cli_ul()
+cli::cli_li("Subitem 1")
+cli::cli_li("Subitem 2")
+cli::cli_end(ulid)
+cli::cli_li("Item 2")
+cli::cli_end()
 }
 endsnippet
 
-snippet cli_color "Colorfull command line output"
-    cli::cli_div(theme = list(span.orange = list(color = "orange"),
-                              span.green = list(color = "green")))
-    cli::cli_text("Usage: {.orange styler} {.green file}")
-    cli::cli_end()
+snippet clidivs "Many cli divs"
+cli::cli_div(theme = list(span.orange = list(color = "orange"),
+                          span.red = list(color = "red"),
+                          span.green = list(color = "green"),
+                          span.blue = list(color = "blue")))
+cli::cli_end()
 endsnippet
 
 snippet commandLine "R command line tool header"
@@ -254,7 +283,7 @@ endsnippet
 snippet doc "roxygen documentation"
 #' @title ${1:title}
 #' @description ${2:description}
-#' @param ${3:parameter name} ${4:Datentyp} - ${5:parameter description}
+#' @param ${3:parameter name} ${4:datatyp} - ${5:parameter description}
 #' @details ${6:details}
 #' @importFrom ${7:R package} ${8:function}
 #' @author Philipp van Wickevoort Crommelin - parcIT GmbH
@@ -278,7 +307,23 @@ ${VISUAL}
 #}}}
 endsnippet
 
+snippet try "tryCatch block"
+  tryCatch(
+  expr = {
+  ${VISUAL}
+  },
+  warning = function(w){print(w)},
+  error = function(e){print(e)}
+  )
+endsnippet
 
+snippet clidivv "put into cli div"
+{
+cli::cli_div(theme = list(span.$1 = list(color = "$1")))
+${VISUAL}
+cli::cli_end()
+}
+endsnippet
 
 
 

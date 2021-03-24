@@ -403,7 +403,7 @@ function! s:BufferCycle(direction)
 			autocmd BufReadPost * call <SID>CheckBuf(bufnr())
 			"autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())<0"."\n"."call <SID>CheckBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
 			"autocmd BufWinEnter * execute "if index(g:bufNumbrs,bufnr())>0"."\n"."call <SID>CheckBuf(bufnr())"."\n"."echom \"Buffer checked\""."\n"."else"."\n"."echom \"Buffer already checked\""."\n"."endif"."\n"
-		augroup END
+		augroup end
 	endif
 endfunction
 "}}}
@@ -576,8 +576,8 @@ endfunction
 	"}}}
 	"------------------------------SETTINGS------------------------------{{{
 	"TODO:command that repeats last command
-" 	set wildmenu
-	set path+=**
+" 	set path to current directory ( Corresponds to output of :pwd or :echo getcwd() )
+	set path=**
 	command! Tex :w|:!pdflatex -shell-escape %
 	command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
   set nocompatible| "Required by the vim-polyglot plugin
@@ -616,7 +616,6 @@ endfunction
 "------------------------------ABBREVIATIONS------------------------------{{{
 iabbrev 'van\ W' van Wickevoort Crommelin
 iabbrev ppp Philipp van Wickevoort Crommelin
-iabbrev ^- <-
 iabbrev ~  ~<space>|    " Replace NON-BRAKE-SPACE character (Hex-Code c2a0)
                         " with regular space character (Hex-code a0)
 "}}}
@@ -837,7 +836,7 @@ augroup html
 	"Don't wrap text for html files
 	autocmd BufNewFile,BufRead *.html setlocal nowrap
 	autocmd FileType html nnoremap <buffer> <localleader>f Vatzf
-augroup END
+augroup end
 "}}}
 "------------------------------Filetype python{{{
 augroup python
@@ -846,18 +845,18 @@ augroup python
 	autocmd FileType python :iabbrev fnn def ()<left><left>
 	autocmd FileType python setlocal foldmethod=indent
 	autocmd FileType python setlocal foldlevelstart=0
-augroup END
+augroup end
 "}}}
 "------------------------------Filetype r{{{
 augroup r
 	autocmd!
 	autocmd FileType r :iabbrev iff if()<left>
-	autocmd FileType r :call StartR("R")
+" 	autocmd FileType r :call StartR("R")
 	autocmd FileType r :iabbrev fnn = function()<left><left><left><left><left><left><left><left><left><left><left><left><left><left>
         autocmd Filetype r :setlocal colorcolumn=81|                    "Display a coloured vertical bar
         autocmd Filetype r :setlocal foldmethod=marker|                    "Display a coloured vertical bar
 "         autocmd Filetype r :setlocal syntax=r|                          "Syntax is sometimes not set automatically when file is opened with NERDtree. That is why it needs to be set explicitly here.
-augroup END
+augroup end
 "}}}
 "------------------------------Filetype html{{{
 augroup markdown
@@ -865,30 +864,30 @@ augroup markdown
 	autocmd FileType markdown onoremap <buffer> in@ :<c-u>execute "normal! /@\r:nohlsearch\rhviw"<cr>
  	autocmd FileType markdown onoremap <buffer> ih :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_"<cr>|	"delete markdown file heading of current section
 	autocmd FileType markdown onoremap <buffer> ah :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_j"<cr>|	"delete around heading
-augroup END
+augroup end
 "}}}
 
 augroup perl
       autocmd!
       autocmd FileType perl :iabbrev '/' //<left>|"Create matching slash in regular expression environments
-augroup END
+augroup end
 "------------------------------Filetype vim{{{
 augroup vim
 	autocmd!
 	autocmd FileType vim setlocal foldmethod=marker
 	autocmd FileType vim setlocal foldlevelstart=0
-augroup END
+augroup end
 "}}}
 "------------------------------miscellaneous{{{
 augroup miscellaneous
 	autocmd!
-  autocmd vimenter * :NERDTree|           "Display Nerdtree after vim startup
+"   autocmd vimenter * :NERDTree|           "Display Nerdtree after vim startup
 	autocmd Filetype help :setlocal number|	"show line numbers for vim documentation files
 " 	autocmd FileType tex :setlocal spell spelllang=de|	"check spelling automatically for tex files
 	autocmd BufWinEnter * :call ResCur()|			          "reset cursor position
 	autocmd BufWinEnter * :execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
 " 	autocmd BufReadPost * call <SID>setLocalWorkDir()|	"Set working directory local to buffer
-augroup END
+augroup end
 "}}}
 "}}}
 "}}}
@@ -923,11 +922,11 @@ augroup nerdtree
 	autocmd FileType nerdtree nnoremap <silent> <buffer> t <c-w><c-w>
 	"Trigger nerdtree file system browser automatically, when starting vim session
 	"autocmd vimenter * NERDTree0
-augroup END
+augroup end
 set guifont=hack_nerd_font:h11
 set encoding=utf-8
 "show line numbers per default
-let NERDTreeShowLineNumbers = 0
+let NERDTreeShowLineNumbers = 1
 "show hidden files per default
 let NERDTreeShowHidden = 1
 nnoremap <localleader>n :call <SID>OpenOrRefreshNerdTree()<cr>
@@ -947,6 +946,11 @@ nnoremap <silent> , <Plug>(iron-send-line)<CR>
 "nmap <localleader>c    <Plug>(iron-clear)
 "}}}
 "------------------------------NVIM-R CONFIGURATION------------------------------{{{
+" Set R's current working directory to 
+" neovim's current working directory
+" (and not to the directory of the R file
+" being opened, i.e. the default behaviour)
+let R_nvim_wd = 1
 "Disable all Nvim-R key maps (Each Nvim-R key map has to be configured manually
 "then)
 let R_user_maps_only = 1
@@ -960,20 +964,28 @@ let R_hi_fun_paren = 1  " Highlight R functions only if followed by a (
 " let Rout_more_colors = 1
 let R_show_arg_help = 1
 let R_assign = 0
+function! s:NvimRconf()
 "remap the 'send line' command of Nvim-R plugin"
-nmap , <Plug>RDSendLine
+nmap <buffer> , <Plug>RDSendLine
 "remap the 'Send selection' command of Nvim-R plugin"
-vmap , <Plug>RDSendSelection
+vmap <buffer> , <Plug>RDSendSelection
 "remap the 'check code before sending and then send' command of Nvim-R plugin"
 "vmap ,c <Plug>RESendSelection
-" Set R's current working directory to 
-" neovim's current working directory
-" (and not to the directory of the R file
-" being opened, i.e. the default behaviour)
-let R_nvim_wd = 1
-nmap <localleader>rw :call g:SendCmdToR("getwd()")<CR>
-nmap <localleader>rs :call RAction("str")<CR>
-nmap <localleader>rh :call RAction("help")<CR>
+nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
+nmap <buffer> <localleader>rs :call RAction("str")<CR>
+nmap <buffer> <localleader>rh <Plug>RHelp
+" nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
+nmap <buffer> <localleader>rg call RAction("glimpse")<CR>
+nmap <buffer> <localleader>rl :call RAction("length")<CR>
+nmap <buffer> <localleader>rq :call g:SendCmdToR("quit(save='no')")<CR>
+nmap <buffer> <localleader>rf :call StartR("R")<CR>
+nmap <buffer> <localleader>aa <Plug>RSendFile
+nmap <buffer> <localleader>rc call RAction("class")<CR>
+endfunction
+augroup NvimR
+      autocmd!
+      autocmd filetype r :call s:NvimRconf()
+augroup end
 "}}}
 "------------------------------ULTISNIPS CONFIGURATION------------------------------{{{
 let g:UltiSnipsEditSplit="context"
