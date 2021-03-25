@@ -8,7 +8,7 @@ Plug 'jalvesaq/Nvim-R'
 "Plug 'gaalcaras/ncm-R'
 "Plug 'ncm2/ncm2-bufword'
 "Plug 'ncm2/ncm2-path'
-Plug 'lervag/vimtex'
+" Plug 'lervag/vimtex'
 Plug 'junegunn/vim-easy-align'
 Plug 'Shougo/deoplete.nvim'
 Plug 'SirVer/ultisnips'
@@ -25,8 +25,8 @@ Plug 'vim-airline/vim-airline' "fancy vim status bar
 Plug 'jiangmiao/auto-pairs' "set matching quotation marks, braces, etc.
 "Plug 'davidhalter/jedi-vim' "python go-to function and completion
 Plug 'sbdchd/neoformat' "code formatting
-Plug 'neomake/neomake'
-"Plug 'Vigemus/iron.nvim'
+" Plug 'neomake/neomake'
+" Plug 'Vigemus/iron.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'edkolev/tmuxline.vim'
 call plug#end()
@@ -60,17 +60,19 @@ let g:VIMRC_DIR = "/Users/Philipp/Developer/Vimscript/init.vim"
 let g:python3_host_prog="/Users/Philipp/anaconda3/python.app/Contents/MacOS/python"
 let g:python_host_prog="/usr/bin/python"
 let g:ruby_host_prog="/usr/local/bin/ruby"
-let mapleader = '\'|			"set the leader key to the hyphen character
-let maplocalleader = '-'|		"map the localleader key to a backslash
+let mapleader = '\'|			"set the leader key to the backslash character
+let maplocalleader = '-'|		"map the localleader key to the hyphen
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "}}}
 "------------------------------FUNCTIONS------------------------------{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
 "Delete the current swap file
+"------------------------------RemoveSwapFile{{{
 function! s:RemoveSwapFile()
 	execute ":!rm ".swapname(bufname())
 endfunction
+"}}}
 "------------------------------DeleteLine{{{
 function! s:DeleteLine()
   call setline(".",'')
@@ -555,9 +557,9 @@ iabbrev 'van\ W' van Wickevoort Crommelin
 "------------------------------MAPPINGS------------------------------{{{
 "------------------------------GLOBAL{{{
 "move cursor just before found character
-noremap f t
+" noremap f t
 "move cursor just after found character
-noremap F T
+" noremap F T
 "}}}
 "------------------------------NORMAL MODE{{{
 "Surround word by given character
@@ -602,8 +604,9 @@ nnoremap <localleader>q :call <SID>QuickFixToggle()<cr>
 "navigate within the quickfix-window
 nnoremap <silent> ä :cprevious<cr>
 nnoremap <silent> ü :cnext<cr>
-"Cycle through all listed buffers
+"Show fold column
 nnoremap <localleader>f :call <SID>FoldColumnToggle()<cr>
+"Cycle through all listed buffers
 noremap <silent> t :call <SID>BufferCycle("up")<cr>
 noremap <silent> <s-T> :call <SID>BufferCycle("down")<cr>
 "echo cword
@@ -698,6 +701,9 @@ vnoremap n< <esc>:<c-u>execute "normal! /".'\v\<'."\rlvi<"<cr>
 vnoremap p< <esc>:<c-u>execute "normal! ?".'\v\>'."\rhvi<"<cr>
 "}}} <alskdjflkasf>
 "------------------------------INSERT MODE{{{
+"Usefull for R scripts
+inoremap ^ <
+inoremap ° >
 "Open completion menuh
 "inoremap <expr> <tab> :call openOmni()
 inoremap <tab> <c-r>=<SID>OpenOmni()<CR>
