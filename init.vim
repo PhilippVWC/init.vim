@@ -5,6 +5,7 @@ call plug#begin()
 " Plug 'ncm2/ncm2'
 " Plug 'roxma/nvim-yarp'
 Plug 'jalvesaq/Nvim-R'
+Plug 'rakr/vim-one'
 Plug 'preservim/tagbar'
 Plug 'sheerun/vim-polyglot'
 " Plug 'brooth/far.vim'
@@ -19,7 +20,6 @@ Plug 'SirVer/ultisnips'
 " Plug 'garbas/vim-snipmate'
 Plug 'preservim/nerdtree'
 Plug 'ivalkeen/nerdtree-execute'
-Plug  'ryanoasis/vim-devicons'
 " Plug  'vim-syntastic/syntastic'
 " Plug 'Lokaltog/powerline'
 " Plug 'tpope/vim-surround'
@@ -35,6 +35,7 @@ Plug 'jiangmiao/auto-pairs' "set matching quotation marks, braces, etc.
 " Plug 'Vigemus/iron.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'edkolev/tmuxline.vim'
+Plug 'ryanoasis/vim-devicons'
 call plug#end()
 "------------------------------CUSTOM PLUGINS
 " execute ":source ".'~/developer/init.vim/grep-operator.vim'
@@ -581,8 +582,8 @@ endfunction
 	command! Tex :w|:!pdflatex -shell-escape %
 	command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
   set nocompatible| "Required by the vim-polyglot plugin
-  colorscheme koehler
-"   colorscheme pablo
+"   colorscheme koehler
+"   Colorscheme is set in plugin options for plugin "vim-one" below
 	set omnifunc=syntaxcomplete#Complete
 	set foldcolumn=4|
 	set ignorecase|		"Ignore case for vim search function / or ?
@@ -923,8 +924,8 @@ augroup nerdtree
 	"Trigger nerdtree file system browser automatically, when starting vim session
 	"autocmd vimenter * NERDTree0
 augroup end
-set guifont=hack_nerd_font:h11
 set encoding=utf-8
+set guifont=hack_nerd_font:h11
 "show line numbers per default
 let NERDTreeShowLineNumbers = 1
 "show hidden files per default
@@ -1039,4 +1040,29 @@ let g:airline_detect_modified=1
 nnoremap <silent> <localleader>ga :Git add %<cr>
 "Git rebase --continue
 nnoremap <silent> <localleader>grc :Git rebase --continue<cr>
+"}}}
+"------------------------------VIM-ONE CONFIGURATION------------------------------{{{
+"Credit joshdick
+"Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
+"If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
+"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
+if (empty($TMUX))
+  if (has("nvim"))
+    "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+    let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+  endif
+  "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+  "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+  " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+  if (has("termguicolors"))
+    set termguicolors
+  endif
+endif
+
+
+" set background=light " for the dark version
+set background=dark " for the dark version
+colorscheme one
+set t_8b=^[[48;2;%lu;%lu;%lum
+set t_8f=^[[38;2;%lu;%lu;%lum
 "}}}
