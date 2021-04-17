@@ -978,6 +978,7 @@ nmap <buffer> <localleader>rh <Plug>RHelp
 " nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
 nmap <buffer> <localleader>rg call RAction("glimpse")<CR>
 nmap <buffer> <localleader>rl :call RAction("length")<CR>
+nmap <buffer> <localleader>rL :call RAction("library")<CR>
 nmap <buffer> <localleader>rq :call g:SendCmdToR("quit(save='no')")<CR>
 nmap <buffer> <localleader>rf :call StartR("R")<CR>
 nmap <buffer> <localleader>aa <Plug>RSendFile
