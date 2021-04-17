@@ -98,7 +98,7 @@ checkInstallation <- function(pkg, repo) {
           ))
         }
         assign(
-          x = paste0(pkg, "IsInstalled"),
+          x = paste0(tolower(pkg), "IsInstalled"),
           value = TRUE,
           envir = globalenv()
         )
@@ -120,7 +120,7 @@ checkInstallation <- function(pkg, repo) {
     )
   } else {
     assign(
-      x = paste0(pkg, "IsInstalled"),
+      x = paste0(tolower(pkg), "IsInstalled"),
       value = TRUE,
       envir = globalenv()
     )
@@ -142,7 +142,7 @@ checkInstallation(
   repo = "cran"
 )
 checkInstallation(
-  pkg = "rfiglet",
+  pkg = "Rfiglet",
   repo = "wrathematics/Rfiglet"
 )
 checkInstallation(
@@ -238,9 +238,9 @@ if (git2rIsInstalled & stylerIsInstalled) {
   #     )
   #   )
   cli::cli_h2(paste0("Format scripts"))
-  gitStagedSkripte <- 
+  gitStagedSkripte <-
     gitStagedDateien[(gitStagedDateien %in% skripte) &
-    !(gitStagedDateien %in% ignoriere)]
+      !(gitStagedDateien %in% ignoriere)]
   styler::style_file(
     path = gitStagedSkripte,
     scope = "tokens"
