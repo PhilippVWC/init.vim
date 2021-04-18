@@ -1,8 +1,8 @@
-#!/bin/zsh
+#!/bin/sh
 # INPUT: NAME OF EXECUTABLE FILE
 # exe creates an executable file with the given name.
 # and opens up the vim editor to modify it directly.
 name="$(pwd)/$1"
 touch $name
 chmod +x $name
-vim $name
+nvim $name
