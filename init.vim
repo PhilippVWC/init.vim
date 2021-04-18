@@ -956,8 +956,8 @@ let R_nvim_wd = 1
 "then)
 let R_user_maps_only = 1
 "Show function arguments
-let R_show_args = 1
-let R_complete = 2 " Always include names of objects
+" let R_show_args = 1 NOTE: Deprecated with nvimcom 0.9-113
+" let R_complete = 2 " Always include names of objects NOTE: Deprecated with nvimcom 0.9-113
 let R_hi_fun = 1 " Activated by Default: Highlight R functions that are
                  " loaded into the global environment
 let R_hi_fun_paren = 1  " Highlight R functions only if followed by a (

@@ -20,7 +20,6 @@
 snapshotDir <- paste0(projectPath, "")
 #------------------------------------------------------
 # Philipp van Wickevoort Crommelin (pvwc)
-# parcIT GmbH
 # ======================================================
 if ("cli" %in% installed.packages()[, "Package"]) {
   cli::cli_h1(paste0("Pre commit script"))
