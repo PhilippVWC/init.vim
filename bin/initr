@@ -31,7 +31,7 @@ git add renv.lock
 git commit -am "Initial commit"
 
 echo "Update all vim plugins"
-vimplugupdate
+updvimplugs
 
 echo "Install nvimcom into private project library"
 instnvc
