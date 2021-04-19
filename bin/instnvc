@@ -1,6 +1,12 @@
-#!/usr/bin/Rscript 
+#!/usr/bin/Rscript
 # ======================================================
-# Installation von nvimcom
+# Installation or update of nvimcom
+# and deposition of source and binary installation
+# into renv's local package library /renv/local
+# acording to
+# https://rstudio.github.io/renv/articles/local-sources.html
+#
+# Info: Package nvimcom is part of the vim plugin Nvim-R:
 # https://github.com/jalvesaq/Nvim-R/tree/master/R/nvimcom
 #------------------------------------------------------
 # Voraussetzungen:
@@ -13,14 +19,16 @@
 #------------------------------------------------------
 # Philipp van Wickevoort Crommelin
 # ======================================================
-if(!exists("projectPath")){
+if (!exists("projectPath")) {
   stop("Variable \"projectPath\" unknown")
 }
-pathNvimcom <- paste0("/home/philipp/.config/nvim/",
-                      "plugged/Nvim-R/R/nvimcom/")
+pathNvimcom <- paste0(
+  "/home/philipp/.config/nvim/",
+  "plugged/Nvim-R/R/nvimcom/"
+)
 
-if(!dir.exists(projectPath)){
-  stop(paste0("Path '",pathNvimcom,"' does not exist"))
+if (!dir.exists(projectPath)) {
+  stop(paste0("Path '", pathNvimcom, "' does not exist"))
 }
 
 # Binary-Paket archivieren und ablegen
@@ -31,9 +39,9 @@ if(!dir.exists(projectPath)){
 # des Pakets "Nvimcom"
 # Abhaengigkeiten aus der DESCRIPTION-Datei
 # Beruecksichtigt leider nur die DESCRIPTION-Datei und
-# nicht zusaetzlich die NAMESPACE-Datei. 
+# nicht zusaetzlich die NAMESPACE-Datei.
 
-  # Check devtools dependency first
+# Check devtools dependency first
 #   if (!("devtools" %in% installed.packages()[, "Package"])) {
 #     tryCatch(
 #       expr = {
@@ -56,7 +64,7 @@ if(!dir.exists(projectPath)){
 #     devtoolsIsInstalled <- TRUE
 #   }
 # tryCatch(expr = {
-# 
+#
 #            cat("Install nvimcom dependencies if required\n")
 # devtools::install_deps(pkg = pathNvimcom,
 #                        quiet = FALSE,
@@ -67,7 +75,7 @@ if(!dir.exists(projectPath)){
 
 # Abhaengigkeiten aus der NAMESPACE-Datei
 # (muss manuell geparsed werden),
-# da kein entsprechendes R-Paket gefunden 
+# da kein entsprechendes R-Paket gefunden
 # wurde.
 # pathNAMESPACE <- paste0(pathNvimcom, "NAMESPACE")
 # contentNAMESPACE <- readLines(file.path(pathNAMESPACE))
@@ -103,7 +111,7 @@ if(!dir.exists(projectPath)){
 # )
 # )
 
-#}}}
+# }}}
 
 srcPath <- paste0(projectPath, "renv/local/")
 binPath <- paste0(projectPath, "renv/local/nvimcom/")
@@ -122,19 +130,22 @@ if (!dir.exists(file.path(binPath))) {
 # Versionsnummer des Pakets Nvimcom parsen
 contentDESCRIPTION <-
   readLines(con = file.path(paste0(pathNvimcom, "/DESCRIPTION")))
-line <- grep(pattern = "Version",
-             x = contentDESCRIPTION)
+line <- grep(
+  pattern = "Version",
+  x = contentDESCRIPTION
+)
 vNvimcom <- sub(
   pattern = "^Version: (.*)$",
   replacement = "\\1",
   x = contentDESCRIPTION[line],
   perl = TRUE
 )
-srcTarBallName <- paste0("Nvimcom_",
-                            vNvimcom,
-                            ".tar.gz")
-if (!(file.exists(file.path(paste0(srcPath, srcTarBallName)
-)))) {
+srcTarBallName <- paste0(
+  "Nvimcom_",
+  vNvimcom,
+  ".tar.gz"
+)
+if (!(file.exists(file.path(paste0(srcPath, srcTarBallName))))) {
   invisible(
     devtools::build(
       pkg = file.path(pathNvimcom),
@@ -169,23 +180,36 @@ archiveSuffix <- sub(
   x = basename(pathBinary),
   perl = TRUE
 )
-binTarBallName <- paste0("Nvimcom_",
-                            vNvimcom,
-                            archiveSuffix)
-if(binTarBallName != basename(pathBinary)){
-invisible(file.rename(from = file.path(pathBinary),
-                      to = file.path(
-                        paste0(binPath,
-                               binTarBallName)
-                      )))
+binTarBallName <- paste0(
+  "Nvimcom_",
+  vNvimcom,
+  archiveSuffix
+)
+if (binTarBallName != basename(pathBinary)) {
+  invisible(file.rename(
+    from = file.path(pathBinary),
+    to = file.path(
+      paste0(
+        binPath,
+        binTarBallName
+      )
+    )
+  ))
 }
 # Installiere Paket "Nvimcom", falls nicht bereits geschehen {{{
-if(!("nvimcom" %in% installed.packages()[,"Package"])){
+if (
+  !("nvimcom" %in% installed.packages()[, "Package"]) |
+    (sub(
+      x = utils::packageVersion(pkg = "nvimcom"),
+      pattern = "-",
+      replacement = "."
+    ) != vNvimcom)
+) {
   install.packages(
     pkgs = file.path(pathNvimcom),
     type = "source",
     quiet = FALSE,
     repos = NULL
   )
-} 
-#}}}
+}
+# }}}
