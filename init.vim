@@ -974,12 +974,13 @@ vmap <buffer> , <Plug>RDSendSelection
 "vmap ,c <Plug>RESendSelection
 nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
 nmap <buffer> <localleader>rs :call RAction("str")<CR>
+nmap <buffer> <localleader>ri :RStop<CR>
 nmap <buffer> <localleader>rh <Plug>RHelp
 " nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
 nmap <buffer> <localleader>rg call RAction("glimpse")<CR>
 nmap <buffer> <localleader>rl :call RAction("length")<CR>
 nmap <buffer> <localleader>rL :call RAction("library")<CR>
-nmap <buffer> <localleader>rq :call g:SendCmdToR("quit(save='no')")<CR>
+nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
 nmap <buffer> <localleader>rf :call StartR("R")<CR>
 nmap <buffer> <localleader>aa <Plug>RSendFile
 nmap <buffer> <localleader>rc call RAction("class")<CR>
