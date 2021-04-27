@@ -111,7 +111,7 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------RemoveSwapFile{{{
 "Delete the current swap file
 function! s:RemoveSwapFile()
-eexecute ":!rm ".swapname(bufname())
+ execute ":!rm ".swapname(bufname())
 endfunction
 "}}}
 "------------------------------DeleteLine{{{
@@ -859,7 +859,7 @@ augroup r
 "         autocmd Filetype r :setlocal syntax=r|                          "Syntax is sometimes not set automatically when file is opened with NERDtree. That is why it needs to be set explicitly here.
 augroup end
 "}}}
-"------------------------------Filetype html{{{
+"------------------------------Filetype markdown{{{
 augroup markdown
 	autocmd!
 	autocmd FileType markdown onoremap <buffer> in@ :<c-u>execute "normal! /@\r:nohlsearch\rhviw"<cr>
@@ -867,16 +867,30 @@ augroup markdown
 	autocmd FileType markdown onoremap <buffer> ah :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_j"<cr>|	"delete around heading
 augroup end
 "}}}
-
+"------------------------------Filetype perl{{{
 augroup perl
       autocmd!
       autocmd FileType perl :iabbrev '/' //<left>|"Create matching slash in regular expression environments
 augroup end
+"}}}
 "------------------------------Filetype vim{{{
 augroup vim
 	autocmd!
 	autocmd FileType vim setlocal foldmethod=marker
 	autocmd FileType vim setlocal foldlevelstart=0
+augroup end
+"}}}
+"------------------------------Filetype sh{{{
+augroup sh
+	autocmd!
+	autocmd FileType sh setlocal textwidth=200
+  autocmd FileType sh setlocal foldmethod=marker
+augroup end
+"}}}
+"------------------------------Filetype snippets{{{
+augroup snippets
+	autocmd!
+  autocmd FileType snippets setlocal foldmethod=marker
 augroup end
 "}}}
 "------------------------------miscellaneous{{{
@@ -974,6 +988,7 @@ vmap <buffer> , <Plug>RDSendSelection
 "vmap ,c <Plug>RESendSelection
 nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
 nmap <buffer> <localleader>rs :call RAction("str")<CR>
+nmap <buffer> <localleader>rc :call RAction("class")<CR>
 nmap <buffer> <localleader>ri :RStop<CR>
 nmap <buffer> <localleader>rh <Plug>RHelp
 " nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
@@ -983,7 +998,6 @@ nmap <buffer> <localleader>rL :call RAction("library")<CR>
 nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
 nmap <buffer> <localleader>rf :call StartR("R")<CR>
 nmap <buffer> <localleader>aa <Plug>RSendFile
-nmap <buffer> <localleader>rc call RAction("class")<CR>
 endfunction
 augroup NvimR
       autocmd!
