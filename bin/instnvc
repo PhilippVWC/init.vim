@@ -197,19 +197,25 @@ if (binTarBallName != basename(pathBinary)) {
   ))
 }
 # Installiere Paket "Nvimcom", falls nicht bereits geschehen {{{
-if (
-  !("nvimcom" %in% installed.packages()[, "Package"]) |
-    (sub(
-      x = utils::packageVersion(pkg = "nvimcom"),
-      pattern = "-",
-      replacement = "."
-    ) != vNvimcom)
-) {
+if (!("nvimcom" %in% installed.packages()[, "Package"])) {
   install.packages(
     pkgs = file.path(pathNvimcom),
     type = "source",
     quiet = FALSE,
     repos = NULL
   )
+} else {
+  if (sub(
+    x = utils::packageVersion(pkg = "nvimcom"),
+    pattern = "-",
+    replacement = "."
+  ) != vNvimcom) {
+    install.packages(
+      pkgs = file.path(pathNvimcom),
+      type = "source",
+      quiet = FALSE,
+      repos = NULL
+    )
+  }
 }
 # }}}
