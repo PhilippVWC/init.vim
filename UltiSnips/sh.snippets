@@ -1,3 +1,98 @@
-snippet col "bash prompt color"
-\[\033[${0:33m}\]
-endsnippet 
+snippet red "colorize red"
+\e[31m$1\e[0m$2
+endsnippet
+
+snippet green "colorize green"
+\e[32m$1\e[0m$2
+endsnippet
+
+snippet cyan "colorize cyan"
+\e[36m$1\e[0m$2
+endsnippet
+
+snippet blue "colorize blue"
+\e[34m$1\e[0m$2
+endsnippet
+
+snippet purple "colorize purple"
+\e[35m$1\e[0m$2
+endsnippet
+
+snippet gray "colorize gray"
+\e[37m$1\e[0m$2
+endsnippet
+
+snippet bold "bold cli text"
+\e[0m$1\e[0m$2
+endsnippet
+
+snippet underl "underlined cli text"
+\e[4m$1\e[0m$2
+endsnippet
+
+snippet blink "blinking cli text"
+\e[5m$1\e[0m$2
+endsnippet
+
+snippet rev "Reverse video characters in cli text"
+\e[7m$1\e[0m$2
+endsnippet
+
+snippet head "header"
+#!/bin/bash
+#################################### HEADER ####################################
+# 
+# Skript-Name: 
+# 
+# Kurze Beschreibung:
+# 
+# 
+#
+# Autor: Philipp van Wickevoort Crommelin (parcIT)
+#
+################################## HEADER END ##################################
+$0
+endsnippet
+
+# Visual Mode snippets {{{
+snippet redv "colorize red"
+\e[31m${VISUAL}\e[0m
+endsnippet
+
+snippet greenv "colorize green"
+\e[32m${VISUAL}\e[0m
+endsnippet
+
+snippet cyanv "colorize cyan"
+\e[36m${VISUAL}\e[0m
+endsnippet
+
+snippet bluev "colorize blue"
+\e[34m${VISUAL}\e[0m
+endsnippet
+
+snippet purplev "colorize purple"
+\e[35m${VISUAL}\e[0m
+endsnippet
+
+snippet grayv "colorize gray"
+\e[37m${VISUAL}\e[0m
+endsnippet
+
+snippet boldv "bold cli text"
+\e[1m${VISUAL}\e[0m
+endsnippet
+
+snippet underlv "underlined cli text"
+\e[4m${VISUAL}\e[0m
+endsnippet
+
+snippet blinkv "blinking cli text"
+\e[5m${VISUAL}\e[0m
+endsnippet
+
+snippet revv "Reverse video characters in cli text"
+\e[7m${VISUAL}\e[0m
+endsnippet
+
+#}}}

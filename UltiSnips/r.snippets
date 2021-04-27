@@ -62,7 +62,7 @@ cli::cli_div(theme = list(span.orange = list(color = "orange"),
 cli::cli_end()
 endsnippet
 
-snippet commandLine "R command line tool header"
+snippet rcl "R command line tool header"
 #!/usr/bin/Rscript --vanilla
 #======================================================
 # Command line formatter for R scripts
@@ -150,26 +150,6 @@ plot(
 )
 endsnippet
 
-snippet gr "draw grid"
-grid(lwd = $1)
-endsnippet
-
-snippet com "comment"
-print("...${1:comment}...")
-endsnippet
-
-snippet gsmIter "iterated gsm"
-gsm_iter_cpp(
-		  N = ${1:Number of iterations}
-		 ,x0 = ${2:Initial condition}
-		 ,r = ${3:Bifurcation parameter}
-		 ,alpha = ${4:Smoothness parameter}
-		 ,N_discr = ${5:0}
-		 ,skipFirst = ${6:TRUE}
-		 ,method = ${7:1}
-)
-endsnippet
- 
 snippet points "draw points"
 points(
    x = ${1: x coordinates}
@@ -331,5 +311,7 @@ ${VISUAL}
 }
 endsnippet
 
-
+snippet paren "put into parenthesis"
+$0(${VISUAL})
+endsnippet
 
