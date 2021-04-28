@@ -23,7 +23,9 @@ export PATH="$PATH:/home/philipp/bin/"
 export DYLD_LIBRARY_PATH="$MAGICK_HOME/lib/"
 # Command prompt
 function git_print_status () {
-  if [ -d "$(pwd)/.git" ]; then
+#   if [ -d "$(pwd)/.git" ]; then
+GIT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ $? -eq 0 ]; then
     branch=$(git branch --show-current);
     if [ -z "$(git status --porcelain)" ]; then
       status="working tree clean";
