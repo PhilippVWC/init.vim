@@ -315,3 +315,39 @@ snippet paren "put into parenthesis"
 $0(${VISUAL})
 endsnippet
 
+snippet modu "Shiny module UI function"
+${1:moduleName}UI <- function(id) {
+  tagList(
+  ${2:
+    textInput(
+      inputId = NS(
+        namespace = id,
+        id = "i"
+      ),
+      label = "Text input"
+    ),
+    textOutput(outputId = NS(
+      namespace = id,
+      id = "o"
+    ),
+    label = "Text Output")
+    }
+  )
+}
+endsnippet
+
+
+snippet mods "Shiny module server function"
+${1:moduleName}Server <- function(id) {
+  moduleServer(
+    id = id,
+    module = function(input, output, session) {
+    ${2:
+    output$o <- renderText(x = {input$i})
+    }
+    }
+  )
+}
+endsnippet
+
+
