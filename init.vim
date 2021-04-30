@@ -740,7 +740,7 @@ nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC."\|:lcd ".g:VIMRC_
 "source (aka. "reload") vimrc file
 nnoremap <localleader>r :source $MYVIMRC<CR>
 "open terminal emulator
-nnoremap <silent> <localleader>C :<c-u>execute "split term://bash"<cr>:startinsert<cr>
+nnoremap <silent> <localleader>C :<c-u>execute "split term://fish"<cr>:startinsert<cr>
 "select word with space key
 nnoremap <space> viw
 "clear current line
