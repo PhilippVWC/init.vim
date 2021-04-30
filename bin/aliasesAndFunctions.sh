@@ -19,7 +19,9 @@ alias mlr="cd /home/philipp/Developer/R"
 alias vimrc="cd /home/philipp/Developer/Vimscript/init.vim"
 BLOCKSIZE=1024
 export EDITOR=nvim 
-export PATH="$PATH:/home/philipp/bin/"
+PATH="$PATH:/home/philipp/Developer/Vimscript/init.vim/bin"
+PATH="$PATH:/home/philipp/Developer/Shell/shiny_setup/"
+export PATH
 export DYLD_LIBRARY_PATH="$MAGICK_HOME/lib/"
 # Command prompt
 function git_print_status () {
@@ -46,8 +48,8 @@ l5='\[\033[36m\] \u@\h \[\033[32m\]$(/bin/ls \
 # '$(du -hd 0|sed -r \ "s/^([[:digit:]])(\.{0,1})([[:digit:]]{1,})([[:alpha:]]{1})[[:space:]].*$/\1\2\3\4/g")\n'
 l6='\[\033[36m\]--------------------------------------------------\n'
 l7='\[\033[36m\]--> \[\033[00m\]'
-PS1=$l1$l2$l3$l4$l5$l6$l7
-export PS1
+#PS1=$l1$l2$l3$l4$l5$l6$l7
+#export PS1
 
 function mkd () {
 	if [ $# -eq 0 ]; then
@@ -84,12 +86,12 @@ function swap()
 function pth()
 {	if [ $# -eq 0 ]; then
 		echo $(pwd)
-		echo -n $(pwd) | pbcopy
+		echo -n $(pwd) | win32yank.exe -i
 	else
 		local fileName=$1
-		local wholePath=$(pwd)/$fileName
+		local wholePath="$(pwd)"/$fileName
 		echo $wholePath
-		echo -n $wholePath | xclip # -n flag: "do not copy the new line character into the clipboard"
+		echo -n $wholePath | win32yank.exe -i
 	fi
 }
 
