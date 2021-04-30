@@ -316,7 +316,7 @@ $0(${VISUAL})
 endsnippet
 
 snippet modu "Shiny module UI function"
-${1:moduleName}UI <- function(id) {
+${1:moduleNameUI} <- function(id) {
   tagList(
   ${2:
     textInput(
@@ -350,4 +350,9 @@ ${1:moduleName}Server <- function(id) {
 }
 endsnippet
 
+snippet serv "Shiny server function"
+server <- function(input,output,session){
+${0:declarative server code}
+}
+endsnippet
 
