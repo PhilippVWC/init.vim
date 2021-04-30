@@ -1,3 +1,0 @@
-#!/bin/sh
-Rscript .hooks/pre-commit.R
-git add -u
