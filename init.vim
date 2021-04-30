@@ -762,7 +762,7 @@ vnoremap <localleader>e( <esc>`<i(<esc>`>la)<esc>
 "Enclose/surround visually selected area with/by single quotes
 vnoremap <localleader>e' <esc>`<i'<esc>`>la'<esc>
 "Enclose/surround visually selected area with/by single quotes
-vnoremap <localleader>e" di"<esc>pa"<esc>
+vnoremap <localleader>e" <esc>`<i"<esc>`>la"<esc>
 "Indent with tab
 vnoremap <silent> <tab> >
 "Unindent with tab
