@@ -5,7 +5,7 @@ SETUVAR _fish_abbr_RR:source\x20\x24__fish_config_dir/config\x2efish
 SETUVAR _fish_abbr_conf:\x24EDITOR\x20\x24__fish_config_dir/config\x2efish
 SETUVAR _fish_abbr_e:exit
 SETUVAR _fish_abbr_ivm:nvim
-SETUVAR _fish_abbr_k:pkill\x20\x2dP\x2012867
+SETUVAR _fish_abbr_k:pkill\x20\x2dP\x2014517
 SETUVAR _fish_abbr_l:ls\x20\x2dlsth
 SETUVAR _fish_abbr_ls:ls\x20\x2dAFG
 SETUVAR _fish_abbr_matrix:cmatrix\x20\x2ds

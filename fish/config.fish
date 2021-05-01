@@ -12,8 +12,6 @@ abbr --add 'vi' 'nvim'
 abbr --add 'k' "pkill -P $fish_pid"   # kill all daughter processes belonging to the current PID
 abbr --add 'untar' 'tar -xcf'
 abbr --add 'ungzip' 'gzip -d' 
-abbr --add 'ls' 'ls -AFG'
-abbr --add 'rm' 'rm -R'
 abbr --add 'matrix' 'cmatrix -s'
 abbr --add 'conf' '$EDITOR $__fish_config_dir/config.fish'
 abbr --add 'RR' 'source $__fish_config_dir/config.fish'
