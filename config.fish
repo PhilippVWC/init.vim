@@ -10,7 +10,7 @@ set -U GOPATH /home/philipp/go
 # disable fish greeting on startup
 set fish_greeting
 
-abbr --add 'l' 'ls -lsth'
+abbr --add 'l' 'ls -lstha'
 abbr --add 'vim' 'nvim'
 abbr --add 'ivm' 'nvim'
 abbr --add 'vi' 'nvim'
