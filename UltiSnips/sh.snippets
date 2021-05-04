@@ -40,7 +40,7 @@ endsnippet
 
 snippet head "header"
 #!/bin/bash
-#################################### HEADER ####################################
+################ HEADER ################
 # 
 # Skript-Name: 
 # 
@@ -50,7 +50,7 @@ snippet head "header"
 #
 # Autor: Philipp van Wickevoort Crommelin (parcIT)
 #
-################################## HEADER END ##################################
+############## HEADER END ##############
 $0
 endsnippet
 
@@ -96,3 +96,72 @@ snippet revv "Reverse video characters in cli text"
 endsnippet
 
 #}}}
+
+snippet body "create skript body structure"
+
+# Globale Bezeichner {{{
+# Basisname und Pfad dieses Kommandozeilenskriptes
+skriptName=$(basename \$0)
+skriptPfad=$(whereis $skriptName | awk '{print \$2}')
+# Verzeichnis fuer zusaetzliche Dateien, die
+# das Programm benoetigt.
+skriptRessourcen="$skriptPfad"_rsc 
+}}}
+# Kommandozeilenoptionen {{{
+}}}
+# Funktionsdefinitionen {{{
+# error {{{
+ error() {
+  echo -e "[\e[91mERROR\e[0m] \$1"
+  exit 1
+} 
+# }}}
+# hilfe {{{
+}}}
+# }}}
+# HAUPTPROGRAMM {{{
+
+# Parse Optionen
+# Ueberpruefe, ob Pfad zum Skript gefunden wurde
+if [ -z $skriptPfad ]; then
+  error "Das Skript: \e[35m$skriptPfad\e[0m konnte nicht gefunden werden."
+fi
+
+if [ $# == 0 ]; then
+  hilfe
+  exit 0
+else
+  while getopts 'hl:' OPTION; do
+    case "$OPTION" in
+      h) 
+        hilfe
+        exit 0
+        ;;
+      l)
+        larg="$OPTARG"
+        ;;
+      *)
+        error "Keine Option übergeben"
+        ;;
+    esac
+  done
+  if [ -z $larg ]; then
+    echo -e "Kein Layout angegeben."
+    echo -e "Shiny-Entwurfsmuster \e[35mnavbarPage\e[0m wird standardmäßig verwendet."
+    larg="navbarPage"
+  fi
+  # Korrigiere Zaehler $# um die Anzahl der uebergebenen Optionen
+  shift "$(($OPTIND -1))"
+
+  # Parse Argumente
+  if [ -z \$1 ]; then
+    error "Bitte einen Pfadnamen angeben, unter dem das Shiny-Projekt mit dem Layout \e[35m$larg\e[0m angelegt werden soll."
+  else
+    appName=\$1
+    infrastruktur $appName
+  fi
+fi
+
+exit 0
+# }}}
+endsnippet
