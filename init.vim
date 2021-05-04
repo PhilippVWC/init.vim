@@ -20,6 +20,7 @@ Plug 'SirVer/ultisnips'
 " Plug 'garbas/vim-snipmate'
 Plug 'preservim/nerdtree'
 Plug 'ivalkeen/nerdtree-execute'
+Plug 'dag/vim-fish'
 " Plug  'vim-syntastic/syntastic'
 " Plug 'Lokaltog/powerline'
 " Plug 'tpope/vim-surround'
@@ -89,10 +90,12 @@ let s:CommentChar = {
       \'perl':'#',
 			\'r':'#',
       \'sh':'#',
+			\'fish':'#',
 			\'vim':'"',
 			\'sql':'--',
 			\'tex':'%',
-			\'c':'//'
+			\'c':'//',
+			\'json':'//'
       \}
 let g:SPELL_LANG = "en_us"|	"global spelling language
 let s:verbose = 0|	"Global indicator variable for more verbose output
@@ -588,7 +591,6 @@ endfunction
 	set foldcolumn=4|
 	set ignorecase|		"Ignore case for vim search function / or ?
 	set hlsearch incsearch|	"highlight all matching search patterns while typing
-	set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
 	set splitright|		"make new vertical splits appear to the right
 	set splitbelow|		"make new horizontal splits appear below
 	"consider command <<aboveleft>> for vertical/horizontal splits to open to the left/top of the
@@ -739,8 +741,11 @@ nnoremap <silent> <localleader>er :execute ":split ".g:RFUNS."\|:lcd ".g:RFUNS_D
 nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC."\|:lcd ".g:VIMRC_DIR<cr>
 "source (aka. "reload") vimrc file
 nnoremap <localleader>r :source $MYVIMRC<CR>
-"open terminal emulator
+"open terminal emulator (detour: nvim calls shell and shell calls shell)
 nnoremap <silent> <localleader>C :<c-u>execute "split term://fish"<cr>:startinsert<cr>
+"open terminal emulator (direct way: nvim calls shell so nvim becomes parent
+"process ps -q $$ -o ppid= )
+" nnoremap <silent> <localleader>C :<c-u>execute ":terminal"<cr>:startinsert<cr>
 "select word with space key
 nnoremap <space> viw
 "clear current line
@@ -1002,6 +1007,7 @@ endfunction
 augroup NvimR
       autocmd!
       autocmd filetype r :call s:NvimRconf()
+	    set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
 augroup end
 "}}}
 "------------------------------ULTISNIPS CONFIGURATION------------------------------{{{
