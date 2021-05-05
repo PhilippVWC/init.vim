@@ -24,14 +24,21 @@ abbr --add 'RR' 'source $__fish_config_dir/config.fish'
 abbr --add 'e' "exit"
 abbr --add 'mlr' "cd /home/philipp/Developer/R"
 
-fish_vi_key_bindings
+function setKeybindings
+    # This function evaluates, wether the current
+    # fish shell was started from neovim.
+    # If true, then VI-Keybings are disabled,
+    # since this would conflict with neovim.
+    set ppid (ps -q (echo $fish_pid) -o ppid=)
+    set pcmd (ps -q $ppid -o comm=)
+    if echo $pcmd | grep -q "^nvim\$"
+        fish_default_key_bindings
+    else
+        fish_vi_key_bindings
+    end
+end
+setKeybindings
 
-# launchSshAgent # Skript to launch an ssh agend
-# fish_default_key_bindings # return to normal keybindings
-# python pwerline prompt
-# function fish_prompt
-#     powerline-shell --shell bare $status
-# end
 # go powerline prompt
 function fish_prompt
     eval $GOPATH/bin/powerline-go -error $status -jobs (jobs -p | wc -l)

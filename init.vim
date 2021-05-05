@@ -5,6 +5,7 @@ call plug#begin()
 " Plug 'ncm2/ncm2'
 " Plug 'roxma/nvim-yarp'
 Plug 'jalvesaq/Nvim-R'
+Plug 'jimhester/lintr'
 Plug 'rakr/vim-one'
 Plug 'preservim/tagbar'
 Plug 'sheerun/vim-polyglot'
@@ -741,11 +742,9 @@ nnoremap <silent> <localleader>er :execute ":split ".g:RFUNS."\|:lcd ".g:RFUNS_D
 nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC."\|:lcd ".g:VIMRC_DIR<cr>
 "source (aka. "reload") vimrc file
 nnoremap <localleader>r :source $MYVIMRC<CR>
-"open terminal emulator (detour: nvim calls shell and shell calls shell)
-nnoremap <silent> <localleader>C :<c-u>execute "split term://fish"<cr>:startinsert<cr>
-"open terminal emulator (direct way: nvim calls shell so nvim becomes parent
-"process ps -q $$ -o ppid= )
-" nnoremap <silent> <localleader>C :<c-u>execute ":terminal"<cr>:startinsert<cr>
+"open terminal emulator. For automatic switch to insert mode (aka terminal mode)
+"define autocomand according to autocomd termOpen * :startinsert
+nnoremap <silent> <localleader>C :execute ":split\|:terminal"<cr>
 "select word with space key
 nnoremap <space> viw
 "clear current line
@@ -901,6 +900,7 @@ augroup end
 "------------------------------miscellaneous{{{
 augroup miscellaneous
 	autocmd!
+  autocmd termOpen * :startinsert| "Automatically start terminal mode 
 "   autocmd vimenter * :NERDTree|           "Display Nerdtree after vim startup
 	autocmd Filetype help :setlocal number|	"show line numbers for vim documentation files
 " 	autocmd FileType tex :setlocal spell spelllang=de|	"check spelling automatically for tex files
