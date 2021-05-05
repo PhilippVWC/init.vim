@@ -3,9 +3,7 @@
 
 set -gx EDITOR "nvim"
 set -x theme_nerd_fonts yes
-set -U fish_user_paths /home/philipp/Developer/Vimscript/init.vim/bin $fish_user_paths
-set -U fish_user_paths /home/philipp/.local/bin $fish_user_paths
-set -U fish_user_paths /home/philipp/Developer/Shell/shiny_setup $fish_user_paths
+set -U fish_user_paths /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup 
 set -U GOPATH /home/philipp/go
 # disable fish greeting on startup
 set fish_greeting
@@ -30,7 +28,11 @@ function setKeybindings
     # If true, then VI-Keybings are disabled,
     # since this would conflict with neovim.
     set ppid (ps -q (echo $fish_pid) -o ppid=)
-    set pcmd (ps -q $ppid -o comm=)
+    # remove leading whitespaces
+    # that sometimes are produced by ps
+    set ppid (string trim $ppid)
+    set pcmd (ps -q (echo $ppid) -o comm=)
+    set pcmd (string trim $pcmd)
     if echo $pcmd | grep -q "^nvim\$"
         fish_default_key_bindings
     else
@@ -39,7 +41,37 @@ function setKeybindings
 end
 setKeybindings
 
-# go powerline prompt
+
+
+# Start openSSH authentication agent if 
+# has not happened yet
+function start_ssh_agent
+    set e /home/$USER/.ssh/agent.env
+    eval ssh-add -l > /dev/null 2>&1
+    set s $status
+    switch $s
+        case 0  
+            echo "OpenSSH authentication agent running"
+        case 1
+            echo "OpenSSH authentication agent running but with wrong keys"
+            echo "Key will now be added."
+            ssh-add
+        case 2
+            echo "Launch openSSH authentication agent:"
+            ssh-agent -c > $e 2>/dev/null
+            source $e
+            set -xU SSH_AUTH_SOCK $SSH_AUTH_SOCK
+            set -xU SSH_AGENT_PID $SSH_AGENT_PID
+            ssh-add
+            rm $e
+        case '*'
+            echo "Error code of ssh-add -l is $status"
+        end
+end
+start_ssh_agent
+
+
+# Display a powerline command prompt
 function fish_prompt
     eval $GOPATH/bin/powerline-go -error $status -jobs (jobs -p | wc -l)
 end
