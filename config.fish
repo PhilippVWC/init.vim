@@ -8,6 +8,7 @@ set -U GOPATH /home/philipp/go
 # disable fish greeting on startup
 set fish_greeting
 
+abbr --add 'tmuxconf' '$EDITOR /home/$USER/.tmux.conf'
 abbr --add 'l' 'ls -lstha'
 abbr --add 'vim' 'nvim'
 abbr --add 'ivm' 'nvim'
@@ -50,8 +51,8 @@ function start_ssh_agent
     eval ssh-add -l > /dev/null 2>&1
     set s $status
     switch $s
-        case 0  
-            echo "OpenSSH authentication agent running"
+#         case 0  
+#             echo "OpenSSH authentication agent running"
         case 1
             echo "OpenSSH authentication agent running but with wrong keys"
             echo "Key will now be added."
@@ -64,12 +65,11 @@ function start_ssh_agent
             set -xU SSH_AGENT_PID $SSH_AGENT_PID
             ssh-add
             rm $e
-        case '*'
-            echo "Error code of ssh-add -l is $status"
+#         case '*'
+#             echo "Error code of ssh-add -l is $status"
         end
 end
 start_ssh_agent
-
 
 # Display a powerline command prompt
 function fish_prompt
