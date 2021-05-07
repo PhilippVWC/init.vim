@@ -5,30 +5,35 @@ call plug#begin()
 " Plug 'ncm2/ncm2'
 " Plug 'roxma/nvim-yarp'
 Plug 'jalvesaq/Nvim-R'
-Plug 'jimhester/lintr'
+Plug 'easymotion/vim-easymotion'
+" Plug 'sindrets/diffview.nvim'
+" Plug 'vim-syntastic/syntastic'
+Plug 'dense-analysis/ale'
 Plug 'rakr/vim-one'
 Plug 'preservim/tagbar'
 Plug 'sheerun/vim-polyglot'
+Plug 'mhinz/vim-startify'
+Plug 'airblade/vim-gitgutter'
 " Plug 'brooth/far.vim'
 " Plug 'gaalcaras/ncm-R'
 " Plug 'ncm2/ncm2-bufword'
 " Plug 'ncm2/ncm2-path'
 " Plug 'lervag/vimtex'
 " Plug 'junegunn/vim-easy-align'
-Plug 'Shougo/deoplete.nvim'
+" Plug 'Shougo/deoplete.nvim'
 Plug 'SirVer/ultisnips'
 " Plug 'honza/vim-snippets'
 " Plug 'garbas/vim-snipmate'
 Plug 'preservim/nerdtree'
 Plug 'ivalkeen/nerdtree-execute'
 Plug 'dag/vim-fish'
-" Plug  'vim-syntastic/syntastic'
-" Plug 'Lokaltog/powerline'
 " Plug 'tpope/vim-surround'
 " Plug 'zchee/deoplete-jedi' "
-" Plug 'vim-airline/vim-airline' "fancy vim status bar
-Plug 'itchyny/lightline.vim' "fancy vim status bar
-" Plug 'vim-airline/vim-airline-themes'
+Plug 'vim-airline/vim-airline' "fancy vim status bar
+Plug 'vim-airline/vim-airline-themes'
+Plug 'edkolev/tmuxline.vim'
+" Plug 'Lokaltog/powerline'
+" Plug 'itchyny/lightline.vim' "fancy vim status bar
 Plug 'Raimondi/delimitMate'
 Plug 'jiangmiao/auto-pairs' "set matching quotation marks, braces, etc.
 " Plug 'davidhalter/jedi-vim' "python go-to function and completion
@@ -36,7 +41,6 @@ Plug 'jiangmiao/auto-pairs' "set matching quotation marks, braces, etc.
 " Plug 'neomake/neomake'
 " Plug 'Vigemus/iron.nvim'
 Plug 'tpope/vim-fugitive'
-Plug 'edkolev/tmuxline.vim'
 Plug 'ryanoasis/vim-devicons'
 call plug#end()
 "------------------------------CUSTOM PLUGINS
@@ -699,7 +703,7 @@ nnoremap <localleader>q :call <SID>QuickFixToggle()<cr>
 nnoremap <silent> ä :cprevious<cr>
 nnoremap <silent> ü :cnext<cr>
 "Cycle through all listed buffers
-nnoremap <localleader>f :call <SID>FoldColumnToggle()<cr>
+" nnoremap <localleader>f :call <SID>FoldColumnToggle()<cr>
 noremap <silent> t :call <SID>BufferCycle("up")<cr>
 noremap <silent> <s-T> :call <SID>BufferCycle("down")<cr>
 "echo cword
@@ -714,9 +718,9 @@ nnoremap <silent> <localleader>l :nohlsearch<cr>
 "perl, python and ruby.
 nnoremap / /\v
 "Highlight all trailing white space charactes before end-of-line character
-nnoremap <silent> <localleader>w :call <SID>HlTrlWsp()<cr>
+" nnoremap <silent> <localleader>w :call <SID>HlTrlWsp()<cr>
 "Delete all trailing white space charactes before end-of-line character
-nnoremap <silent> <localleader>W :execute "normal! mq:%s/".trlWspPattern."//g\r:nohl\r`q"<cr>
+" nnoremap <silent> <localleader>W :execute "normal! mq:%s/".trlWspPattern."//g\r:nohl\r`q"<cr>
 "Write and close all windows in all tabs und quit vim
 nnoremap <localleader>Z :wqall<cr>
 "maximize window
@@ -924,11 +928,11 @@ augroup end
 "let g:vimtex_compiler_progname = 'nvr'
 "}}}
 "------------------------------DEOPLETE CONFIGURATION------------------------------{{{
-let g:deoplete#enable_at_startup = 1 "enable deoplete auto completion at vim startup
-call deoplete#custom#option({
-    \ 'ignore_case': 1,
-    \ 'camel_case' : 1,
-    \ })
+" let g:deoplete#enable_at_startup = 1 "enable deoplete auto completion at vim startup
+" call deoplete#custom#option({
+"     \ 'ignore_case': 1,
+"     \ 'camel_case' : 1,
+"     \ })
 "let the vimtex plugin use deoplete as completion engine
 "call deoplete#custom#var('omni', 'input_patterns', {
 "      \ 'tex': g:vimtex#re#deoplete
@@ -1092,4 +1096,24 @@ endif
 colorscheme one
 set t_8b=^[[48;2;%lu;%lu;%lum
 set t_8f=^[[38;2;%lu;%lu;%lum
+"}}}
+"------------------------------SYNTASTIC CONFIGURATION------------------------------{{{
+" let g:syntastic_enable_r_lintr_checker = 1
+" let g:syntastic_r_checkers = ['lintr']
+"}}}
+"-------------------------VIM-EASYMOTION CONFIGURATION------------------------------{{{
+" <Leader>f{char} to move to {char}
+map  <localleader>f <Plug>(easymotion-bd-f)
+nmap <localleader>f <Plug>(easymotion-overwin-f)
+
+" s{char}{char} to move to {char}{char}
+" nmap s <Plug>(easymotion-overwin-f2)
+
+" Move to line
+" map <Leader>L <Plug>(easymotion-bd-jk)
+" nmap <Leader>L <Plug>(easymotion-overwin-line)
+
+" Move to word
+map  <localleader>w <Plug>(easymotion-bd-w)
+nmap <localleader>w <Plug>(easymotion-overwin-w)
 "}}}
