@@ -3,6 +3,7 @@
 "================================================= PLUGINS ==================================={{{
 call plug#begin()
 " Plug 'ncm2/ncm2'
+Plug 'iamcco/markdown-preview.nvim' 
 " Plug 'roxma/nvim-yarp'
 Plug 'jalvesaq/Nvim-R'
 Plug 'ncm2/ncm2'
@@ -920,7 +921,7 @@ augroup end
 "}}}
 "}}}
 "================================================= PLugin configuration ======================{{{
-"------------------------------NCM CONFIGURATION------------------------------{{{
+"------------------------------NCM------------------------------{{{
 " IMPORTANT: :help Ncm2PopupOpen for more information
 " enable ncm2 for all buffers
 "autocmd BufEnter * call ncm2#enable_for_buffer()
@@ -931,7 +932,7 @@ augroup end
 "let g:ncm2#auto_popup=1
 "let g:vimtex_compiler_progname = 'nvr'
 "}}}
-"------------------------------DEOPLETE CONFIGURATION------------------------------{{{
+"------------------------------DEOPLETE------------------------------{{{
 " let g:deoplete#enable_at_startup = 1 "enable deoplete auto completion at vim startup
 " call deoplete#custom#option({
 "     \ 'ignore_case': 1,
@@ -942,7 +943,7 @@ augroup end
 "      \ 'tex': g:vimtex#re#deoplete
 "      \})
 "}}}
-"------------------------------NERDTREE CONFIGURATION------------------------------{{{
+"------------------------------NERDTREE------------------------------{{{
 "try fc-cache -v -f in terminal to reset font buffer
 augroup nerdtree
 	autocmd!
@@ -961,7 +962,7 @@ nnoremap <localleader>n :call <SID>OpenOrRefreshNerdTree()<cr>
 "nnoremap <localleader>h :call <Plug>NERDTreeMapOpenSplit()<CR>
 let g:webdevicons_enable_nerdtree = 1
 "}}}
-"------------------------------IRON CONFIGURATION------------------------------{{{
+"------------------------------IRON------------------------------{{{
 "send visually selected code fragment in visual mode
 "vnoremap <silent> , <Plug>(iron-visual-send)<Esc><CR>
 "nmap <localleader>t    <Plug>(iron-send-motion)
@@ -973,7 +974,7 @@ nnoremap <silent> , <Plug>(iron-send-line)<CR>
 "nmap <localleader>q    <Plug>(iron-exit)
 "nmap <localleader>c    <Plug>(iron-clear)
 "}}}
-"------------------------------NVIM-R CONFIGURATION------------------------------{{{
+"------------------------------NVIM-R------------------------------{{{
 " Set R's current working directory to 
 " neovim's current working directory
 " (and not to the directory of the R file
@@ -1018,7 +1019,7 @@ augroup NvimR
 	    set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
 augroup end
 "}}}
-"------------------------------ULTISNIPS CONFIGURATION------------------------------{{{
+"------------------------------ULTISNIPS------------------------------{{{
 let g:UltiSnipsEditSplit="context"
 "dont use <Tab> key to expand snippet
 let g:UltiSnipsExpandTrigger = "<localleader><cr>"
@@ -1034,27 +1035,27 @@ function ExpandSnippetOrCarriageReturn()
 endfunction
 inoremap <expr> <CR> pumvisible() ? "<C-R>=ExpandSnippetOrCarriageReturn()<CR>" : "\<CR>"
 "}}}
-"------------------------------JEDI-VIM CONFIGURATION------------------------------{{{
+"------------------------------JEDI-VIM------------------------------{{{
 " disable autocompletion, cause we use deoplete for completion
 let g:jedi#completions_enabled = 1
 " open the go-to function in split, not another buffer
 let g:jedi#use_splits_not_buffers = "right"
 "}}}
-"------------------------------NEOFORMAT CONFIGURATION------------------------------{{{
+"------------------------------NEOFORMAT------------------------------{{{
 "use 'styler' formatter for R source files
 let g:neoformat_enabled_r = ['styler']
 "}}}
-"------------------------------NEOMAKE CONFIGURATION------------------------------{{{
+"------------------------------NEOMAKE------------------------------{{{
 "make 'pylint' the linter for python source files
 let g:neomake_python_enabled_makers = ['pylint']
 "}}}
-"------------------------------AIRLINE CONFIGURATION------------------------------{{{
+"------------------------------AIRLINE------------------------------{{{
 "Automatically displays all buffers when there's only one tab open.
 let g:airline#extensions#tabline#enabled = 1
 "enable modified detection
 let g:airline_detect_modified=1
 "}}}
-"------------------------------LIGHTLINE CONFIGURATION------------------------------{{{
+"------------------------------LIGHTLINE------------------------------{{{
 		let g:lightline = {
 			\ 'active': {
 			\   'left': [ [ 'mode', 'paste' ],
@@ -1065,13 +1066,13 @@ let g:airline_detect_modified=1
 			\ },
 			\ }
 "}}}
-"------------------------------FUGITIVE CONFIGURATION------------------------------{{{
+"------------------------------FUGITIVE------------------------------{{{
 "Git add file that corresponds to current buffer
 nnoremap <silent> <localleader>ga :Git add %<cr>
 "Git rebase --continue
 nnoremap <silent> <localleader>grc :Git rebase --continue<cr>
 "}}}
-"------------------------------VIM-ONE CONFIGURATION------------------------------{{{
+"------------------------------VIM-ONE------------------------------{{{
 "Credit joshdick
 "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
 "If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
@@ -1101,11 +1102,11 @@ colorscheme one
 set t_8b=^[[48;2;%lu;%lu;%lum
 set t_8f=^[[38;2;%lu;%lu;%lum
 "}}}
-"------------------------------SYNTASTIC CONFIGURATION------------------------------{{{
+"------------------------------SYNTASTIC------------------------------{{{
 " let g:syntastic_enable_r_lintr_checker = 1
 " let g:syntastic_r_checkers = ['lintr']
 "}}}
-"-------------------------VIM-EASYMOTION CONFIGURATION------------------------------{{{
+"-------------------------VIM-EASYMOTION------------------------------{{{
 " <Leader>f{char} to move to {char}
 map  <localleader>f <Plug>(easymotion-bd-f)
 nmap <localleader>f <Plug>(easymotion-overwin-f)
@@ -1120,4 +1121,39 @@ nmap <localleader>f <Plug>(easymotion-overwin-f)
 " Move to word
 map  <localleader>w <Plug>(easymotion-bd-w)
 nmap <localleader>w <Plug>(easymotion-overwin-w)
+"}}}
+"------------------------------ALE------------------------------{{{
+" default 0
+" let g:ale_r_lintr_lint_package = 0
+let g:ale_r_lintr_options = '
+\with_defaults(
+\    default = NULL,
+\    T_and_F_symbol_linter = lintr::T_and_F_symbol_linter,
+\    assignment_linter = lintr::assignment_linter,
+\    closed_curly_linter = lintr::closed_curly_linter(allow_single_line = FALSE),
+\    commas_linter = lintr::commas_linter,
+\    commented_code_linter = lintr::commented_code_linter,
+\    complexity_limit = lintr::cyclocomp_linter(complexity_limit = 25),
+\    object_name_linter = lintr::object_name_linter(styles = "snake_case"),
+\    object_length_linter = lintr::object_length_linter(length = 30L),
+\    equals_na_linter = lintr::equals_na_linter,
+\    function_left_parentheses_linter = lintr::function_left_parentheses_linter,
+\    infix_spaces_linter = lintr::infix_spaces_linter,
+\    no_tab_linter = lintr::no_tab_linter,
+\    object_usage_linter = lintr::object_usage_linter,
+\    open_curly_linter = lintr::open_curly_linter(allow_single_line = FALSE),
+\    paren_brace_linter = lintr::paren_brace_linter,
+\    absolute_path_linter = lintr::absolute_path_linter(lax = TRUE),
+\    nonportable_path_linter = lintr::nonportable_path_linter(lax = TRUE),
+\    pipe_continuation_linter = lintr::pipe_continuation_linter,
+\    semicolon_terminator_linter = lintr::semicolon_terminator_linter(semicolon = c("compound", "trailing")),
+\    seq_linter = lintr::seq_linter,
+\    single_quotes_linter = lintr::single_quotes_linter,
+\    spaces_inside_linter = lintr::spaces_inside_linter,
+\    spaces_left_parentheses_linter = lintr::spaces_left_parentheses_linter,
+\    undesirable_function_linter = lintr::undesirable_function_linter(fun = c(lintr::default_undesirable_functions)),
+\    undesirable_operator_linter = lintr::undesirable_operator_linter(op = c(lintr::default_undesirable_operators)),
+\    unneeded_concatenation_linter = lintr::unneeded_concatenation_linter
+\  )
+\'
 "}}}
