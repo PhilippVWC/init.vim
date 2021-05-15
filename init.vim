@@ -23,6 +23,7 @@ Plug 'edkolev/tmuxline.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'jiangmiao/auto-pairs' 
 Plug 'tpope/vim-fugitive'
+Plug 'Chiel92/vim-autoformat'
 call plug#end()
 "}}}
 "================================================= Personal configuration {{{
@@ -93,6 +94,17 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------ FUNCTIONS{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
+"------------------------------ PlugLoaded{{{
+"Check wether plugin is currently loaded
+"see
+"https://vi.stackexchange.com/questions/10939/how-to-see-if-a-plugin-is-active
+function! PlugLoaded(name)
+    return (
+        \ has_key(g:plugs, a:name) &&
+        \ isdirectory(g:plugs[a:name].dir) &&
+        \ stridx(&rtp, g:plugs[a:name].dir) >= 0)
+endfunction
+"}}}
 "------------------------------ RemoveSwapFile{{{
 "Delete the current swap file
 function! s:RemoveSwapFile()
@@ -567,7 +579,7 @@ set path=**
 command! Tex :w|:!pdflatex -shell-escape %
 command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
 set nocompatible| "Required by the vim-polyglot plugin
-" set omnifunc=syntaxcomplete#Complete
+set omnifunc=syntaxcomplete#Complete
 set foldcolumn=4|
 set ignorecase|		"Ignore case for vim search function / or ?
 set hlsearch incsearch|	"highlight all matching search patterns while typing
@@ -868,209 +880,186 @@ augroup end
 "}}}
 "}}}
 "================================================= PLugin configuration{{{
-"------------------------------ NCM{{{
-" IMPORTANT: :help Ncm2PopupOpen for more information
-" enable ncm2 for all buffers
-"autocmd BufEnter * call ncm2#enable_for_buffer()
-"let g:ncm2#auto_popup = 1
-"let g:ncm2#is_incomplete=2
-"inoremap <Tab> <Plug>(ncm2_manual_trigger)
-"set completeopt=noinsert,menuone,noselect
-"let g:ncm2#auto_popup=1
-"let g:vimtex_compiler_progname = 'nvr'
+"------------------------------ NCM2{{{
+if match(&runtimepath,'ncm2') != -1
+    " enable ncm2 for all buffers
+    autocmd BufEnter * call ncm2#enable_for_buffer()
+
+    " IMPORTANT: :help Ncm2PopupOpen for more information
+    set completeopt=noinsert,menuone,noselect
+
+    " NOTE: you need to install completion sources to get completions. Check
+    " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
+endif
 "}}}
 "------------------------------ DEOPLETE{{{
-" let g:deoplete#enable_at_startup = 1 "enable deoplete auto completion at vim startup
-" call deoplete#custom#option({
-"     \ 'ignore_case': 1,
-"     \ 'camel_case' : 1,
-"     \ })
-"let the vimtex plugin use deoplete as completion engine
-"call deoplete#custom#var('omni', 'input_patterns', {
-"      \ 'tex': g:vimtex#re#deoplete
-"      \})
+if match(&runtimepath,'deoplete') != -1
+	" let g:deoplete#enable_at_startup = 1 "enable deoplete auto completion at vim startup
+	" call deoplete#custom#option({
+	"     \ 'ignore_case': 1,
+	"     \ 'camel_case' : 1,
+	"     \ })
+	"let the vimtex plugin use deoplete as completion engine
+	"call deoplete#custom#var('omni', 'input_patterns', {
+	"      \ 'tex': g:vimtex#re#deoplete
+	"      \})
+endif
 "}}}
 "------------------------------ NERDTREE{{{
-"try fc-cache -v -f in terminal to reset font buffer
-augroup nerdtree
-	autocmd!
-	autocmd FileType nerdtree set ignorecase | call <SID>Cmt("Ignorecase option set for nerdtree")
-	autocmd FileType nerdtree nnoremap <silent> <buffer> t <c-w><c-w>
-	"Trigger nerdtree file system browser automatically, when starting vim session
-	"autocmd vimenter * NERDTree0
-augroup end
-set encoding=utf-8
-set guifont=hack_nerd_font:h11
-"show line numbers per default
-let NERDTreeShowLineNumbers = 1
-"show hidden files per default
-let NERDTreeShowHidden = 1
-nnoremap <localleader>n :call <SID>OpenOrRefreshNerdTree()<cr>
-"nnoremap <localleader>h :call <Plug>NERDTreeMapOpenSplit()<CR>
-let g:webdevicons_enable_nerdtree = 1
-"}}}
-"------------------------------ IRON{{{
-"send visually selected code fragment in visual mode
-"vnoremap <silent> , <Plug>(iron-visual-send)<Esc><CR>
-"nmap <localleader>t    <Plug>(iron-send-motion)
-"nmap <localleader>r    <Plug>(iron-repeat-cmd)
-"send line in normal mode - TODO: move cursor to next line afterwards
-nnoremap <silent> , <Plug>(iron-send-line)<CR>
-"nmap <localleader><CR> <Plug>(iron-cr)
-"nmap <localleader>i    <plug>(iron-interrupt)
-"nmap <localleader>q    <Plug>(iron-exit)
-"nmap <localleader>c    <Plug>(iron-clear)
+if match(&runtimepath,'nerdtree') != -1
+	"try fc-cache -v -f in terminal to reset font buffer
+	augroup nerdtree
+		autocmd!
+		autocmd FileType nerdtree set ignorecase | call <SID>Cmt("Ignorecase option set for nerdtree")
+		autocmd FileType nerdtree nnoremap <silent> <buffer> t <c-w><c-w>
+		"Trigger nerdtree file system browser automatically, when starting vim session
+		"autocmd vimenter * NERDTree0
+	augroup end
+	set encoding=utf-8
+	set guifont=hack_nerd_font:h11
+	"show line numbers per default
+	let NERDTreeShowLineNumbers = 1
+	"show hidden files per default
+	let NERDTreeShowHidden = 1
+	nnoremap <localleader>n :call <SID>OpenOrRefreshNerdTree()<cr>
+	"nnoremap <localleader>h :call <Plug>NERDTreeMapOpenSplit()<CR>
+	let g:webdevicons_enable_nerdtree = 1
+endif
 "}}}
 "------------------------------ NVIM-R{{{
-" Set R's current working directory to 
-" neovim's current working directory
-" (and not to the directory of the R file
-" being opened, i.e. the default behaviour)
-let R_nvim_wd = 1
-"Disable all Nvim-R key maps (Each Nvim-R key map has to be configured manually
-"then)
-let R_user_maps_only = 1
-"Show function arguments
-" let R_show_args = 1 NOTE: Deprecated with nvimcom 0.9-113
-" let R_complete = 2 " Always include names of objects NOTE: Deprecated with nvimcom 0.9-113
-let R_hi_fun = 1 " Activated by Default: Highlight R functions that are
-                 " loaded into the global environment
-let R_hi_fun_paren = 1  " Highlight R functions only if followed by a (
-" let R_hi_fun_globenv = 0
-" let Rout_more_colors = 1
-let R_show_arg_help = 1
-let R_assign = 0
-function! s:NvimRconf()
-"remap the 'send line' command of Nvim-R plugin"
-nmap <buffer> , <Plug>RDSendLine
-"remap the 'Send selection' command of Nvim-R plugin"
-vmap <buffer> , <Plug>RDSendSelection
-"remap the 'check code before sending and then send' command of Nvim-R plugin"
-"vmap ,c <Plug>RESendSelection
-nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
-nmap <buffer> <localleader>rs :call RAction("str")<CR>
-nmap <buffer> <localleader>rc :call RAction("class")<CR>
-nmap <buffer> <localleader>ri :RStop<CR>
-nmap <buffer> <localleader>rh <Plug>RHelp
-" nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
-nmap <buffer> <localleader>rg call RAction("glimpse")<CR>
-nmap <buffer> <localleader>rl :call RAction("length")<CR>
-nmap <buffer> <localleader>rL :call RAction("library")<CR>
-nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
-nmap <buffer> <localleader>rf :call StartR("R")<CR>
-nmap <buffer> <localleader>aa <Plug>RSendFile
-endfunction
-augroup NvimR
-      autocmd!
-      autocmd filetype r :call s:NvimRconf()
-	    set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
-augroup end
+if match(&runtimepath,'Nvim-R') != -1
+	" Set R's current working directory to 
+	" neovim's current working directory
+	" (and not to the directory of the R file
+	" being opened, i.e. the default behaviour)
+	let R_nvim_wd = 1
+	"Disable all Nvim-R key maps (Each Nvim-R key map has to be configured manually
+	"then)
+	let R_user_maps_only = 1
+	"Show function arguments
+	" let R_show_args = 1 NOTE: Deprecated with nvimcom 0.9-113
+	" let R_complete = 2 " Always include names of objects NOTE: Deprecated with nvimcom 0.9-113
+	let R_hi_fun = 1 " Activated by Default: Highlight R functions that are
+	                 " loaded into the global environment
+	let R_hi_fun_paren = 1  " Highlight R functions only if followed by a (
+	" let R_hi_fun_globenv = 0
+	" let Rout_more_colors = 1
+	let R_show_arg_help = 1
+	let R_assign = 0
+	function! s:NvimRconf()
+	"remap the 'send line' command of Nvim-R plugin"
+	nmap <buffer> , <Plug>RDSendLine
+	"remap the 'Send selection' command of Nvim-R plugin"
+	vmap <buffer> , <Plug>RDSendSelection
+	"remap the 'check code before sending and then send' command of Nvim-R plugin"
+	"vmap ,c <Plug>RESendSelection
+	nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
+	nmap <buffer> <localleader>rs :call RAction("str")<CR>
+	nmap <buffer> <localleader>rc :call RAction("class")<CR>
+	nmap <buffer> <localleader>ri :RStop<CR>
+	nmap <buffer> <localleader>rh <Plug>RHelp
+	" nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
+	nmap <buffer> <localleader>rg call RAction("glimpse")<CR>
+	nmap <buffer> <localleader>rl :call RAction("length")<CR>
+	nmap <buffer> <localleader>rL :call RAction("library")<CR>
+	nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
+	nmap <buffer> <localleader>rf :call StartR("R")<CR>
+	nmap <buffer> <localleader>aa <Plug>RSendFile
+	endfunction
+	augroup NvimR
+		autocmd!
+		autocmd filetype r :call s:NvimRconf()
+		set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
+	augroup end
+endif
 "}}}
 "------------------------------ ULTISNIPS{{{
-let g:UltiSnipsEditSplit="context"
-"dont use <Tab> key to expand snippet
-let g:UltiSnipsExpandTrigger = "<localleader><cr>"
-"let snippet displayed in the completion pop up be expanded by hitting Carriage Return
-let g:ulti_expand_or_jump_res = 0
-function ExpandSnippetOrCarriageReturn()
-    let snippet = UltiSnips#ExpandSnippetOrJump()
-    if g:ulti_expand_or_jump_res > 0
-        return snippet
-    else
-        return "\<CR>"
-    endif
-endfunction
-inoremap <expr> <CR> pumvisible() ? "<C-R>=ExpandSnippetOrCarriageReturn()<CR>" : "\<CR>"
+if match(&runtimepath,'ultisnips') != -1
+	let g:UltiSnipsEditSplit="context"
+	"dont use <Tab> key to expand snippet
+	let g:UltiSnipsExpandTrigger = "<localleader><cr>"
+	"let snippet displayed in the completion pop up be expanded by hitting Carriage Return
+	let g:ulti_expand_or_jump_res = 0
+	function ExpandSnippetOrCarriageReturn()
+	    let snippet = UltiSnips#ExpandSnippetOrJump()
+	    if g:ulti_expand_or_jump_res > 0
+	        return snippet
+	    else
+	        return "\<CR>"
+	    endif
+	endfunction
+	inoremap <expr> <CR> pumvisible() ? "<C-R>=ExpandSnippetOrCarriageReturn()<CR>" : "\<CR>"
+endif
 "}}}
-"------------------------------ JEDI-VIM{{{
-" disable autocompletion, cause we use deoplete for completion
-let g:jedi#completions_enabled = 1
-" open the go-to function in split, not another buffer
-let g:jedi#use_splits_not_buffers = "right"
-"}}}
-"------------------------------ NEOFORMAT{{{
-"use 'styler' formatter for R source files
-let g:neoformat_enabled_r = ['styler']
-"}}}
-"------------------------------ NEOMAKE{{{
-"make 'pylint' the linter for python source files
-let g:neomake_python_enabled_makers = ['pylint']
-"}}}
-"------------------------------ AIRLINE{{{
+"------------------------------ VIM-AIRLINE{{{
 "Automatically displays all buffers when there's only one tab open.
-let g:airline#extensions#tabline#enabled = 1
-"enable modified detection
-let g:airline_detect_modified=1
-"}}}
-"------------------------------ LIGHTLINE{{{
-		let g:lightline = {
-			\ 'active': {
-			\   'left': [ [ 'mode', 'paste' ],
-			\             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-			\ },
-			\ 'component_function': {
-			\   'gitbranch': 'FugitiveHead'
-			\ },
-			\ }
+if match(&runtimepath,'vim-airline') != -1
+	let g:airline#extensions#tabline#enabled = 1
+	"enable modified detection
+	let g:airline_detect_modified=1
+endif
 "}}}
 "------------------------------ FUGITIVE{{{
-"Git add file that corresponds to current buffer
-nnoremap <silent> <localleader>ga :Git add %<cr>
-"Git rebase --continue
-nnoremap <silent> <localleader>grc :Git rebase --continue<cr>
+if match(&runtimepath,'fugitive') != -1
+	"Git add file that corresponds to current buffer
+	nnoremap <silent> <localleader>ga :Git add %<cr>
+	"Git rebase --continue
+	nnoremap <silent> <localleader>grc :Git rebase --continue<cr>
+endif
 "}}}
 "------------------------------ VIM-ONE{{{
-"Credit joshdick
-"Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
-"If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
-"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
-" if (empty($TMUX))
-"   if (has("nvim"))
-    "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
-"     let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-"   endif
-"   "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
-"   "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
-"   " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
-"   if (has("termguicolors"))
-"     set termguicolors
-"   endif
-" endif
-
-if (has("termguicolors"))
-      set background=dark " for the dark version
-      set termguicolors
+if match(&runtimepath,'vim-one') != -1
+	"Credit joshdick
+	"Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
+	"If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
+	"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
+	" if (empty($TMUX))
+	"   if (has("nvim"))
+	    "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+	"     let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+	"   endif
+	"   "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+	"   "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+	"   " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+	"   if (has("termguicolors"))
+	"     set termguicolors
+	"   endif
+	" endif
+	
+	if (has("termguicolors"))
+	      set background=dark " for the dark version
+	      set termguicolors
+	endif
+	" if (&termguicolors == 1)
+	"       set notermguicolors
+	"       set background=light " for the dark version
+	" endif
+	colorscheme one
+	set t_8b=^[[48;2;%lu;%lu;%lum
+	set t_8f=^[[38;2;%lu;%lu;%lum
 endif
-" if (&termguicolors == 1)
-"       set notermguicolors
-"       set background=light " for the dark version
-" endif
-colorscheme one
-set t_8b=^[[48;2;%lu;%lu;%lum
-set t_8f=^[[38;2;%lu;%lu;%lum
-"}}}
-"------------------------------ SYNTASTIC{{{
-" let g:syntastic_enable_r_lintr_checker = 1
-" let g:syntastic_r_checkers = ['lintr']
 "}}}
 "------------------------------ VIM-EASYMOTION{{{
-" <Leader>f{char} to move to {char}
-map  <localleader>f <Plug>(easymotion-bd-f)
-nmap <localleader>f <Plug>(easymotion-overwin-f)
-
-" s{char}{char} to move to {char}{char}
-" nmap s <Plug>(easymotion-overwin-f2)
-
-" Move to line
-" map <Leader>L <Plug>(easymotion-bd-jk)
-" nmap <Leader>L <Plug>(easymotion-overwin-line)
-
-" Move to word
-map  <localleader>w <Plug>(easymotion-bd-w)
-nmap <localleader>w <Plug>(easymotion-overwin-w)
+if match(&runtimepath,'vim-easymotion') != -1
+	" <Leader>f{char} to move to {char}
+	map  <localleader>f <Plug>(easymotion-bd-f)
+	nmap <localleader>f <Plug>(easymotion-overwin-f)
+	
+	" s{char}{char} to move to {char}{char}
+	" nmap s <Plug>(easymotion-overwin-f2)
+	
+	" Move to line
+	" map <Leader>L <Plug>(easymotion-bd-jk)
+	" nmap <Leader>L <Plug>(easymotion-overwin-line)
+	
+	" Move to word
+	map  <localleader>w <Plug>(easymotion-bd-w)
+	nmap <localleader>w <Plug>(easymotion-overwin-w)
+endif
 "}}}
 "------------------------------ ALE{{{
-" default 0
+if match(&runtimepath,'ale') != -1
+	" default 0
 " let g:ale_r_lintr_lint_package = 0
 let g:ale_r_lintr_options = '
 \with_defaults(
@@ -1103,4 +1092,5 @@ let g:ale_r_lintr_options = '
 \    unneeded_concatenation_linter = lintr::unneeded_concatenation_linter
 \  )
 \'
+endif
 "}}}
