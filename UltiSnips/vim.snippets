@@ -25,4 +25,8 @@ ${VISUAL}
 "}}}
 endsnippet
 
-
+snippet runtime "runtime path check"
+if match(&runtimepath,'${1:pluginName}') != -1
+	${VISUAL}
+endif
+endsnippet
