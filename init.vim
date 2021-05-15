@@ -17,11 +17,11 @@ Plug 'ncm2/ncm2-ultisnips'
 Plug 'preservim/nerdtree'
 Plug 'ivalkeen/nerdtree-execute'
 Plug 'dag/vim-fish'
-Plug 'vim-airline/vim-airline' 
+Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'edkolev/tmuxline.vim'
 Plug 'ryanoasis/vim-devicons'
-Plug 'jiangmiao/auto-pairs' 
+Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-fugitive'
 Plug 'Chiel92/vim-autoformat'
 call plug#end()
@@ -31,57 +31,57 @@ call plug#end()
 "Clipboard, pasteboard, copy and paste, Zwischenablage
 "Clipboard interaction Windows and WSL
 "It would suffice, to deposit win32yank.exe into the search path
-"The unix command line tool win32yank.exe 
+"The unix command line tool win32yank.exe
 "is available at https://www.github.com/equalsraf/win32yank/releases
-"The following global variable defines a more explicit way 
+"The following global variable defines a more explicit way
 "to control the behaviour of the copy and paste mechanism
 let g:clipboard = {
-                  \'name' : 'win32yank-wsl',
-                  \'copy' : {
-                  \'+' : 'win32yank.exe -i --crlf',
-                  \'*' : 'win32yank.exe -i --crlf'
-                  \},
-                  \'paste' : {
-                  \'+' : 'win32yank.exe -o --lf',
-                  \'*' : 'win32yank.exe -o --lf'
-                  \},
-                  \'cache_enabled' : 0
-                  \}
+			\'name' : 'win32yank-wsl',
+			\'copy' : {
+			\'+' : 'win32yank.exe -i --crlf',
+			\'*' : 'win32yank.exe -i --crlf'
+			\},
+			\'paste' : {
+			\'+' : 'win32yank.exe -o --lf',
+			\'*' : 'win32yank.exe -o --lf'
+			\},
+			\'cache_enabled' : 0
+			\}
 "Configuration to use ctags for R with neovim
 let g:tagbar_type_r = {
-      \ 'ctagstype' : 'r',
-      \ 'kinds' : [
-      \ 'f:Functions',
-      \ 'g:GlobalVariables',
-      \ 'v:FunctionVariables',
-      \]
-      \}
+			\ 'ctagstype' : 'r',
+			\ 'kinds' : [
+			\ 'f:Functions',
+			\ 'g:GlobalVariables',
+			\ 'v:FunctionVariables',
+			\]
+			\}
 "characters to enclose/surround a word
 let s:surroundChar = {
-      \'{':'}',
-      \'[':']',
-      \'(':')',
-      \'$':'$',
-      \'/':'/',
-      \'\\':'\\',
-      \'<':'>',
-      \"'":"'",
-      \'"':'"',
-      \' ':' '
-      \}
+			\'{':'}',
+			\'[':']',
+			\'(':')',
+			\'$':'$',
+			\'/':'/',
+			\'\\':'\\',
+			\'<':'>',
+			\"'":"'",
+			\'"':'"',
+			\' ':' '
+			\}
 "comment character for different programming languages
 let s:CommentChar = {
-      \'python':'#',
-      \'perl':'#',
+			\'python':'#',
+			\'perl':'#',
 			\'r':'#',
-      \'sh':'#',
+			\'sh':'#',
 			\'fish':'#',
 			\'vim':'"',
 			\'sql':'--',
 			\'tex':'%',
 			\'c':'//',
 			\'json':'//'
-      \}
+			\}
 let g:SPELL_LANG = "en_us"|	"global spelling language
 let s:verbose = 0|	"Global indicator variable for more verbose output
 let g:VIMRC_DIR="/home/philipp/Developer/Vimscript/init.vim/"
@@ -99,49 +99,49 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "see
 "https://vi.stackexchange.com/questions/10939/how-to-see-if-a-plugin-is-active
 function! PlugLoaded(name)
-    return (
-        \ has_key(g:plugs, a:name) &&
-        \ isdirectory(g:plugs[a:name].dir) &&
-        \ stridx(&rtp, g:plugs[a:name].dir) >= 0)
+	return (
+				\ has_key(g:plugs, a:name) &&
+				\ isdirectory(g:plugs[a:name].dir) &&
+				\ stridx(&rtp, g:plugs[a:name].dir) >= 0)
 endfunction
 "}}}
 "------------------------------ RemoveSwapFile{{{
 "Delete the current swap file
 function! s:RemoveSwapFile()
- execute ":!rm ".swapname(bufname())
+	execute ":!rm ".swapname(bufname())
 endfunction
 "}}}
 "------------------------------ DeleteLine{{{
 function! s:DeleteLine()
-  call setline(".",'')
-  startinsert!
+	call setline(".",'')
+	startinsert!
 endfunction
 "}}}
 "------------------------------ OpenTagInNewSplit{{{
 function! s:OpenTagInNewSplit(myTag)
-      " Todo: quit if a tag does not exist
-      execute ":ptag ".a:myTag
+	" Todo: quit if a tag does not exist
+	execute ":ptag ".a:myTag
 endfunction
 "}}}
 "------------------------------ ChangeSurroundingChar{{{
 "change surrounding character
 function! s:ChangeSurroundingChar(char)
-  let s:p = [line("."),col(".")]
-  echo s:p
-  let s:savedReg = @"
-  let s:word = expand("<cword>")
-  execute "normal! byh"
-  let s:oldDelimiter = @"
-  let s:col_l = col(".")
-  let s:cl = getline(".")
-  let s:leftHandSide = strcharpart(s:cl,0,s:col_l-1)
-  execute "normal! el"
-  let s:col_r = col(".")
-  let s:rightHandSide = strcharpart(s:cl,s:col_r,len(s:cl))
-  call setline(line("."),s:leftHandSide.a:char.s:word.get(s:surroundChar,a:char,'#').s:rightHandSide)
-  let @" = s:savedReg
-  call cursor(s:p)
-endfunction   
+	let s:p = [line("."),col(".")]
+	echo s:p
+	let s:savedReg = @"
+	let s:word = expand("<cword>")
+	execute "normal! byh"
+	let s:oldDelimiter = @"
+	let s:col_l = col(".")
+	let s:cl = getline(".")
+	let s:leftHandSide = strcharpart(s:cl,0,s:col_l-1)
+	execute "normal! el"
+	let s:col_r = col(".")
+	let s:rightHandSide = strcharpart(s:cl,s:col_r,len(s:cl))
+	call setline(line("."),s:leftHandSide.a:char.s:word.get(s:surroundChar,a:char,'#').s:rightHandSide)
+	let @" = s:savedReg
+	call cursor(s:p)
+endfunction
 "}}}
 "------------------------------ Surround{{{
 "Surround by character
@@ -149,11 +149,11 @@ endfunction
 "on the left hand side: Equal sign is moved to the right of surrounded area.
 "
 function! s:Surround(char)
-  let s:p = [line("."),col(".")+1]
-  execute "normal! bi".a:char."\<esc>ea".get(s:surroundChar,a:char,'#')."\<esc>"
-  call cursor(s:p)
+	let s:p = [line("."),col(".")+1]
+	execute "normal! bi".a:char."\<esc>ea".get(s:surroundChar,a:char,'#')."\<esc>"
+	call cursor(s:p)
 endfunction
-"}}}   
+"}}}
 "------------------------------ CommentLines{{{
 "Function to comment "lines" according to filetype/programming language used
 function! s:CommentLines()
@@ -172,7 +172,7 @@ endfunction
 "otherwise
 function! s:OpenOrRefreshNerdTree()
 	NERDTreeToggle
-  NERDTreeRefreshRoot
+	NERDTreeRefreshRoot
 endfunction
 "}}}
 "------------------------------ setLocalWorkDir{{{
@@ -188,8 +188,8 @@ endfunction
 "Format and Feed to Read-Eval-Print-Loop
 "This function is for Users of the statistical programming language R, that use
 "the plugin Nvim-R. When the cursor is positioned within a function block and
-"FormatAndFeedToRepl is called the function arguments are parsed into the REPL 
-"(== the R language console). As a consequence, they are loaded into the 
+"FormatAndFeedToRepl is called the function arguments are parsed into the REPL
+"(== the R language console). As a consequence, they are loaded into the
 "global namespace.
 "This function is handy, if the inner code block of an R function is to be
 "tested, but the function arguments are not known whithin the namespace
@@ -201,14 +201,14 @@ function! s:FormatAndFeedToRepl()
 	execute "normal! /(\ryi("
 	let funcArgsRaw = substitute(@",'\v[ \t\n]','','g')|	"remove newline and space characters
 	let fArgs = []
-	let n = 0 
+	let n = 0
 	let l = len(funcArgsRaw)
 	let c = 0
 	let p = 0
 	while l > 0
 		let p = match(funcArgsRaw,'(')|	"look for a function argument (starts with an opening paranthesis), that is a call for an R function
 		if p >= 0
-			let c = match(funcArgsRaw,',')|	"Identify position of a comma	
+			let c = match(funcArgsRaw,',')|	"Identify position of a comma
 			if c >= 0|	"A comma was found
 				if( c < p )
 					if(c!=0)
@@ -444,10 +444,10 @@ function! s:GoToWinAndRefreshNerdtree(winNumber)
 	call win_gotoid(win_getid(a:winNumber))
 	if (&buftype==#'' && g:NERDTree.IsOpen()) "empty buftype option corresponds to normal buffer (see help buftype)
 		"variable g:NERDTree.IsOpen may be invalid after updating NERDTree
-		"NERDTreeCWD| "No need to set NERDTree working directory since 
-                              "working directory is no more set to directory of 
-                              "currently loaded file in buffer in autocomd
-                              "BufReadPost
+		"NERDTreeCWD| "No need to set NERDTree working directory since
+		"working directory is no more set to directory of
+		"currently loaded file in buffer in autocomd
+		"BufReadPost
 		call win_gotoid(win_getid(a:winNumber))
 	endif
 endfunction
@@ -571,7 +571,7 @@ function! s:MinCurWin()
 	endif
 endfunction
 "}}}
-	"}}}
+"}}}
 "------------------------------ SETTINGS{{{
 "TODO:command that repeats last command
 "set path to current directory ( Corresponds to output of :pwd or :echo getcwd() )
@@ -610,7 +610,7 @@ set foldmethod=marker
 iabbrev 'van\ W' van Wickevoort Crommelin
 iabbrev ppp Philipp van Wickevoort Crommelin
 iabbrev ~  ~<space>|    " Replace NON-BRAKE-SPACE character (Hex-Code c2a0)
-                        " with regular space character (Hex-code a0)
+" with regular space character (Hex-code a0)
 "}}}
 "------------------------------ MAPPINGS{{{
 "------------------------------ GLOBAL{{{
@@ -643,7 +643,7 @@ noremap <silent> <s-T> :call <SID>BufferCycle("down")<cr>
 "       \ 'v:FunctionVariables',
 "       \]
 "       \}
-"       
+"
 "Now jump to a tag with :tag /pattern or use the following mapping
 " nnoremap <silent> <localleader>F :execute "tag ".expand("<cword>")<cr>
 nnoremap <silent> <localleader>F :call <SID>OpenTagInNewSplit(expand("<cword>"))<cr>
@@ -795,7 +795,7 @@ inoremap <c-u>  <esc>viwgUea
 "inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <localleader><tab> <tab>
-"expand R pipe 
+"expand R pipe
 inoremap <<CR> %>%<CR>
 "}}}
 "------------------------------ TERMINAL MODE{{{
@@ -833,21 +833,21 @@ augroup end
 "------------------------------ Filetype r{{{
 augroup r
 	autocmd!
-        autocmd Filetype r :setlocal colorcolumn=80|                    "Display a coloured vertical bar
+	autocmd Filetype r :setlocal colorcolumn=80|                    "Display a coloured vertical bar
 augroup end
 "}}}
 "------------------------------ Filetype markdown{{{
 augroup markdown
 	autocmd!
 	autocmd FileType markdown onoremap <buffer> in@ :<c-u>execute "normal! /@\r:nohlsearch\rhviw"<cr>
- 	autocmd FileType markdown onoremap <buffer> ih :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_"<cr>|	"delete markdown file heading of current section
+	autocmd FileType markdown onoremap <buffer> ih :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_"<cr>|	"delete markdown file heading of current section
 	autocmd FileType markdown onoremap <buffer> ah :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_j"<cr>|	"delete around heading
 augroup end
 "}}}
 "------------------------------ Filetype perl{{{
 augroup perl
-      autocmd!
-      autocmd FileType perl :iabbrev '/' //<left>|"Create matching slash in regular expression environments
+	autocmd!
+	autocmd FileType perl :iabbrev '/' //<left>|"Create matching slash in regular expression environments
 augroup end
 "}}}
 "------------------------------ Filetype vim{{{
@@ -870,11 +870,11 @@ augroup end
 "------------------------------ miscellaneous{{{
 augroup miscellaneous
 	autocmd!
-  	autocmd termOpen * :startinsert| "Automatically start terminal mode 
-"    	autocmd vimenter * :NERDTree|           "Display Nerdtree after vim startup
+	autocmd termOpen * :startinsert| "Automatically start terminal mode
+	"	autocmd vimenter * :NERDTree|           "Display Nerdtree after vim startup
 	autocmd Filetype help :setlocal number|	"show line numbers for vim documentation files
-	autocmd BufWinEnter * :call ResCur()|			          "reset cursor position
-" 	autocmd BufWinEnter * :execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
+	autocmd BufWinEnter * :call ResCur()|				  "reset cursor position
+	"	autocmd BufWinEnter * :execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
 augroup end
 "}}}
 "}}}
@@ -882,14 +882,14 @@ augroup end
 "================================================= PLugin configuration{{{
 "------------------------------ NCM2{{{
 if match(&runtimepath,'ncm2') != -1
-    " enable ncm2 for all buffers
-    autocmd BufEnter * call ncm2#enable_for_buffer()
+	" enable ncm2 for all buffers
+	autocmd BufEnter * call ncm2#enable_for_buffer()
 
-    " IMPORTANT: :help Ncm2PopupOpen for more information
-    set completeopt=noinsert,menuone,noselect
+	" IMPORTANT: :help Ncm2PopupOpen for more information
+	set completeopt=noinsert,menuone,noselect
 
-    " NOTE: you need to install completion sources to get completions. Check
-    " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
+	" NOTE: you need to install completion sources to get completions. Check
+	" our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
 endif
 "}}}
 "------------------------------ DEOPLETE{{{
@@ -928,7 +928,7 @@ endif
 "}}}
 "------------------------------ NVIM-R{{{
 if match(&runtimepath,'Nvim-R') != -1
-	" Set R's current working directory to 
+	" Set R's current working directory to
 	" neovim's current working directory
 	" (and not to the directory of the R file
 	" being opened, i.e. the default behaviour)
@@ -940,31 +940,31 @@ if match(&runtimepath,'Nvim-R') != -1
 	" let R_show_args = 1 NOTE: Deprecated with nvimcom 0.9-113
 	" let R_complete = 2 " Always include names of objects NOTE: Deprecated with nvimcom 0.9-113
 	let R_hi_fun = 1 " Activated by Default: Highlight R functions that are
-	                 " loaded into the global environment
+	" loaded into the global environment
 	let R_hi_fun_paren = 1  " Highlight R functions only if followed by a (
 	" let R_hi_fun_globenv = 0
 	" let Rout_more_colors = 1
 	let R_show_arg_help = 1
 	let R_assign = 0
 	function! s:NvimRconf()
-	"remap the 'send line' command of Nvim-R plugin"
-	nmap <buffer> , <Plug>RDSendLine
-	"remap the 'Send selection' command of Nvim-R plugin"
-	vmap <buffer> , <Plug>RDSendSelection
-	"remap the 'check code before sending and then send' command of Nvim-R plugin"
-	"vmap ,c <Plug>RESendSelection
-	nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
-	nmap <buffer> <localleader>rs :call RAction("str")<CR>
-	nmap <buffer> <localleader>rc :call RAction("class")<CR>
-	nmap <buffer> <localleader>ri :RStop<CR>
-	nmap <buffer> <localleader>rh <Plug>RHelp
-	" nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
-	nmap <buffer> <localleader>rg call RAction("glimpse")<CR>
-	nmap <buffer> <localleader>rl :call RAction("length")<CR>
-	nmap <buffer> <localleader>rL :call RAction("library")<CR>
-	nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
-	nmap <buffer> <localleader>rf :call StartR("R")<CR>
-	nmap <buffer> <localleader>aa <Plug>RSendFile
+		"remap the 'send line' command of Nvim-R plugin"
+		nmap <buffer> , <Plug>RDSendLine
+		"remap the 'Send selection' command of Nvim-R plugin"
+		vmap <buffer> , <Plug>RDSendSelection
+		"remap the 'check code before sending and then send' command of Nvim-R plugin"
+		"vmap ,c <Plug>RESendSelection
+		nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
+		nmap <buffer> <localleader>rs :call RAction("str")<CR>
+		nmap <buffer> <localleader>rc :call RAction("class")<CR>
+		nmap <buffer> <localleader>ri :RStop<CR>
+		nmap <buffer> <localleader>rh <Plug>RHelp
+		" nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
+		nmap <buffer> <localleader>rg call RAction("glimpse")<CR>
+		nmap <buffer> <localleader>rl :call RAction("length")<CR>
+		nmap <buffer> <localleader>rL :call RAction("library")<CR>
+		nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
+		nmap <buffer> <localleader>rf :call StartR("R")<CR>
+		nmap <buffer> <localleader>aa <Plug>RSendFile
 	endfunction
 	augroup NvimR
 		autocmd!
@@ -981,12 +981,12 @@ if match(&runtimepath,'ultisnips') != -1
 	"let snippet displayed in the completion pop up be expanded by hitting Carriage Return
 	let g:ulti_expand_or_jump_res = 0
 	function ExpandSnippetOrCarriageReturn()
-	    let snippet = UltiSnips#ExpandSnippetOrJump()
-	    if g:ulti_expand_or_jump_res > 0
-	        return snippet
-	    else
-	        return "\<CR>"
-	    endif
+		let snippet = UltiSnips#ExpandSnippetOrJump()
+		if g:ulti_expand_or_jump_res > 0
+			return snippet
+		else
+			return "\<CR>"
+		endif
 	endfunction
 	inoremap <expr> <CR> pumvisible() ? "<C-R>=ExpandSnippetOrCarriageReturn()<CR>" : "\<CR>"
 endif
@@ -1015,7 +1015,7 @@ if match(&runtimepath,'vim-one') != -1
 	"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
 	" if (empty($TMUX))
 	"   if (has("nvim"))
-	    "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+	"For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
 	"     let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 	"   endif
 	"   "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
@@ -1025,10 +1025,10 @@ if match(&runtimepath,'vim-one') != -1
 	"     set termguicolors
 	"   endif
 	" endif
-	
+
 	if (has("termguicolors"))
-	      set background=dark " for the dark version
-	      set termguicolors
+		set background=dark " for the dark version
+		set termguicolors
 	endif
 	" if (&termguicolors == 1)
 	"       set notermguicolors
@@ -1044,14 +1044,14 @@ if match(&runtimepath,'vim-easymotion') != -1
 	" <Leader>f{char} to move to {char}
 	map  <localleader>f <Plug>(easymotion-bd-f)
 	nmap <localleader>f <Plug>(easymotion-overwin-f)
-	
+
 	" s{char}{char} to move to {char}{char}
 	" nmap s <Plug>(easymotion-overwin-f2)
-	
+
 	" Move to line
 	" map <Leader>L <Plug>(easymotion-bd-jk)
 	" nmap <Leader>L <Plug>(easymotion-overwin-line)
-	
+
 	" Move to word
 	map  <localleader>w <Plug>(easymotion-bd-w)
 	nmap <localleader>w <Plug>(easymotion-overwin-w)
@@ -1060,37 +1060,37 @@ endif
 "------------------------------ ALE{{{
 if match(&runtimepath,'ale') != -1
 	" default 0
-" let g:ale_r_lintr_lint_package = 0
-let g:ale_r_lintr_options = '
-\with_defaults(
-\    default = NULL,
-\    T_and_F_symbol_linter = lintr::T_and_F_symbol_linter,
-\    assignment_linter = lintr::assignment_linter,
-\    closed_curly_linter = lintr::closed_curly_linter(allow_single_line = FALSE),
-\    commas_linter = lintr::commas_linter,
-\    commented_code_linter = lintr::commented_code_linter,
-\    complexity_limit = lintr::cyclocomp_linter(complexity_limit = 25),
-\    object_name_linter = lintr::object_name_linter(styles = "snake_case"),
-\    object_length_linter = lintr::object_length_linter(length = 30L),
-\    equals_na_linter = lintr::equals_na_linter,
-\    function_left_parentheses_linter = lintr::function_left_parentheses_linter,
-\    infix_spaces_linter = lintr::infix_spaces_linter,
-\    no_tab_linter = lintr::no_tab_linter,
-\    object_usage_linter = lintr::object_usage_linter,
-\    open_curly_linter = lintr::open_curly_linter(allow_single_line = FALSE),
-\    paren_brace_linter = lintr::paren_brace_linter,
-\    absolute_path_linter = lintr::absolute_path_linter(lax = TRUE),
-\    nonportable_path_linter = lintr::nonportable_path_linter(lax = TRUE),
-\    pipe_continuation_linter = lintr::pipe_continuation_linter,
-\    semicolon_terminator_linter = lintr::semicolon_terminator_linter(semicolon = c("compound", "trailing")),
-\    seq_linter = lintr::seq_linter,
-\    single_quotes_linter = lintr::single_quotes_linter,
-\    spaces_inside_linter = lintr::spaces_inside_linter,
-\    spaces_left_parentheses_linter = lintr::spaces_left_parentheses_linter,
-\    undesirable_function_linter = lintr::undesirable_function_linter(fun = c(lintr::default_undesirable_functions)),
-\    undesirable_operator_linter = lintr::undesirable_operator_linter(op = c(lintr::default_undesirable_operators)),
-\    unneeded_concatenation_linter = lintr::unneeded_concatenation_linter
-\  )
-\'
+	" let g:ale_r_lintr_lint_package = 0
+	let g:ale_r_lintr_options = '
+				\with_defaults(
+				\    default = NULL,
+				\    T_and_F_symbol_linter = lintr::T_and_F_symbol_linter,
+				\    assignment_linter = lintr::assignment_linter,
+				\    closed_curly_linter = lintr::closed_curly_linter(allow_single_line = FALSE),
+				\    commas_linter = lintr::commas_linter,
+				\    commented_code_linter = lintr::commented_code_linter,
+				\    complexity_limit = lintr::cyclocomp_linter(complexity_limit = 25),
+				\    object_name_linter = lintr::object_name_linter(styles = "snake_case"),
+				\    object_length_linter = lintr::object_length_linter(length = 30L),
+				\    equals_na_linter = lintr::equals_na_linter,
+				\    function_left_parentheses_linter = lintr::function_left_parentheses_linter,
+				\    infix_spaces_linter = lintr::infix_spaces_linter,
+				\    no_tab_linter = lintr::no_tab_linter,
+				\    object_usage_linter = lintr::object_usage_linter,
+				\    open_curly_linter = lintr::open_curly_linter(allow_single_line = FALSE),
+				\    paren_brace_linter = lintr::paren_brace_linter,
+				\    absolute_path_linter = lintr::absolute_path_linter(lax = TRUE),
+				\    nonportable_path_linter = lintr::nonportable_path_linter(lax = TRUE),
+				\    pipe_continuation_linter = lintr::pipe_continuation_linter,
+				\    semicolon_terminator_linter = lintr::semicolon_terminator_linter(semicolon = c("compound", "trailing")),
+				\    seq_linter = lintr::seq_linter,
+				\    single_quotes_linter = lintr::single_quotes_linter,
+				\    spaces_inside_linter = lintr::spaces_inside_linter,
+				\    spaces_left_parentheses_linter = lintr::spaces_left_parentheses_linter,
+				\    undesirable_function_linter = lintr::undesirable_function_linter(fun = c(lintr::default_undesirable_functions)),
+				\    undesirable_operator_linter = lintr::undesirable_operator_linter(op = c(lintr::default_undesirable_operators)),
+				\    unneeded_concatenation_linter = lintr::unneeded_concatenation_linter
+				\  )
+				\'
 endif
 "}}}
