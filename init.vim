@@ -1,59 +1,33 @@
-"Neovim resource file from Philipp van Wickevoort Crommelin.
+"Neovim resource file Philipp van Wickevoort Crommelin.
 "Please send bug reports to philippcrommelin@googlemail.com.
-"================================================= PLUGINS ==================================={{{
+"================================================= Plugins{{{
 call plug#begin()
-" Plug 'ncm2/ncm2'
-Plug 'iamcco/markdown-preview.nvim' 
-" Plug 'roxma/nvim-yarp'
 Plug 'jalvesaq/Nvim-R'
 Plug 'ncm2/ncm2'
-Plug 'ncm2/ncm2-bufword'
 Plug 'gaalcaras/ncm-R'
 Plug 'roxma/nvim-yarp'
 Plug 'easymotion/vim-easymotion'
-" Plug 'sindrets/diffview.nvim'
-" Plug 'vim-syntastic/syntastic'
 Plug 'dense-analysis/ale'
 Plug 'rakr/vim-one'
 Plug 'preservim/tagbar'
-Plug 'sheerun/vim-polyglot'
 Plug 'mhinz/vim-startify'
 Plug 'airblade/vim-gitgutter'
-" Plug 'brooth/far.vim'
-" Plug 'gaalcaras/ncm-R'
-" Plug 'ncm2/ncm2-bufword'
-" Plug 'ncm2/ncm2-path'
-" Plug 'lervag/vimtex'
-" Plug 'junegunn/vim-easy-align'
-" Plug 'Shougo/deoplete.nvim'
 Plug 'SirVer/ultisnips'
-" Plug 'honza/vim-snippets'
-" Plug 'garbas/vim-snipmate'
+Plug 'ncm2/ncm2-ultisnips'
 Plug 'preservim/nerdtree'
 Plug 'ivalkeen/nerdtree-execute'
 Plug 'dag/vim-fish'
-" Plug 'tpope/vim-surround'
-" Plug 'zchee/deoplete-jedi' "
-Plug 'vim-airline/vim-airline' "fancy vim status bar
+Plug 'vim-airline/vim-airline' 
 Plug 'vim-airline/vim-airline-themes'
 Plug 'edkolev/tmuxline.vim'
-" Plug 'Lokaltog/powerline'
-" Plug 'itchyny/lightline.vim' "fancy vim status bar
-Plug 'Raimondi/delimitMate'
-Plug 'jiangmiao/auto-pairs' "set matching quotation marks, braces, etc.
-" Plug 'davidhalter/jedi-vim' "python go-to function and completion
-" Plug 'sbdchd/neoformat' "code formatting
-" Plug 'neomake/neomake'
-" Plug 'Vigemus/iron.nvim'
-Plug 'tpope/vim-fugitive'
 Plug 'ryanoasis/vim-devicons'
+Plug 'jiangmiao/auto-pairs' 
+Plug 'tpope/vim-fugitive'
 call plug#end()
-"------------------------------CUSTOM PLUGINS
-" execute ":source ".'~/developer/init.vim/grep-operator.vim'
 "}}}
-"================================================= Personal configuration ===================={{{
-"------------------------------GLOBAL VARIABLES------------------------------{{{
-"clipboard, pasteboard, copy and paste, Zwischenablage
+"================================================= Personal configuration {{{
+"------------------------------ GLOBAL VARIABLES{{{
+"Clipboard, pasteboard, copy and paste, Zwischenablage
 "Clipboard interaction Windows and WSL
 "It would suffice, to deposit win32yank.exe into the search path
 "The unix command line tool win32yank.exe 
@@ -110,36 +84,34 @@ let s:CommentChar = {
 let g:SPELL_LANG = "en_us"|	"global spelling language
 let s:verbose = 0|	"Global indicator variable for more verbose output
 let g:VIMRC_DIR="/home/philipp/Developer/Vimscript/init.vim/"
-let g:RFUNS_DIR="/home/philipp/Developer/R/"
-let g:RFUNS="/home/philipp/Developer/R/nuetzlicheFunktionen.R"
 let g:python3_host_prog="/usr/bin/python3"
 let g:python_host_prog="/usr/bin/python2"
 let g:mapleader = '\'|			"Set the leader key to the hyphen character
 let g:maplocalleader = '-'|		"Map the localleader key to a backslash
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "}}}
-"------------------------------FUNCTIONS------------------------------{{{
+"------------------------------ FUNCTIONS{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
-"------------------------------RemoveSwapFile{{{
+"------------------------------ RemoveSwapFile{{{
 "Delete the current swap file
 function! s:RemoveSwapFile()
  execute ":!rm ".swapname(bufname())
 endfunction
 "}}}
-"------------------------------DeleteLine{{{
+"------------------------------ DeleteLine{{{
 function! s:DeleteLine()
   call setline(".",'')
   startinsert!
 endfunction
 "}}}
-"------------------------------OpenTagInNewSplit{{{
+"------------------------------ OpenTagInNewSplit{{{
 function! s:OpenTagInNewSplit(myTag)
       " Todo: quit if a tag does not exist
       execute ":ptag ".a:myTag
 endfunction
 "}}}
-"------------------------------ChangeSurroundingChar{{{
+"------------------------------ ChangeSurroundingChar{{{
 "change surrounding character
 function! s:ChangeSurroundingChar(char)
   let s:p = [line("."),col(".")]
@@ -159,7 +131,7 @@ function! s:ChangeSurroundingChar(char)
   call cursor(s:p)
 endfunction   
 "}}}
-"------------------------------Surround{{{
+"------------------------------ Surround{{{
 "Surround by character
 "TODO: Bug identified: Surround visually selected area with leading equal sign
 "on the left hand side: Equal sign is moved to the right of surrounded area.
@@ -170,7 +142,7 @@ function! s:Surround(char)
   call cursor(s:p)
 endfunction
 "}}}   
-"------------------------------CommentLines{{{
+"------------------------------ CommentLines{{{
 "Function to comment "lines" according to filetype/programming language used
 function! s:CommentLines()
 	let c = get(s:CommentChar,&filetype,'?')
@@ -183,7 +155,7 @@ function! s:CommentLines()
 	endif
 endfunction
 "}}}
-"------------------------------OpenOrRefreshNerdTree{{{
+"------------------------------ OpenOrRefreshNerdTree{{{
 "Open the NERDTree if it is not visible, or refresh its working directory
 "otherwise
 function! s:OpenOrRefreshNerdTree()
@@ -191,7 +163,7 @@ function! s:OpenOrRefreshNerdTree()
   NERDTreeRefreshRoot
 endfunction
 "}}}
-"------------------------------setLocalWorkDir{{{
+"------------------------------ setLocalWorkDir{{{
 "set local working directory
 function! s:setLocalWorkDir()
 	echom &buftype
@@ -200,7 +172,7 @@ function! s:setLocalWorkDir()
 	endif
 endfunction
 "}}}
-"------------------------------FormatAndFeedToRepl{{{
+"------------------------------ FormatAndFeedToRepl{{{
 "Format and Feed to Read-Eval-Print-Loop
 "This function is for Users of the statistical programming language R, that use
 "the plugin Nvim-R. When the cursor is positioned within a function block and
@@ -264,7 +236,7 @@ function! s:FormatAndFeedToRepl()
 	call setpos('.',cursPos)
 endfunction
 "}}}
-"------------------------------OpenOmni{{{
+"------------------------------ OpenOmni{{{
 "Open adequate completion menu
 function! s:OpenOmni()
 	if !pumvisible()
@@ -293,7 +265,7 @@ function! s:OpenOmni()
 	endif
 endfunction
 "}}}
-"------------------------------SpellCheckToggle{{{
+"------------------------------ SpellCheckToggle{{{
 "Toggle spell check
 function! s:SpellCheckToggle()
 	if &spell
@@ -303,7 +275,7 @@ function! s:SpellCheckToggle()
 	endif
 endfunction
 "}}}
-"------------------------------QuickFixToggle{{{
+"------------------------------ QuickFixToggle{{{
 "Toggle quickfix window
 function! s:QuickFixToggle()
 	if exists("g:quickfix_window_is_open") && g:quickfix_window_is_open
@@ -319,7 +291,7 @@ function! s:QuickFixToggle()
 	return
 endfunction
 "}}}
-"------------------------------FoldColumnToggle{{{
+"------------------------------ FoldColumnToggle{{{
 "Function to toggle the foldcolumn
 function! s:FoldColumnToggle()
 	if &foldcolumn
@@ -329,7 +301,7 @@ function! s:FoldColumnToggle()
 	endif
 endfunction
 "}}}
-"------------------------------CheckBuf{{{
+"------------------------------ CheckBuf{{{
 "Helper function to check, whether a given buffer is listed and within contained
 "within g:bufNumbrs
 function! s:CheckBuf(bufNr)
@@ -353,7 +325,7 @@ function! s:CheckBuf(bufNr)
 	endif
 endfunction
 "}}}
-"------------------------------BufferCycle{{{
+"------------------------------ BufferCycle{{{
 "Open a new window and cycle through all listed buffers (A)
 function! s:BufferCycle(direction)
 	function! Local_incrementIndex()
@@ -421,7 +393,7 @@ function! s:BufferCycle(direction)
 	endif
 endfunction
 "}}}
-"------------------------------HlTrlWsp{{{
+"------------------------------ HlTrlWsp{{{
 "Function that toggles highlighting trailing white-space characters
 function! s:HlTrlWsp()
 	highlight trlWspGroup ctermbg=green guibg=green
@@ -445,7 +417,7 @@ function! s:HlTrlWsp()
 	endif
 endfunction
 "}}}
-"------------------------------Cmt{{{
+"------------------------------ Cmt{{{
 "Print a comment if boolean script variable s:verbose is set
 function! s:Cmt(comment)
 	if s:verbose
@@ -453,7 +425,7 @@ function! s:Cmt(comment)
 	endif
 endfunction
 "}}}
-"------------------------------GoToWinAndRefreshNerdtree{{{
+"------------------------------ GoToWinAndRefreshNerdtree{{{
 "Go to a window with given window number and reload current working dir of
 "NERDTree
 function! s:GoToWinAndRefreshNerdtree(winNumber)
@@ -468,7 +440,7 @@ function! s:GoToWinAndRefreshNerdtree(winNumber)
 	endif
 endfunction
 "}}}
-"------------------------------GoToNeighbourWin{{{
+"------------------------------ GoToNeighbourWin{{{
 "Go to previous/next window if direction is 'backward'/'forward'
 function! s:GoToNeighbourWin(direction)
 	let c = winnr('$')
@@ -489,7 +461,7 @@ function! s:GoToNeighbourWin(direction)
 	endif
 endfunction
 "}}}
-"------------------------------ToggleSyntax{{{
+"------------------------------ ToggleSyntax{{{
 "Toggle syntax coloring
 function! s:ToggleSyntax()
 	if(exists("g:syntax_on"))
@@ -499,12 +471,12 @@ function! s:ToggleSyntax()
 	endif
 endfunction
 "}}}
-"------------------------------GR{{{
+"------------------------------ GR{{{
 function GR(replacementString)
 	%s/{expand("<cword>")}/{a:replacementString}/gc
 endfunction
 "}}}
-"------------------------------RangeSearch{{{
+"------------------------------ RangeSearch{{{
 "Perform search with "/" within visually selected range
 function! s:RangeSearch(direction)
 	call inputsave()
@@ -519,7 +491,7 @@ function! s:RangeSearch(direction)
 	endif
 endfunction
 "}}}
-"------------------------------ResCur{{{
+"------------------------------ ResCur{{{
 "Reset cursor position
 function! ResCur()
 	try
@@ -530,7 +502,7 @@ function! ResCur()
 	endtry
 endfunction
 "}}}
-"------------------------------MaxCurWin{{{
+"------------------------------ MaxCurWin{{{
 "Maximize current window
 function! s:MaxCurWin()
 	let g:cursorPosition = getcurpos()
@@ -567,7 +539,7 @@ function! s:MaxCurWin()
 	endif
 endfunction
 "}}}
-"------------------------------MinCurWin{{{
+"------------------------------ MinCurWin{{{
 "Minimize current window (Close tab and return to minimized Window)
 function! s:MinCurWin()
 	if exists("g:maxMinPairs")
@@ -588,58 +560,56 @@ function! s:MinCurWin()
 endfunction
 "}}}
 	"}}}
-	"------------------------------SETTINGS------------------------------{{{
-	"TODO:command that repeats last command
-" 	set path to current directory ( Corresponds to output of :pwd or :echo getcwd() )
-	set path=**
-	command! Tex :w|:!pdflatex -shell-escape %
-	command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
-  set nocompatible| "Required by the vim-polyglot plugin
-"   colorscheme koehler
-"   Colorscheme is set in plugin options for plugin "vim-one" below
-	set omnifunc=syntaxcomplete#Complete
-	set foldcolumn=4|
-	set ignorecase|		"Ignore case for vim search function / or ?
-	set hlsearch incsearch|	"highlight all matching search patterns while typing
-	set splitright|		"make new vertical splits appear to the right
-	set splitbelow|		"make new horizontal splits appear below
-	"consider command <<aboveleft>> for vertical/horizontal splits to open to the left/top of the
-	"current active window
-	set wrap|		"let lines break, if their lengths exceed the window size
-  "Enable mouse for all modes (visual, insert, command-line mode, etc.)
-	set mouse=a
-" 	set ttymouse=xterm2|  "when used inside tmux
+"------------------------------ SETTINGS{{{
+"TODO:command that repeats last command
+"set path to current directory ( Corresponds to output of :pwd or :echo getcwd() )
+set path=**
+command! Tex :w|:!pdflatex -shell-escape %
+command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
+set nocompatible| "Required by the vim-polyglot plugin
+" set omnifunc=syntaxcomplete#Complete
+set foldcolumn=4|
+set ignorecase|		"Ignore case for vim search function / or ?
+set hlsearch incsearch|	"highlight all matching search patterns while typing
+set splitright|		"make new vertical splits appear to the right
+set splitbelow|		"make new horizontal splits appear below
+"consider command <<aboveleft>> for vertical/horizontal splits to open to the left/top of the
+"current active window
+" set wrap|		"let lines break, if their lengths exceed the window size
+"Enable mouse for all modes (visual, insert, command-line mode, etc.)
+set mouse=a
 "Zwischenablage, clipboard, pasteboard, copy and paste
 "Es reicht einfach das Hinterlegen des Unix-Programms
 "win32yank.exe
 "Dieses ist unter https://www.github.com/equalsraf/win32yank/releases
 "herunterzuladen
-  set clipboard=unnamedplus
-	set shiftround|		"round value for indentation to multiple of shiftwidth
-	set number
-	set laststatus=2
-	set expandtab
-        set shiftwidth=2
-        set softtabstop=2
-	set autoindent
-	set smartindent
-	"set autowriteall 	"automatically write buffers when required
-	filetype plugin indent on
-	"}}}
-"------------------------------ABBREVIATIONS------------------------------{{{
+set foldmethod=marker
+" set shiftround|		"round value for indentation to multiple of shiftwidth
+" set number
+" set laststatus=2
+" set expandtab
+" set shiftwidth=2
+" set softtabstop=2
+" set autoindent
+" set smartindent
+" filetype plugin indent on
+"}}}
+"------------------------------ ABBREVIATIONS{{{
 iabbrev 'van\ W' van Wickevoort Crommelin
 iabbrev ppp Philipp van Wickevoort Crommelin
 iabbrev ~  ~<space>|    " Replace NON-BRAKE-SPACE character (Hex-Code c2a0)
                         " with regular space character (Hex-code a0)
 "}}}
-"------------------------------MAPPINGS------------------------------{{{
-"------------------------------GLOBAL{{{
+"------------------------------ MAPPINGS{{{
+"------------------------------ GLOBAL{{{
 "move cursor just before found character
 noremap f t
 "move cursor just after found character
 noremap F T
+noremap <silent> t :call <SID>BufferCycle("up")<cr>
+noremap <silent> <s-T> :call <SID>BufferCycle("down")<cr>
 "}}}
-"------------------------------NORMAL MODE{{{
+"------------------------------ NORMAL MODE{{{
 "jump to tag - Don't forget to create a tag file with ctags, like
 "ctags myDirectoryWithRFiles --exclude renv
 "and import it in
@@ -709,8 +679,6 @@ nnoremap <silent> ä :cprevious<cr>
 nnoremap <silent> ü :cnext<cr>
 "Cycle through all listed buffers
 " nnoremap <localleader>f :call <SID>FoldColumnToggle()<cr>
-noremap <silent> t :call <SID>BufferCycle("up")<cr>
-noremap <silent> <s-T> :call <SID>BufferCycle("down")<cr>
 "echo cword
 nnoremap <localleader>ee :execute "echom shellescape(expand(\"\<cword>\"))"<cr>
 "echo cWORD
@@ -748,7 +716,7 @@ nnoremap <silent> <S-tab> :call <SID>GoToNeighbourWin("backward")<esc>
 "Edit R function collection
 nnoremap <silent> <localleader>er :execute ":split ".g:RFUNS."\|:lcd ".g:RFUNS_DIR<cr>
 "Edit vimrc file
-nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC."\|:lcd ".g:VIMRC_DIR<cr>
+nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC<cr>
 "source (aka. "reload") vimrc file
 nnoremap <localleader>r :source $MYVIMRC<CR>
 "open terminal emulator. For automatic switch to insert mode (aka terminal mode)
@@ -758,12 +726,8 @@ nnoremap <silent> <localleader>C :execute ":split\|:terminal"<cr>
 nnoremap <space> viw
 "clear current line
 nnoremap <silent> <localleader>d :call <sid>DeleteLine()<cr>
-"Increase tabstop
-noremap <silent> <localleader>ll :let &tabstop += (&tabstop < 10) ? 1 : 0 <CR>
-"Decrease tabsto
-noremap <silent> <localleader>hh :let &tabstop -= (&tabstop < 2) ? 0 : 1 <CR>
 "}}}
-"------------------------------VISUAL MODE{{{
+"------------------------------ VISUAL MODE{{{
 "Enclose/surround visually selected area with/by angle brackets
 vnoremap <localleader>e< <esc>`<i<<esc>`>la><esc>
 "Enclose/surround visually selected area with/by brackets
@@ -805,7 +769,7 @@ vnoremap n< <esc>:<c-u>execute "normal! /".'\v\<'."\rlvi<"<cr>
 "constrain selection to content of previously emerging pair of angle brackets
 vnoremap p< <esc>:<c-u>execute "normal! ?".'\v\>'."\rhvi<"<cr>
 "}}} <alskdjflkasf>
-"------------------------------INSERT MODE{{{
+"------------------------------ INSERT MODE{{{
 "Open completion menuh
 "inoremap <expr> <tab> :call openOmni()
 inoremap <tab> <c-r>=<SID>OpenOmni()<CR>
@@ -822,11 +786,11 @@ inoremap <localleader><tab> <tab>
 "expand R pipe 
 inoremap <<CR> %>%<CR>
 "}}}
-"------------------------------TERMINAL MODE{{{
+"------------------------------ TERMINAL MODE{{{
 "terminal mode: escape key --> exit insert mode
 tnoremap <Esc> <C-\><C-n>
 "}}}
-"------------------------------OPERATOR PENDING MODE{{{
+"------------------------------ OPERATOR PENDING MODE{{{
 if(len(maparg('cp'))!=0)|	"check whether mapping already exists
 	unmap cp|		"unmap iron-vims repeat command
 endif
@@ -838,13 +802,8 @@ onoremap n{ :<c-u>normal! f{lvi{<cr>|	"next brace environment
 onoremap p{ :<c-u>normal! F}hvi{<cr>|	"last brace environment
 "}}}
 "}}}
-"------------------------------AUTOCOMMANDS	{{{
-"autocmd BufWinEnter * :write|echom("PVWC\tFile saved.")
-"TODO: autocmd BufWinenter *.R "deactivate iron-vim plugin"
-"	or alternatively
-"	autocmd FileType r "deactivate iron-vim plugin"
-"Comment a line specific to its filetype
-"------------------------------Filetype html{{{
+"------------------------------ AUTOCOMMANDS{{{
+"------------------------------ Filetype html{{{
 augroup html
 	autocmd!
 	"Don't wrap text for html files
@@ -852,27 +811,20 @@ augroup html
 	autocmd FileType html nnoremap <buffer> <localleader>f Vatzf
 augroup end
 "}}}
-"------------------------------Filetype python{{{
+"------------------------------ Filetype python{{{
 augroup python
 	autocmd!|	"Delete all comands from group first
-	autocmd FileType python :iabbrev iff if:<left>
-	autocmd FileType python :iabbrev fnn def ()<left><left>
 	autocmd FileType python setlocal foldmethod=indent
 	autocmd FileType python setlocal foldlevelstart=0
 augroup end
 "}}}
-"------------------------------Filetype r{{{
+"------------------------------ Filetype r{{{
 augroup r
 	autocmd!
-	autocmd FileType r :iabbrev iff if()<left>
-" 	autocmd FileType r :call StartR("R")
-	autocmd FileType r :iabbrev fnn = function()<left><left><left><left><left><left><left><left><left><left><left><left><left><left>
-        autocmd Filetype r :setlocal colorcolumn=81|                    "Display a coloured vertical bar
-        autocmd Filetype r :setlocal foldmethod=marker|                    "Display a coloured vertical bar
-"         autocmd Filetype r :setlocal syntax=r|                          "Syntax is sometimes not set automatically when file is opened with NERDtree. That is why it needs to be set explicitly here.
+        autocmd Filetype r :setlocal colorcolumn=80|                    "Display a coloured vertical bar
 augroup end
 "}}}
-"------------------------------Filetype markdown{{{
+"------------------------------ Filetype markdown{{{
 augroup markdown
 	autocmd!
 	autocmd FileType markdown onoremap <buffer> in@ :<c-u>execute "normal! /@\r:nohlsearch\rhviw"<cr>
@@ -880,48 +832,43 @@ augroup markdown
 	autocmd FileType markdown onoremap <buffer> ah :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_j"<cr>|	"delete around heading
 augroup end
 "}}}
-"------------------------------Filetype perl{{{
+"------------------------------ Filetype perl{{{
 augroup perl
       autocmd!
       autocmd FileType perl :iabbrev '/' //<left>|"Create matching slash in regular expression environments
 augroup end
 "}}}
-"------------------------------Filetype vim{{{
+"------------------------------ Filetype vim{{{
 augroup vim
 	autocmd!
-	autocmd FileType vim setlocal foldmethod=marker
 	autocmd FileType vim setlocal foldlevelstart=0
 augroup end
 "}}}
-"------------------------------Filetype sh{{{
+"------------------------------ Filetype sh{{{
 augroup sh
 	autocmd!
 	autocmd FileType sh setlocal textwidth=200
-  autocmd FileType sh setlocal foldmethod=marker
 augroup end
 "}}}
-"------------------------------Filetype snippets{{{
+"------------------------------ Filetype snippets{{{
 augroup snippets
 	autocmd!
-  autocmd FileType snippets setlocal foldmethod=marker
 augroup end
 "}}}
-"------------------------------miscellaneous{{{
+"------------------------------ miscellaneous{{{
 augroup miscellaneous
 	autocmd!
-  autocmd termOpen * :startinsert| "Automatically start terminal mode 
-"   autocmd vimenter * :NERDTree|           "Display Nerdtree after vim startup
+  	autocmd termOpen * :startinsert| "Automatically start terminal mode 
+"    	autocmd vimenter * :NERDTree|           "Display Nerdtree after vim startup
 	autocmd Filetype help :setlocal number|	"show line numbers for vim documentation files
-" 	autocmd FileType tex :setlocal spell spelllang=de|	"check spelling automatically for tex files
 	autocmd BufWinEnter * :call ResCur()|			          "reset cursor position
-	autocmd BufWinEnter * :execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
-" 	autocmd BufReadPost * call <SID>setLocalWorkDir()|	"Set working directory local to buffer
+" 	autocmd BufWinEnter * :execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
 augroup end
 "}}}
 "}}}
 "}}}
-"================================================= PLugin configuration ======================{{{
-"------------------------------NCM------------------------------{{{
+"================================================= PLugin configuration{{{
+"------------------------------ NCM{{{
 " IMPORTANT: :help Ncm2PopupOpen for more information
 " enable ncm2 for all buffers
 "autocmd BufEnter * call ncm2#enable_for_buffer()
@@ -932,7 +879,7 @@ augroup end
 "let g:ncm2#auto_popup=1
 "let g:vimtex_compiler_progname = 'nvr'
 "}}}
-"------------------------------DEOPLETE------------------------------{{{
+"------------------------------ DEOPLETE{{{
 " let g:deoplete#enable_at_startup = 1 "enable deoplete auto completion at vim startup
 " call deoplete#custom#option({
 "     \ 'ignore_case': 1,
@@ -943,7 +890,7 @@ augroup end
 "      \ 'tex': g:vimtex#re#deoplete
 "      \})
 "}}}
-"------------------------------NERDTREE------------------------------{{{
+"------------------------------ NERDTREE{{{
 "try fc-cache -v -f in terminal to reset font buffer
 augroup nerdtree
 	autocmd!
@@ -962,7 +909,7 @@ nnoremap <localleader>n :call <SID>OpenOrRefreshNerdTree()<cr>
 "nnoremap <localleader>h :call <Plug>NERDTreeMapOpenSplit()<CR>
 let g:webdevicons_enable_nerdtree = 1
 "}}}
-"------------------------------IRON------------------------------{{{
+"------------------------------ IRON{{{
 "send visually selected code fragment in visual mode
 "vnoremap <silent> , <Plug>(iron-visual-send)<Esc><CR>
 "nmap <localleader>t    <Plug>(iron-send-motion)
@@ -974,7 +921,7 @@ nnoremap <silent> , <Plug>(iron-send-line)<CR>
 "nmap <localleader>q    <Plug>(iron-exit)
 "nmap <localleader>c    <Plug>(iron-clear)
 "}}}
-"------------------------------NVIM-R------------------------------{{{
+"------------------------------ NVIM-R{{{
 " Set R's current working directory to 
 " neovim's current working directory
 " (and not to the directory of the R file
@@ -1019,7 +966,7 @@ augroup NvimR
 	    set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
 augroup end
 "}}}
-"------------------------------ULTISNIPS------------------------------{{{
+"------------------------------ ULTISNIPS{{{
 let g:UltiSnipsEditSplit="context"
 "dont use <Tab> key to expand snippet
 let g:UltiSnipsExpandTrigger = "<localleader><cr>"
@@ -1035,27 +982,27 @@ function ExpandSnippetOrCarriageReturn()
 endfunction
 inoremap <expr> <CR> pumvisible() ? "<C-R>=ExpandSnippetOrCarriageReturn()<CR>" : "\<CR>"
 "}}}
-"------------------------------JEDI-VIM------------------------------{{{
+"------------------------------ JEDI-VIM{{{
 " disable autocompletion, cause we use deoplete for completion
 let g:jedi#completions_enabled = 1
 " open the go-to function in split, not another buffer
 let g:jedi#use_splits_not_buffers = "right"
 "}}}
-"------------------------------NEOFORMAT------------------------------{{{
+"------------------------------ NEOFORMAT{{{
 "use 'styler' formatter for R source files
 let g:neoformat_enabled_r = ['styler']
 "}}}
-"------------------------------NEOMAKE------------------------------{{{
+"------------------------------ NEOMAKE{{{
 "make 'pylint' the linter for python source files
 let g:neomake_python_enabled_makers = ['pylint']
 "}}}
-"------------------------------AIRLINE------------------------------{{{
+"------------------------------ AIRLINE{{{
 "Automatically displays all buffers when there's only one tab open.
 let g:airline#extensions#tabline#enabled = 1
 "enable modified detection
 let g:airline_detect_modified=1
 "}}}
-"------------------------------LIGHTLINE------------------------------{{{
+"------------------------------ LIGHTLINE{{{
 		let g:lightline = {
 			\ 'active': {
 			\   'left': [ [ 'mode', 'paste' ],
@@ -1066,13 +1013,13 @@ let g:airline_detect_modified=1
 			\ },
 			\ }
 "}}}
-"------------------------------FUGITIVE------------------------------{{{
+"------------------------------ FUGITIVE{{{
 "Git add file that corresponds to current buffer
 nnoremap <silent> <localleader>ga :Git add %<cr>
 "Git rebase --continue
 nnoremap <silent> <localleader>grc :Git rebase --continue<cr>
 "}}}
-"------------------------------VIM-ONE------------------------------{{{
+"------------------------------ VIM-ONE{{{
 "Credit joshdick
 "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
 "If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
@@ -1102,11 +1049,11 @@ colorscheme one
 set t_8b=^[[48;2;%lu;%lu;%lum
 set t_8f=^[[38;2;%lu;%lu;%lum
 "}}}
-"------------------------------SYNTASTIC------------------------------{{{
+"------------------------------ SYNTASTIC{{{
 " let g:syntastic_enable_r_lintr_checker = 1
 " let g:syntastic_r_checkers = ['lintr']
 "}}}
-"-------------------------VIM-EASYMOTION------------------------------{{{
+"------------------------------ VIM-EASYMOTION{{{
 " <Leader>f{char} to move to {char}
 map  <localleader>f <Plug>(easymotion-bd-f)
 nmap <localleader>f <Plug>(easymotion-overwin-f)
@@ -1122,7 +1069,7 @@ nmap <localleader>f <Plug>(easymotion-overwin-f)
 map  <localleader>w <Plug>(easymotion-bd-w)
 nmap <localleader>w <Plug>(easymotion-overwin-w)
 "}}}
-"------------------------------ALE------------------------------{{{
+"------------------------------ ALE{{{
 " default 0
 " let g:ale_r_lintr_lint_package = 0
 let g:ale_r_lintr_options = '
