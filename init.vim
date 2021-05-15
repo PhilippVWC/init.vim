@@ -1094,3 +1094,8 @@ if match(&runtimepath,'ale') != -1
 				\'
 endif
 "}}}
+"------------------------------ VIM-GITGUTTER{{{
+if match(&runtimepath,'git-gutter') != -1
+	set updatetime=100
+endif
+"}}}
