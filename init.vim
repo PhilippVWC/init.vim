@@ -2,18 +2,19 @@
 "Please send bug reports to philippcrommelin@googlemail.com.
 "================================================= Plugins{{{
 call plug#begin()
-Plug 'jalvesaq/Nvim-R'
 Plug 'ncm2/ncm2'
-Plug 'gaalcaras/ncm-R'
 Plug 'roxma/nvim-yarp'
+Plug 'jalvesaq/Nvim-R'
+Plug 'gaalcaras/ncm-R'
+Plug 'SirVer/ultisnips'
+Plug 'ncm2/ncm2-ultisnips'
 Plug 'easymotion/vim-easymotion'
 Plug 'dense-analysis/ale'
 Plug 'rakr/vim-one'
 Plug 'preservim/tagbar'
 Plug 'mhinz/vim-startify'
 Plug 'airblade/vim-gitgutter'
-Plug 'SirVer/ultisnips'
-Plug 'ncm2/ncm2-ultisnips'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'preservim/nerdtree'
 Plug 'ivalkeen/nerdtree-execute'
 Plug 'dag/vim-fish'
@@ -946,31 +947,24 @@ if match(&runtimepath,'Nvim-R') != -1
 	" let Rout_more_colors = 1
 	let R_show_arg_help = 1
 	let R_assign = 0
-	function! s:NvimRconf()
-		"remap the 'send line' command of Nvim-R plugin"
-		nmap <buffer> , <Plug>RDSendLine
-		"remap the 'Send selection' command of Nvim-R plugin"
-		vmap <buffer> , <Plug>RDSendSelection
-		"remap the 'check code before sending and then send' command of Nvim-R plugin"
-		"vmap ,c <Plug>RESendSelection
-		nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
-		nmap <buffer> <localleader>rs :call RAction("str")<CR>
-		nmap <buffer> <localleader>rc :call RAction("class")<CR>
-		nmap <buffer> <localleader>ri :RStop<CR>
-		nmap <buffer> <localleader>rh <Plug>RHelp
-		" nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
-		nmap <buffer> <localleader>rg call RAction("glimpse")<CR>
-		nmap <buffer> <localleader>rl :call RAction("length")<CR>
-		nmap <buffer> <localleader>rL :call RAction("library")<CR>
-		nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
-		nmap <buffer> <localleader>rf :call StartR("R")<CR>
-		nmap <buffer> <localleader>aa <Plug>RSendFile
-	endfunction
-	augroup NvimR
-		autocmd!
-		autocmd filetype r :call s:NvimRconf()
-		set textwidth=80|	"Insert mode: Line feed is automatically inserted during writing.
-	augroup end
+	"remap the 'send line' command of Nvim-R plugin"
+	nmap <buffer> , <Plug>RDSendLine
+	"remap the 'Send selection' command of Nvim-R plugin"
+	vmap <buffer> , <Plug>RDSendSelection
+	"remap the 'check code before sending and then send' command of Nvim-R plugin"
+	"vmap ,c <Plug>RESendSelection
+	nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
+	nmap <buffer> <localleader>rs :call RAction("str")<CR>
+	nmap <buffer> <localleader>rc :call RAction("class")<CR>
+	nmap <buffer> <localleader>ri :RStop<CR>
+	nmap <buffer> <localleader>rh <Plug>RHelp
+	" nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
+	nmap <buffer> <localleader>rg call RAction("glimpse")<CR>
+	nmap <buffer> <localleader>rl :call RAction("length")<CR>
+	nmap <buffer> <localleader>rL :call RAction("library")<CR>
+	nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
+	nmap <buffer> <localleader>rf :call StartR("R")<CR>
+	nmap <buffer> <localleader>aa <Plug>RSendFile
 endif
 "}}}
 "------------------------------ ULTISNIPS{{{
