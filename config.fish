@@ -4,7 +4,7 @@
 set -gx EDITOR "nvim"
 set -x theme_nerd_fonts yes
 set -U fish_user_paths /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup 
-set -U GOPATH /home/philipp/go
+set -U GOPATH $HOME/go
 # disable fish greeting on startup
 set fish_greeting
 

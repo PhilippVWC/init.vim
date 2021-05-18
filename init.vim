@@ -36,18 +36,18 @@ call plug#end()
 "is available at https://www.github.com/equalsraf/win32yank/releases
 "The following global variable defines a more explicit way
 "to control the behaviour of the copy and paste mechanism
-let g:clipboard = {
-			\'name' : 'win32yank-wsl',
-			\'copy' : {
-			\'+' : 'win32yank.exe -i --crlf',
-			\'*' : 'win32yank.exe -i --crlf'
-			\},
-			\'paste' : {
-			\'+' : 'win32yank.exe -o --lf',
-			\'*' : 'win32yank.exe -o --lf'
-			\},
-			\'cache_enabled' : 0
-			\}
+" let g:clipboard = {
+" 			\'name' : 'win32yank-wsl',
+" 			\'copy' : {
+" 			\'+' : 'win32yank.exe -i --crlf',
+" 			\'*' : 'win32yank.exe -i --crlf'
+" 			\},
+" 			\'paste' : {
+" 			\'+' : 'win32yank.exe -o --lf',
+" 			\'*' : 'win32yank.exe -o --lf'
+" 			\},
+" 			\'cache_enabled' : 0
+" 			\}
 "Configuration to use ctags for R with neovim
 let g:tagbar_type_r = {
 			\ 'ctagstype' : 'r',
