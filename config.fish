@@ -28,11 +28,11 @@ function setKeybindings
     # fish shell was started from neovim.
     # If true, then VI-Keybings are disabled,
     # since this would conflict with neovim.
-    set ppid (ps -q (echo $fish_pid) -o ppid=)
+    set ppid (ps -p (echo $fish_pid) -o ppid=)
     # remove leading whitespaces
     # that sometimes are produced by ps
     set ppid (string trim $ppid)
-    set pcmd (ps -q (echo $ppid) -o comm=)
+    set pcmd (ps -p (echo $ppid) -o comm=)
     set pcmd (string trim $pcmd)
     if echo $pcmd | grep -q "^nvim\$"
         fish_default_key_bindings
@@ -51,8 +51,6 @@ function start_ssh_agent
     eval ssh-add -l > /dev/null 2>&1
     set s $status
     switch $s
-#         case 0  
-#             echo "OpenSSH authentication agent running"
         case 1
             echo "OpenSSH authentication agent running but with wrong keys"
             echo "Key will now be added."
@@ -65,8 +63,6 @@ function start_ssh_agent
             set -xU SSH_AGENT_PID $SSH_AGENT_PID
             ssh-add
             rm $e
-#         case '*'
-#             echo "Error code of ssh-add -l is $status"
         end
 end
 start_ssh_agent
