@@ -95,7 +95,6 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 let g:python3_host_prog="/usr/bin/python3"
 let g:python_host_prog="/usr/bin/python2"
 
-" let g:ruby_version=get(systemlist("ruby --version | awk '{print $2}' | sed -r 's/^([0-9]\\.[0-9]\\.[0-9])p.*$/\\1/g'"),0)
 let g:ruby_version=get(systemlist("ls -l $HOME/.gem/ruby/ | tail -n +2 | rev | awk '{print $1}' | rev | sort -r | head -n 1"),0)
 " perhaps it is necessary to perform a user installation with gem according to
 " gem install --user neovim
