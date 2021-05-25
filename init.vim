@@ -94,8 +94,12 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------ NEOVIM PROVIDER {{{
 let g:python3_host_prog="/usr/bin/python3"
 let g:python_host_prog="/usr/bin/python2"
-let g:ruby_host_prog="/Users/Philipp/.gem/ruby/3.0.0/bin/neovim-ruby-host"
-let g:node_host_prog ="/usr/local/lib/node_modules/neovim/bin/cli.js"
+
+let g:ruby_version=get(systemlist("ruby --version | awk '{print $2}' | sed -r 's/^([0-9]\\.[0-9]\\.[0-9])p.*$/\\1/g'"),0)
+" perhaps it is necessary to perform a user installation with gem according to
+" gem install --user neovim
+let g:ruby_host_prog=$HOME."/.gem/ruby/".g:ruby_version."/bin/neovim-ruby-host"
+let g:node_host_prog="/usr/local/lib/node_modules/neovim/bin/cli.js"
 " }}}
 "------------------------------ FUNCTIONS{{{
 "TODO: Function that changes a word globally
