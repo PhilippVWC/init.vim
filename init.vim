@@ -37,17 +37,17 @@ call plug#end()
 "The following global variable defines a more explicit way
 "to control the behaviour of the copy and paste mechanism
 " let g:clipboard = {
-" 			\'name' : 'win32yank-wsl',
-" 			\'copy' : {
-" 			\'+' : 'win32yank.exe -i --crlf',
-" 			\'*' : 'win32yank.exe -i --crlf'
-" 			\},
-" 			\'paste' : {
-" 			\'+' : 'win32yank.exe -o --lf',
-" 			\'*' : 'win32yank.exe -o --lf'
-" 			\},
-" 			\'cache_enabled' : 0
-" 			\}
+"			\'name' : 'win32yank-wsl',
+"			\'copy' : {
+"			\'+' : 'win32yank.exe -i --crlf',
+"			\'*' : 'win32yank.exe -i --crlf'
+"			\},
+"			\'paste' : {
+"			\'+' : 'win32yank.exe -o --lf',
+"			\'*' : 'win32yank.exe -o --lf'
+"			\},
+"			\'cache_enabled' : 0
+"			\}
 "Configuration to use ctags for R with neovim
 let g:tagbar_type_r = {
 			\ 'ctagstype' : 'r',
@@ -86,12 +86,17 @@ let s:CommentChar = {
 let g:SPELL_LANG = "en_us"|	"global spelling language
 let s:verbose = 0|	"Global indicator variable for more verbose output
 let g:VIMRC_DIR="/home/philipp/Developer/Vimscript/init.vim/"
-let g:python3_host_prog="/usr/bin/python3"
-let g:python_host_prog="/usr/bin/python2"
+
 let g:mapleader = '\'|			"Set the leader key to the hyphen character
 let g:maplocalleader = '-'|		"Map the localleader key to a backslash
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "}}}
+"------------------------------ NEOVIM PROVIDER {{{
+let g:python3_host_prog="/usr/bin/python3"
+let g:python_host_prog="/usr/bin/python2"
+let g:ruby_host_prog="/Users/Philipp/.gem/ruby/3.0.0/bin/neovim-ruby-host"
+let g:node_host_prog ="/usr/local/lib/node_modules/neovim/bin/cli.js"
+" }}}
 "------------------------------ FUNCTIONS{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments

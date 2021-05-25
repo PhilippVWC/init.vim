@@ -2,11 +2,14 @@
 # Philipp van Wickevoort Crommelin
 
 set -gx EDITOR "nvim"
-set -x theme_nerd_fonts yes
-set -U fish_user_paths /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup 
-set -U GOPATH $HOME/go
+set -gx theme_nerd_fonts yes
+# set -gx fish_user_paths /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup 
+set -gx PATH $PATH $HOME/Developer/Vimscript/init.vim/bin $HOME/.local/bin $HOME/Developer/Shell/shiny_setup
+# set -gx PATH $PATH /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup /usr/local/lib/ruby/gems/3.0.0/bin
+
+set -gx GOPATH $HOME/go
 # disable fish greeting on startup
-set fish_greeting
+set -g fish_greeting
 
 abbr --add 'tmuxconf' '$EDITOR /home/$USER/.tmux.conf'
 abbr --add 'l' 'ls -lstha'
