@@ -607,7 +607,7 @@ set mouse=a
 "herunterzuladen
 set foldmethod=marker
 " set shiftround|		"round value for indentation to multiple of shiftwidth
-" set number
+set number
 " set laststatus=2
 " set expandtab
 " set shiftwidth=2

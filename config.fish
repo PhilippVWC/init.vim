@@ -11,6 +11,7 @@ set -gx GOPATH $HOME/go
 # disable fish greeting on startup
 set -g fish_greeting
 
+abbr --add 'rci' 'R CMD INSTALL'
 abbr --add 'tmuxconf' '$EDITOR /home/$USER/.tmux.conf'
 abbr --add 'l' 'ls -lstha'
 abbr --add 'vim' 'nvim'
