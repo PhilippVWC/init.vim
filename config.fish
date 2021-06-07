@@ -108,6 +108,8 @@ function set_tmux_prefix
         # local session
         set -Ux TMUX_PREFIX "^"
     end
+    printf "set -g prefix C-$TMUX_PREFIX\nunbind C-$TMUX_PREFIX\nbind C-$TMUX_PREFIX send-prefix" > $HOME/.prefix.tmux.conf
+    tmux source-file ~/.prefix.tmux.conf
 end
 # }}}
 # }}}
