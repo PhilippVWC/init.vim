@@ -20,11 +20,12 @@ abbr --add 'e' "exit"
 abbr --add 'mlr' "cd /home/philipp/Developer/R"
 # }}}
 # ------------------------------ function definitions{{{
-function setKeybindings
-    # This function evaluates, wether the current
-    # fish shell was started from neovim.
-    # If true, then VI-Keybings are disabled,
-    # since this would conflict with neovim.
+# set_key_bindings {{{
+# This function evaluates, wether the current
+# fish shell was started from neovim.
+# If true, then VI-Keybings are disabled,
+# since this would conflict with neovim.
+function set_key_bindings
     set ppid (ps -p (echo $fish_pid) -o ppid=)
     # remove leading whitespaces
     # that sometimes are produced by ps
@@ -37,8 +38,12 @@ function setKeybindings
         fish_vi_key_bindings
     end
 end
-
-function isSshLogin
+# }}}
+# is_ssh_login {{{
+# Check wether current fish session 
+# is a remote ssh login session
+# returns 0 if yes or 1 otherwise
+function is_ssh_login
     if test -z $SSH_LOGIN
         set ppid (ps -p (echo $fish_pid) -o ppid=)
         set ppid (string trim $ppid)
@@ -54,7 +59,8 @@ function isSshLogin
         return $SSH_LOGIN
     end
 end
-
+# }}}
+# start_ssh_agent {{{
 # Start openSSH authentication agent if 
 # has not happened yet
 function start_ssh_agent
@@ -76,14 +82,19 @@ function start_ssh_agent
             rm $e
     end
 end
-start_ssh_agent
-
+# }}}
+# fish_prompt {{{
 # Display a powerline command prompt
 function fish_prompt
-    setKeybindings
+    set_key_bindings
     powerline-shell --shell bare $status
     #     eval $GOPATH/bin/powerline-go -error $status -jobs (jobs -p | wc -l)
 end
+# }}}
+# }}}
+# ------------------------------ Function calls{{{
+start_ssh_agent
+is_ssh_login
 # }}}
 # ------------------------------ Variable definitions{{{
 set -gx EDITOR "nvim"
