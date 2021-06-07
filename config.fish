@@ -39,7 +39,7 @@ function set_key_bindings
     end
 end
 # }}}
-# is_ssh_login {{{
+# set_ssh_login {{{
 # Check wether current fish session 
 # is a remote ssh login session and
 # set environment variable "SSH_LOGIN"
@@ -89,10 +89,24 @@ function fish_prompt
     #     eval $GOPATH/bin/powerline-go -error $status -jobs (jobs -p | wc -l)
 end
 # }}}
+# This function sets an exportet environment variable
+# "TMUX_PREFIX" according to wether current fish 
+# session is remote (SSH) or local
+function set_tmux_prefix
+    # set variable $SSH_LOGIN
+    set_ssh_login
+    if test $SSH_LOGIN -eq 0
+        # remote session
+        set -Ux TMUX_PREFIX "w"
+    else
+        # local session
+        set -Ux TMUX_PREFIX "^"
+    end
+end
 # }}}
 # ------------------------------ Function calls{{{
 start_ssh_agent
-is_ssh_login
+set_tmux_prefix
 # }}}
 # ------------------------------ Variable definitions{{{
 set -gx EDITOR "nvim"
