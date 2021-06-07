@@ -72,5 +72,6 @@ start_ssh_agent
 # Display a powerline command prompt
 function fish_prompt
     setKeybindings
-    eval $GOPATH/bin/powerline-go -error $status -jobs (jobs -p | wc -l)
+    powerline-shell --shell bare $status
+#     eval $GOPATH/bin/powerline-go -error $status -jobs (jobs -p | wc -l)
 end
