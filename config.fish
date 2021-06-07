@@ -89,6 +89,7 @@ function fish_prompt
     #     eval $GOPATH/bin/powerline-go -error $status -jobs (jobs -p | wc -l)
 end
 # }}}
+# set_tmux_prefix {{{
 # This function sets an exportet environment variable
 # "TMUX_PREFIX" according to wether current fish 
 # session is remote (SSH) or local
@@ -103,6 +104,7 @@ function set_tmux_prefix
         set -Ux TMUX_PREFIX "^"
     end
 end
+# }}}
 # }}}
 # ------------------------------ Function calls{{{
 start_ssh_agent
