@@ -921,7 +921,7 @@ if match(&runtimepath,'nerdtree') != -1
 	augroup nerdtree
 		autocmd!
 		autocmd FileType nerdtree set ignorecase | call <SID>Cmt("Ignorecase option set for nerdtree")
-		autocmd FileType nerdtree nnoremap <silent> <buffer> t <c-w><c-w>
+" 		autocmd FileType nerdtree nnoremap <silent> <buffer> t <c-w><c-w>
 		"Trigger nerdtree file system browser automatically, when starting vim session
 		"autocmd vimenter * NERDTree0
 	augroup end
