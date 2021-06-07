@@ -45,17 +45,21 @@ end
 # set environment variable "SSH_LOGIN"
 # to 0 if true and 1 otherwise
 function set_ssh_login
-    if test -z $SSH_LOGIN
-        #grand parent proces id "gppid" ;)
-        set gppid (ps -p (ps -p (echo $fish_pid) -o ppid=) -o ppid=)
-        set ppid (string trim $ppid)
-        set ppcmd (ps -p (echo $ppid) -o comm=)
-        set ppcmd (string trim $ppcmd)
-        if test "$ppcmd" -eq "sshd"
-            set -Ux SSH_LOGIN 0
-        else
-            set -Ux SSH_LOGIN 1
-        end
+    echo current process is (ps -p (echo $fish_pid) -o comm=)
+    set ppid (ps -p (echo $fish_pid) -o ppid=)
+    set ppid (string trim $ppid)
+    echo ppcmd is (ps -p (echo $ppid) -o comm=)
+    #grand parent proces id "gppid" ;)
+    set gppid (ps -p (echo $ppid) -o ppid=)
+    set gppid (string trim $gppid)
+
+    set gppcmd (ps -p (echo $gppid) -o comm=)
+    set gppcmd (string trim $gppcmd)
+    echo "gppcmd is $gppcmd"
+    if echo $gppcmd | grep -q "^sshd\$"
+        set -Ux SSH_LOGIN 0
+    else
+        set -Ux SSH_LOGIN 1
     end
 end
 # }}}
