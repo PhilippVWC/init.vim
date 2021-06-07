@@ -45,22 +45,40 @@ end
 # set environment variable "SSH_LOGIN"
 # to 0 if true and 1 otherwise
 function set_ssh_login
-    echo current process is (ps -p (echo $fish_pid) -o comm=)
+#     echo current process is (ps -p (echo $fish_pid) -o comm=)
     set ppid (ps -p (echo $fish_pid) -o ppid=)
     set ppid (string trim $ppid)
-    echo ppcmd is (ps -p (echo $ppid) -o comm=)
+#     echo ppcmd is (ps -p (echo $ppid) -o comm=)
     #grand parent proces id "gppid" ;)
     set gppid (ps -p (echo $ppid) -o ppid=)
     set gppid (string trim $gppid)
 
     set gppcmd (ps -p (echo $gppid) -o comm=)
     set gppcmd (string trim $gppcmd)
-    echo "gppcmd is $gppcmd"
+#     echo "gppcmd is $gppcmd"
     if echo $gppcmd | grep -q "^sshd\$"
         set -Ux SSH_LOGIN 0
     else
         set -Ux SSH_LOGIN 1
     end
+end
+# }}}
+# set_tmux_prefix {{{
+# This function sets an exportet environment variable
+# "TMUX_PREFIX" according to wether current fish 
+# session is remote (SSH) or local
+function set_tmux_prefix
+    # set variable $SSH_LOGIN
+    set_ssh_login
+    if test $SSH_LOGIN -eq 0
+        # remote session
+        set -Ux TMUX_PREFIX "w"
+    else
+        # local session
+        set -Ux TMUX_PREFIX "^"
+    end
+    printf "set -g prefix C-$TMUX_PREFIX\nunbind C-$TMUX_PREFIX\nbind C-$TMUX_PREFIX send-prefix" > $HOME/.prefix.tmux.conf
+    tmux source-file ~/.prefix.tmux.conf
 end
 # }}}
 # start_ssh_agent {{{
@@ -92,24 +110,6 @@ function fish_prompt
     set_key_bindings
     powerline-shell --shell bare $status
     #     eval $GOPATH/bin/powerline-go -error $status -jobs (jobs -p | wc -l)
-end
-# }}}
-# set_tmux_prefix {{{
-# This function sets an exportet environment variable
-# "TMUX_PREFIX" according to wether current fish 
-# session is remote (SSH) or local
-function set_tmux_prefix
-    # set variable $SSH_LOGIN
-    set_ssh_login
-    if test $SSH_LOGIN -eq 0
-        # remote session
-        set -Ux TMUX_PREFIX "w"
-    else
-        # local session
-        set -Ux TMUX_PREFIX "^"
-    end
-    printf "set -g prefix C-$TMUX_PREFIX\nunbind C-$TMUX_PREFIX\nbind C-$TMUX_PREFIX send-prefix" > $HOME/.prefix.tmux.conf
-    tmux source-file ~/.prefix.tmux.conf
 end
 # }}}
 # }}}
