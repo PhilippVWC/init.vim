@@ -46,7 +46,8 @@ end
 # to 0 if true and 1 otherwise
 function set_ssh_login
     if test -z $SSH_LOGIN
-        set ppid (ps -p (echo $fish_pid) -o ppid=)
+        #grand parent proces id "gppid" ;)
+        set gppid (ps -p (ps -p (echo $fish_pid) -o ppid=) -o ppid=)
         set ppid (string trim $ppid)
         set ppcmd (ps -p (echo $ppid) -o comm=)
         set ppcmd (string trim $ppcmd)
