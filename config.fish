@@ -1,16 +1,7 @@
 # Personal configuration for fish shell
 # Philipp van Wickevoort Crommelin
 
-set -gx EDITOR "nvim"
-set -gx theme_nerd_fonts yes
-# set -gx fish_user_paths /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup 
-set -gx PATH $HOME{/Developer/Vimscript/init.vim/bin, /.local/bin, /Developer/Shell/shiny_setup, /neovim/bin} $PATH
-# set -gx PATH $PATH /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup /usr/local/lib/ruby/gems/3.0.0/bin
-
-set -gx GOPATH $HOME/go
-# disable fish greeting on startup
-set -g fish_greeting
-
+# ------------------------------ Abbreviations{{{
 abbr --add 'rss' 'pvwc@svr-rstudio-tools:/home/pvwc/'
 abbr --add 'rci' 'R CMD INSTALL'
 abbr --add 'tmuxconf' '$EDITOR /home/$USER/.tmux.conf'
@@ -27,7 +18,8 @@ abbr --add 'settings' '$EDITOR /mnt/c/Users/pvwc/AppData/Local/Packages/Microsof
 abbr --add 'RR' 'source $__fish_config_dir/config.fish'
 abbr --add 'e' "exit"
 abbr --add 'mlr' "cd /home/philipp/Developer/R"
-
+# }}}
+# ------------------------------ function definitions{{{
 function setKeybindings
     # This function evaluates, wether the current
     # fish shell was started from neovim.
@@ -92,3 +84,15 @@ function fish_prompt
     powerline-shell --shell bare $status
     #     eval $GOPATH/bin/powerline-go -error $status -jobs (jobs -p | wc -l)
 end
+# }}}
+# ------------------------------ Variable definitions{{{
+set -gx EDITOR "nvim"
+set -gx theme_nerd_fonts yes
+# set -gx fish_user_paths /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup 
+set -gx PATH $HOME{/Developer/Vimscript/init.vim/bin, /.local/bin, /Developer/Shell/shiny_setup, /neovim/bin} $PATH
+# set -gx PATH $PATH /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup /usr/local/lib/ruby/gems/3.0.0/bin
+
+set -gx GOPATH $HOME/go
+# disable fish greeting on startup
+set -g fish_greeting
+# }}}
