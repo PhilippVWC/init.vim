@@ -41,9 +41,10 @@ end
 # }}}
 # is_ssh_login {{{
 # Check wether current fish session 
-# is a remote ssh login session
-# returns 0 if yes or 1 otherwise
-function is_ssh_login
+# is a remote ssh login session and
+# set environment variable "SSH_LOGIN"
+# to 0 if true and 1 otherwise
+function set_ssh_login
     if test -z $SSH_LOGIN
         set ppid (ps -p (echo $fish_pid) -o ppid=)
         set ppid (string trim $ppid)
@@ -54,9 +55,6 @@ function is_ssh_login
         else
             set -Ux SSH_LOGIN 1
         end
-        return $SSH_LOGIN
-    else
-        return $SSH_LOGIN
     end
 end
 # }}}
