@@ -11,6 +11,7 @@ set -gx GOPATH $HOME/go
 # disable fish greeting on startup
 set -g fish_greeting
 
+abbr --add 'rss' 'pvwc@svr-rstudio-tools:/home/pvwc/'
 abbr --add 'rci' 'R CMD INSTALL'
 abbr --add 'tmuxconf' '$EDITOR /home/$USER/.tmux.conf'
 abbr --add 'l' 'ls -lstha'
@@ -44,9 +45,6 @@ function setKeybindings
         fish_vi_key_bindings
     end
 end
-setKeybindings
-
-
 
 # Start openSSH authentication agent if 
 # has not happened yet
@@ -73,5 +71,6 @@ start_ssh_agent
 
 # Display a powerline command prompt
 function fish_prompt
+    setKeybindings
     eval $GOPATH/bin/powerline-go -error $status -jobs (jobs -p | wc -l)
 end
