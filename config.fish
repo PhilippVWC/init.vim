@@ -4,7 +4,7 @@
 set -gx EDITOR "nvim"
 set -gx theme_nerd_fonts yes
 # set -gx fish_user_paths /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup 
-set -gx PATH $PATH $HOME/Developer/Vimscript/init.vim/bin $HOME/.local/bin $HOME/Developer/Shell/shiny_setup
+set -gx PATH $PATH $HOME{/Developer/Vimscript/init.vim/bin, /.local/bin, /Developer/Shell/shiny_setup, /neovim/bin}
 # set -gx PATH $PATH /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup /usr/local/lib/ruby/gems/3.0.0/bin
 
 set -gx GOPATH $HOME/go
