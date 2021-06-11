@@ -39,30 +39,6 @@ function set_key_bindings
     end
 end
 # }}}
-# set_ssh_login {{{
-# Check wether current fish session 
-# is a remote ssh login session and
-# set environment variable "SSH_LOGIN"
-# to 0 if true and 1 otherwise
-function set_ssh_login
-#     echo current process is (ps -p (echo $fish_pid) -o comm=)
-    set ppid (ps -p (echo $fish_pid) -o ppid=)
-    set ppid (string trim $ppid)
-#     echo ppcmd is (ps -p (echo $ppid) -o comm=)
-    #grand parent proces id "gppid" ;)
-    set gppid (ps -p (echo $ppid) -o ppid=)
-    set gppid (string trim $gppid)
-
-    set gppcmd (ps -p (echo $gppid) -o comm=)
-    set gppcmd (string trim $gppcmd)
-#     echo "gppcmd is $gppcmd"
-    if echo $gppcmd | grep -q "^sshd\$"
-        set -Ux SSH_LOGIN 0
-    else
-        set -Ux SSH_LOGIN 1
-    end
-end
-# }}}
 # set_tmux_prefix {{{
 # This function sets an exportet environment variable
 # "TMUX_PREFIX" according to wether current fish 
