@@ -108,7 +108,7 @@ set_tmux_prefix
 set -gx EDITOR "nvim"
 set -gx theme_nerd_fonts yes
 # set -gx fish_user_paths /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup 
-set -gx PATH $HOME{/Developer/Vimscript/init.vim/bin, /.local/bin, /Developer/Shell/shiny_setup, /neovim/bin} $PATH
+set -gx PATH $HOME{/Developer/Vimscript/init.vim/bin, /.local/bin, /Developer/Shell/shiny_setup, /local/nvim/bin} $PATH
 # set -gx PATH $PATH /home/philipp/Developer/Vimscript/init.vim/bin /home/philipp/.local/bin /home/philipp/Developer/Shell/shiny_setup /usr/local/lib/ruby/gems/3.0.0/bin
 
 set -gx GOPATH $HOME/go
