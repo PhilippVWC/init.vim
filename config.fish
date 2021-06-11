@@ -16,7 +16,7 @@ abbr --add 'matrix' 'cmatrix -s'
 abbr --add 'conf' '$EDITOR $__fish_config_dir/config.fish'
 abbr --add 'settings' '$EDITOR /mnt/c/Users/pvwc/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json'
 abbr --add 'RR' 'source $__fish_config_dir/config.fish'
-abbr --add 'e' "exit"
+abbr --add 'e' "exit 0"
 abbr --add 'mlr' "cd /home/philipp/Developer/R"
 # }}}
 # ------------------------------ function definitions{{{
