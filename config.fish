@@ -69,16 +69,27 @@ end
 # session is remote (SSH) or local
 function set_tmux_prefix
     # set variable $SSH_LOGIN
-    set_ssh_login
-    if test $SSH_LOGIN -eq 0
-        # remote session
-        set -Ux TMUX_PREFIX "w"
+    if ! test -e $HOME/.prefix.tmux.conf
+        #         set_ssh_login
+        if test -n "$SSH_TTY"
+            # remote session
+            set -Ux TMUX_PREFIX "w"
+        else
+            # local session
+            set -Ux TMUX_PREFIX "^"
+        end
+        printf "set -g prefix C-$TMUX_PREFIX\nunbind C-$TMUX_PREFIX\nbind C-$TMUX_PREFIX send-prefix" >$HOME/.prefix.tmux.conf
+
+	# If tmux runs at the moment configure new prefix
+        if test -n "$TMUX"
+            tmux source-file "$HOME/.prefix.tmux.conf"
+	    echo "New tmux prefix set to \"$TMUX_PREFIX\" in running tmux client session"
+        end
+	echo "prefix set to \"$TMUX_PREFIX\""
+	echo "Tmux prefix configuration stored in $HOME/.prefix.tmux.conf"
     else
-        # local session
-        set -Ux TMUX_PREFIX "^"
+        echo "Tmux prefix already set to \"$TMUX_PREFIX\""
     end
-    printf "set -g prefix C-$TMUX_PREFIX\nunbind C-$TMUX_PREFIX\nbind C-$TMUX_PREFIX send-prefix" > $HOME/.prefix.tmux.conf
-    tmux source-file ~/.prefix.tmux.conf
 end
 # }}}
 # start_ssh_agent {{{
