@@ -590,6 +590,7 @@ endfunction
 set path=**
 command! Tex :w|:!pdflatex -shell-escape %
 command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
+command! TaggeR :!tag.R
 set nocompatible| "Required by the vim-polyglot plugin
 set omnifunc=syntaxcomplete#Complete
 set foldcolumn=4|
@@ -847,6 +848,7 @@ augroup r
 	autocmd!
 	autocmd Filetype r :setlocal colorcolumn=80|                    "Display a coloured vertical bar
 	autocmd Filetype r :nnoremap <buffer> = :execute "!styler ".expand("%")<cr>
+	autocmd Filetype r :nnoremap <buffer> <localleader>rt :TaggeR<cr>
 augroup end
 "}}}
 "------------------------------ Filetype markdown{{{
