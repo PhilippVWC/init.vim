@@ -2,9 +2,9 @@
 "Please send bug reports to philippcrommelin@googlemail.com.
 "================================================= Plugins{{{
 call plug#begin()
+Plug 'jalvesaq/Nvim-R'
 Plug 'ncm2/ncm2'
 Plug 'roxma/nvim-yarp'
-Plug 'jalvesaq/Nvim-R'
 Plug 'gaalcaras/ncm-R'
 Plug 'SirVer/ultisnips'
 Plug 'ncm2/ncm2-ultisnips'
@@ -92,14 +92,14 @@ let g:maplocalleader = '-'|		"Map the localleader key to a backslash
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "}}}
 "------------------------------ NEOVIM PROVIDER {{{
-let g:python3_host_prog="/usr/bin/python3"
-let g:python_host_prog="/usr/bin/python2"
+" let g:python3_host_prog="/usr/bin/python3"
+" let g:python_host_prog="/usr/bin/python2"
 
-let g:ruby_version=get(systemlist("ls -l $HOME/.gem/ruby/ | tail -n +2 | rev | awk '{print $1}' | rev | sort -r | head -n 1"),0)
+" let g:ruby_version=get(systemlist("ls -l $HOME/.gem/ruby/ | tail -n +2 | rev | awk '{print $1}' | rev | sort -r | head -n 1"),0)
 " perhaps it is necessary to perform a user installation with gem according to
 " gem install --user neovim
-let g:ruby_host_prog=$HOME."/.gem/ruby/".g:ruby_version."/bin/neovim-ruby-host"
-let g:node_host_prog="/usr/local/lib/node_modules/neovim/bin/cli.js"
+" let g:ruby_host_prog=$HOME."/.gem/ruby/".g:ruby_version."/bin/neovim-ruby-host"
+" let g:node_host_prog="/usr/local/lib/node_modules/neovim/bin/cli.js"
 " }}}
 "------------------------------ FUNCTIONS{{{
 "TODO: Function that changes a word globally
@@ -585,6 +585,8 @@ endfunction
 "------------------------------ SETTINGS{{{
 "TODO:command that repeats last command
 "set path to current directory ( Corresponds to output of :pwd or :echo getcwd() )
+" define the currently edited file to have linefeed lineendings
+" set fileformat=unix
 set path=**
 command! Tex :w|:!pdflatex -shell-escape %
 command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
@@ -844,6 +846,7 @@ augroup end
 augroup r
 	autocmd!
 	autocmd Filetype r :setlocal colorcolumn=80|                    "Display a coloured vertical bar
+	autocmd Filetype r :nnoremap <buffer> = :execute "!styler ".expand("%")<cr>
 augroup end
 "}}}
 "------------------------------ Filetype markdown{{{
@@ -890,18 +893,6 @@ augroup end
 "}}}
 "}}}
 "================================================= PLugin configuration{{{
-"------------------------------ NCM2{{{
-if match(&runtimepath,'ncm2') != -1
-	" enable ncm2 for all buffers
-	autocmd BufEnter * call ncm2#enable_for_buffer()
-
-	" IMPORTANT: :help Ncm2PopupOpen for more information
-	set completeopt=noinsert,menuone,noselect
-
-	" NOTE: you need to install completion sources to get completions. Check
-	" our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
-endif
-"}}}
 "------------------------------ DEOPLETE{{{
 if match(&runtimepath,'deoplete') != -1
 	" let g:deoplete#enable_at_startup = 1 "enable deoplete auto completion at vim startup
@@ -938,6 +929,7 @@ endif
 "}}}
 "------------------------------ NVIM-R{{{
 if match(&runtimepath,'Nvim-R') != -1
+	let R_auto_start = 1
 	" Set R's current working directory to
 	" neovim's current working directory
 	" (and not to the directory of the R file
@@ -974,6 +966,18 @@ if match(&runtimepath,'Nvim-R') != -1
 	nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
 	nmap <buffer> <localleader>rf :call StartR("R")<CR>
 	nmap <buffer> <localleader>aa <Plug>RSendFile
+endif
+"}}}
+"------------------------------ NCM2{{{
+if match(&runtimepath,'ncm2') != -1
+	" enable ncm2 for all buffers
+	autocmd BufEnter * call ncm2#enable_for_buffer()
+
+	" IMPORTANT: :help Ncm2PopupOpen for more information
+	set completeopt=noinsert,menuone,noselect
+
+	" NOTE: you need to install completion sources to get completions. Check
+	" our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
 endif
 "}}}
 "------------------------------ ULTISNIPS{{{
@@ -1101,4 +1105,9 @@ endif
 if match(&runtimepath,'git-gutter') != -1
 	set updatetime=100
 endif
+"}}}
+"}}}
+"================================================= Usefull help pages{{{
+"show info about displayed non-printable characters
+":help digraph-table 
 "}}}
