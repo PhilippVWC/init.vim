@@ -49,7 +49,7 @@ function set_tmux_prefix
         #         set_ssh_login
         if test -n "$SSH_TTY"
             # remote session
-            set -Ux TMUX_PREFIX "w"
+            set -Ux TMUX_PREFIX "y"
         else
             # local session
             set -Ux TMUX_PREFIX "^"
@@ -59,12 +59,12 @@ function set_tmux_prefix
 	# If tmux runs at the moment configure new prefix
         if test -n "$TMUX"
             tmux source-file "$HOME/.prefix.tmux.conf"
-	    echo "New tmux prefix set to \"$TMUX_PREFIX\" in running tmux client session"
+ 	    echo "New tmux prefix set to \"$TMUX_PREFIX\" in running tmux client session"
         end
-	echo "prefix set to \"$TMUX_PREFIX\""
-	echo "Tmux prefix configuration stored in $HOME/.prefix.tmux.conf"
+ 	echo "prefix set to \"$TMUX_PREFIX\""
+ 	echo "Tmux prefix configuration stored in $HOME/.prefix.tmux.conf"
     else
-        echo "Tmux prefix already set to \"$TMUX_PREFIX\""
+         echo "Tmux prefix already set to \"$TMUX_PREFIX\""
     end
 end
 # }}}
