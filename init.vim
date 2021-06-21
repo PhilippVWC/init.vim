@@ -515,7 +515,7 @@ endfunction
 "}}}
 "------------------------------ ResCur{{{
 "Reset cursor position
-function! ResCur()
+function! s:ResCur()
 	try
 		if line("'\"") <= line("$")
 			normal! g`"
@@ -907,7 +907,7 @@ augroup miscellaneous
 	autocmd termOpen * :startinsert| "Automatically start terminal mode
 	"	autocmd vimenter * :NERDTree|           "Display Nerdtree after vim startup
 	autocmd Filetype help :setlocal number|	"show line numbers for vim documentation files
-	autocmd BufWinEnter * :call ResCur()|				  "reset cursor position
+	autocmd BufWinEnter * :call <SID>ResCur()|				  "reset cursor position
 	"	autocmd BufWinEnter * :execute ":setlocal scrolloff=".&lines/4|	"TODO: &lines is not adequate since it is global
 augroup end
 "}}}
