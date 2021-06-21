@@ -3,9 +3,9 @@
 "================================================= Plugins{{{
 call plug#begin()
 Plug 'jalvesaq/Nvim-R'
-Plug 'ncm2/ncm2'
-Plug 'roxma/nvim-yarp'
-Plug 'gaalcaras/ncm-R'
+" Plug 'ncm2/ncm2'
+" Plug 'roxma/nvim-yarp'
+" Plug 'gaalcaras/ncm-R'
 Plug 'SirVer/ultisnips'
 Plug 'ncm2/ncm2-ultisnips'
 Plug 'easymotion/vim-easymotion'
@@ -52,11 +52,11 @@ call plug#end()
 let g:tagbar_type_r = {
 			\ 'ctagstype' : 'r',
 			\ 'kinds' : [
-			\ 'f:Functions',
-			\ 'g:GlobalVariables',
-			\ 'v:FunctionVariables',
-			\]
-			\}
+				\ 'f:Functions',
+				\ 'g:GlobalVariables',
+				\ 'v:FunctionVariables',
+				\]
+				\}
 "characters to enclose/surround a word
 let s:surroundChar = {
 			\'{':'}',
@@ -591,8 +591,8 @@ set path=**
 command! Tex :w|:!pdflatex -shell-escape %
 command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
 command! TaggeR :!tag.R
-set nocompatible| "Required by the vim-polyglot plugin
-set omnifunc=syntaxcomplete#Complete
+" set nocompatible| "Required by the vim-polyglot plugin
+" set omnifunc=syntaxcomplete#Complete
 set foldcolumn=4|
 set ignorecase|		"Ignore case for vim search function / or ?
 set hlsearch incsearch|	"highlight all matching search patterns while typing
@@ -617,7 +617,7 @@ set number
 " set softtabstop=2
 " set autoindent
 " set smartindent
-" filetype plugin indent on
+filetype plugin on
 "}}}
 "------------------------------ ABBREVIATIONS{{{
 iabbrev 'van\ W' van Wickevoort Crommelin
@@ -720,7 +720,7 @@ nnoremap / /\v
 "Delete all trailing white space charactes before end-of-line character
 " nnoremap <silent> <localleader>W :execute "normal! mq:%s/".trlWspPattern."//g\r:nohl\r`q"<cr>
 "Write and close all windows in all tabs und quit vim
-nnoremap <localleader>Z :wqall<cr>
+nnoremap <localleader>Z :execute ":wall \| :qall"<CR>
 "maximize window
 "nnoremap <localleader>M :tabedit %<cr>
 nnoremap <silent> <localleader>M :call <SID>MaxCurWin()<cr>
@@ -849,6 +849,25 @@ augroup r
 	autocmd Filetype r :setlocal colorcolumn=80|                    "Display a coloured vertical bar
 	autocmd Filetype r :nnoremap <buffer> = :execute "!styler ".expand("%")<cr>
 	autocmd Filetype r :nnoremap <buffer> <localleader>rt :TaggeR<cr>
+	if match(&runtimepath,'Nvim-R') != -1
+		autocmd Filetype r :nmap <buffer> , <Plug>RDSendLine
+		"	autocmd Filetype r :remap the 'Send selection' command of Nvim-R plugin"
+		autocmd Filetype r :vmap <buffer> , <Plug>RDSendSelection
+		"	autocmd Filetype r :remap the 'check code before sending and then send' command of Nvim-R plugin"
+		"	autocmd Filetype r :vmap ,c <Plug>RESendSelection
+		autocmd Filetype r :nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
+		autocmd Filetype r :nmap <buffer> <localleader>rs :call RAction("str")<CR>
+		autocmd Filetype r :nmap <buffer> <localleader>rc :call RAction("class")<CR>
+		autocmd Filetype r :nmap <buffer> <localleader>ri <Plug>RStop
+		autocmd Filetype r :nmap <buffer> <localleader>rh <Plug>RHelp
+		"	autocmd Filetype r :nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
+		autocmd Filetype r :nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
+		autocmd Filetype r :nmap <buffer> <localleader>rl :call RAction("length")<CR>
+		autocmd Filetype r :nmap <buffer> <localleader>rL :call RAction("library")<CR>
+		autocmd Filetype r :nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
+		autocmd Filetype r :nmap <buffer> <localleader>rf :call StartR("R")<CR>
+		autocmd Filetype r :nmap <buffer> <localleader>aa <Plug>RSendFile
+	endif
 augroup end
 "}}}
 "------------------------------ Filetype markdown{{{
@@ -914,7 +933,7 @@ if match(&runtimepath,'nerdtree') != -1
 	augroup nerdtree
 		autocmd!
 		autocmd FileType nerdtree set ignorecase | call <SID>Cmt("Ignorecase option set for nerdtree")
-" 		autocmd FileType nerdtree nnoremap <silent> <buffer> t <c-w><c-w>
+		"		autocmd FileType nerdtree nnoremap <silent> <buffer> t <c-w><c-w>
 		"Trigger nerdtree file system browser automatically, when starting vim session
 		"autocmd vimenter * NERDTree0
 	augroup end
@@ -951,32 +970,15 @@ if match(&runtimepath,'Nvim-R') != -1
 	let R_show_arg_help = 1
 	let R_assign = 0
 	"remap the 'send line' command of Nvim-R plugin"
-	nmap <buffer> , <Plug>RDSendLine
-	"remap the 'Send selection' command of Nvim-R plugin"
-	vmap <buffer> , <Plug>RDSendSelection
-	"remap the 'check code before sending and then send' command of Nvim-R plugin"
-	"vmap ,c <Plug>RESendSelection
-	nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
-	nmap <buffer> <localleader>rs :call RAction("str")<CR>
-	nmap <buffer> <localleader>rc :call RAction("class")<CR>
-	nmap <buffer> <localleader>ri :RStop<CR>
-	nmap <buffer> <localleader>rh <Plug>RHelp
-	" nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
-	nmap <buffer> <localleader>rg call RAction("glimpse")<CR>
-	nmap <buffer> <localleader>rl :call RAction("length")<CR>
-	nmap <buffer> <localleader>rL :call RAction("library")<CR>
-	nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
-	nmap <buffer> <localleader>rf :call StartR("R")<CR>
-	nmap <buffer> <localleader>aa <Plug>RSendFile
 endif
 "}}}
 "------------------------------ NCM2{{{
 if match(&runtimepath,'ncm2') != -1
 	" enable ncm2 for all buffers
-	autocmd BufEnter * call ncm2#enable_for_buffer()
+	"	autocmd BufEnter * call ncm2#enable_for_buffer()
 
 	" IMPORTANT: :help Ncm2PopupOpen for more information
-	set completeopt=noinsert,menuone,noselect
+	"	set completeopt=noinsert,menuone,noselect
 
 	" NOTE: you need to install completion sources to get completions. Check
 	" our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
@@ -1111,5 +1113,5 @@ endif
 "}}}
 "================================================= Usefull help pages{{{
 "show info about displayed non-printable characters
-":help digraph-table 
+":help digraph-table
 "}}}
