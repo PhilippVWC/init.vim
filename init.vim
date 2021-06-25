@@ -592,7 +592,7 @@ command! Tex :w|:!pdflatex -shell-escape %
 command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
 command! TaggeR :!tag.R
 " set nocompatible| "Required by the vim-polyglot plugin
-" set omnifunc=syntaxcomplete#Complete
+set omnifunc=syntaxcomplete#Complete
 set foldcolumn=4|
 set ignorecase|		"Ignore case for vim search function / or ?
 set hlsearch incsearch|	"highlight all matching search patterns while typing
