@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 ssh=ssh
 portForw=portForw
-port1=2352
-port2=2353
+port1=3252
+port2=3253
 tmux has-session -t $ssh &> /dev/null
 if [ $? != 0 ]; then
 	tmux new -s $ssh -d
