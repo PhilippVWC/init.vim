@@ -628,11 +628,11 @@ iabbrev ~  ~<space>|    " Replace NON-BRAKE-SPACE character (Hex-Code c2a0)
 "------------------------------ MAPPINGS{{{
 "------------------------------ GLOBAL{{{
 "move cursor just before found character
-noremap f t
+" noremap f t
 "move cursor just after found character
-noremap F T
-noremap <silent> t :call <SID>BufferCycle("up")<cr>
-noremap <silent> <s-T> :call <SID>BufferCycle("down")<cr>
+" noremap F T
+" noremap <silent> t :call <SID>BufferCycle("up")<cr>
+" noremap <silent> <s-T> :call <SID>BufferCycle("down")<cr>
 "}}}
 "------------------------------ NORMAL MODE{{{
 "jump to tag - Don't forget to create a tag file with ctags, like
@@ -858,13 +858,15 @@ augroup r
 		autocmd Filetype r :nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>rs :call RAction("str")<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>rc :call RAction("class")<CR>
-		autocmd Filetype r :nmap <buffer> <localleader>ri <Plug>RStop
+" 		autocmd Filetype r :nmap <buffer> <localleader>ri <Plug>RStop
+		autocmd Filetype r :nmap <buffer> <localleader>ri :RStop<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>rh <Plug>RHelp
 		"	autocmd Filetype r :nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>rl :call RAction("length")<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>rL :call RAction("library")<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
+		autocmd Filetype r :nmap <buffer> <localleader>rq :call g:SendCmdToR("Q")<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>rf :call StartR("R")<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>aa <Plug>RSendFile
 	endif
@@ -915,17 +917,17 @@ augroup end
 "}}}
 "================================================= PLugin configuration{{{
 "------------------------------ DEOPLETE{{{
-if match(&runtimepath,'deoplete') != -1
-	" let g:deoplete#enable_at_startup = 1 "enable deoplete auto completion at vim startup
-	" call deoplete#custom#option({
-	"     \ 'ignore_case': 1,
-	"     \ 'camel_case' : 1,
-	"     \ })
-	"let the vimtex plugin use deoplete as completion engine
-	"call deoplete#custom#var('omni', 'input_patterns', {
-	"      \ 'tex': g:vimtex#re#deoplete
-	"      \})
-endif
+" if match(&runtimepath,'deoplete') != -1
+" 	 let g:deoplete#enable_at_startup = 1 "enable deoplete auto completion at vim startup
+" 	 call deoplete#custom#option({
+" 	     \ 'ignore_case': 1,
+" 	     \ 'camel_case' : 1,
+" 	     \ })
+" 	let the vimtex plugin use deoplete as completion engine
+" 	call deoplete#custom#var('omni', 'input_patterns', {
+" 	      \ 'tex': g:vimtex#re#deoplete
+" 	      \})
+" endif
 "}}}
 "------------------------------ NERDTREE{{{
 if match(&runtimepath,'nerdtree') != -1
@@ -1037,14 +1039,14 @@ if match(&runtimepath,'vim-one') != -1
 	"   endif
 	" endif
 
-	if (has("termguicolors"))
+" 	if (has("termguicolors"))
 		set background=dark " for the dark version
 		set termguicolors
-	endif
-	" if (&termguicolors == 1)
-	"       set notermguicolors
-	"       set background=light " for the dark version
-	" endif
+" 	endif
+" 	if (&termguicolors == 1)
+" 	      set notermguicolors
+" 	      set background=light " for the dark version
+" 	endif
 	colorscheme one
 	set t_8b=^[[48;2;%lu;%lu;%lum
 	set t_8f=^[[38;2;%lu;%lu;%lum
@@ -1099,7 +1101,7 @@ if match(&runtimepath,'ale') != -1
 				\    spaces_inside_linter = lintr::spaces_inside_linter,
 				\    spaces_left_parentheses_linter = lintr::spaces_left_parentheses_linter,
 				\    undesirable_function_linter = lintr::undesirable_function_linter(fun = c(lintr::default_undesirable_functions)),
-				\    undesirable_operator_linter = lintr::undesirable_operator_linter(op = c(lintr::default_undesirable_operators)),
+				\    undesirable_operator_linter = lintr::undesirable_operator_linter(op = list(`<<-` = NA, `->>`= NA)),
 				\    unneeded_concatenation_linter = lintr::unneeded_concatenation_linter
 				\  )
 				\'
