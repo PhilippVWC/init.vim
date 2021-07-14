@@ -1,3 +1,35 @@
+snippet test "testthat snippet"
+testthat::test_that(desc = "${1:Beschreibung}", code = {
+  # input tests
+  ${2:
+  testthat::expect_error(lsimrs:::split_into_microtables(lines = 1))
+  testthat::expect_error(lsimrs:::split_into_microtables(lines = data.frame(a = 1)))
+  testthat::expect_error(lsimrs:::split_into_microtables(lines = list(a = 1)))
+  testthat::expect_silent(lsimrs:::split_into_microtables(lines = "***TABLE***"))
+  testthat::expect_silent(lsimrs:::split_into_microtables(lines = "abcdef...xyz"))
+  testthat::expect_silent(lsimrs:::split_into_microtables(lines = ""))
+  testthat::expect_error(lsimrs:::split_into_microtables(lines = NULL))
+  testthat::expect_error(lsimrs:::split_into_microtables(lines = NA))
+  }
+  # output tests
+
+  ## arrange
+  lines_list <- list()
+  expectations <- list()
+  purrr::map2(
+    .x = lines_list,
+    .y = expectations,
+    .f = function(lines, expected) {
+      ## act
+      object <- lsimrs:::${3:Funktionsname}(${4:Argumente} = lines)
+      ## assert
+      testthat::expect_type(
+        object = object,
+        type = "list"
+      )
+        })
+})
+endsnippet
 snippet clih3 "cli header 3 message"
 cli::cli_h3(paste0("$1"))
 endsnippet

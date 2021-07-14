@@ -3,18 +3,21 @@
 "================================================= Plugins{{{
 call plug#begin()
 Plug 'jalvesaq/Nvim-R'
+" Plug 'ycm-core/YouCompleteMe'
 " Plug 'ncm2/ncm2'
 " Plug 'roxma/nvim-yarp'
 " Plug 'gaalcaras/ncm-R'
+Plug 'Shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
+" Plug 'ncm2/ncm2-ultisnips'
 Plug 'SirVer/ultisnips'
-Plug 'ncm2/ncm2-ultisnips'
+" Plug 'ncm2/ncm2-neosnippet'
 Plug 'easymotion/vim-easymotion'
 Plug 'dense-analysis/ale'
 Plug 'rakr/vim-one'
 Plug 'preservim/tagbar'
 Plug 'mhinz/vim-startify'
 Plug 'airblade/vim-gitgutter'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'preservim/nerdtree'
 Plug 'ivalkeen/nerdtree-execute'
 Plug 'dag/vim-fish'
@@ -92,7 +95,7 @@ let g:maplocalleader = '-'|		"Map the localleader key to a backslash
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "}}}
 "------------------------------ NEOVIM PROVIDER {{{
-" let g:python3_host_prog="/usr/bin/python3"
+let g:python3_host_prog="/opt/python-3.9.5/bin/python3.9"
 " let g:python_host_prog="/usr/bin/python2"
 
 " let g:ruby_version=get(systemlist("ls -l $HOME/.gem/ruby/ | tail -n +2 | rev | awk '{print $1}' | rev | sort -r | head -n 1"),0)
@@ -857,17 +860,18 @@ augroup r
 		"	autocmd Filetype r :vmap ,c <Plug>RESendSelection
 		autocmd Filetype r :nmap <buffer> <localleader>rw :call g:SendCmdToR("getwd()")<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>rs :call RAction("str")<CR>
-		autocmd Filetype r :nmap <buffer> <localleader>rc :call RAction("class")<CR>
+		autocmd Filetype r :nmap <buffer> <localleader>rC :call RAction("class")<CR>
 " 		autocmd Filetype r :nmap <buffer> <localleader>ri <Plug>RStop
-		autocmd Filetype r :nmap <buffer> <localleader>ri :RStop<CR>
-		autocmd Filetype r :nmap <buffer> <localleader>rh <Plug>RHelp
-		"	autocmd Filetype r :nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
-		autocmd Filetype r :nmap <buffer> <localleader>rg :call RAction("glimpse")<CR>
-		autocmd Filetype r :nmap <buffer> <localleader>rl :call RAction("length")<CR>
-		autocmd Filetype r :nmap <buffer> <localleader>rL :call RAction("library")<CR>
-		autocmd Filetype r :nmap <buffer> <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
-		autocmd Filetype r :nmap <buffer> <localleader>rq :call g:SendCmdToR("Q")<CR>
-		autocmd Filetype r :nmap <buffer> <localleader>rf :call StartR("R")<CR>
+		autocmd Filetype r :nmap <localleader>ri :RStop<CR>
+		autocmd Filetype r :nmap <localleader>rh <Plug>RHelp
+		autocmd Filetype r :nmap <buffer> <localleader>rg :execute ':call g:SendCmdToR("tibble::glimpse('.expand("<cword>").')")'<CR>
+		autocmd Filetype r :nmap <buffer> <localleader>rL :execute ':call g:SendCmdToR("length('.expand("<cword>").')")'<CR>
+		autocmd Filetype r :nmap <localleader>rl :execute ':call g:SendCmdToR("library('.expand("<cword>").')")'<CR>
+		autocmd Filetype r :nmap <localleader>rk :call g:SendCmdToR("quit(save='no')")<CR>
+		autocmd Filetype r :nmap <localleader>rq :call g:SendCmdToR("Q")<CR>
+		autocmd Filetype r :nmap <localleader>rn :call g:SendCmdToR("n")<CR>
+		autocmd Filetype r :nmap <localleader>rc :call g:SendCmdToR("c")<CR>
+		autocmd Filetype r :nmap <localleader>rf :call StartR("R")<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>aa <Plug>RSendFile
 	endif
 augroup end
@@ -917,17 +921,17 @@ augroup end
 "}}}
 "================================================= PLugin configuration{{{
 "------------------------------ DEOPLETE{{{
-" if match(&runtimepath,'deoplete') != -1
-" 	 let g:deoplete#enable_at_startup = 1 "enable deoplete auto completion at vim startup
-" 	 call deoplete#custom#option({
-" 	     \ 'ignore_case': 1,
-" 	     \ 'camel_case' : 1,
-" 	     \ })
+if match(&runtimepath,'deoplete') != -1
+	 let g:deoplete#enable_at_startup = 1 "enable deoplete auto completion at vim startup
+	 call deoplete#custom#option({
+	     \ 'ignore_case': 1,
+	     \ 'camel_case' : 1,
+	     \ })
 " 	let the vimtex plugin use deoplete as completion engine
 " 	call deoplete#custom#var('omni', 'input_patterns', {
 " 	      \ 'tex': g:vimtex#re#deoplete
 " 	      \})
-" endif
+endif
 "}}}
 "------------------------------ NERDTREE{{{
 if match(&runtimepath,'nerdtree') != -1
