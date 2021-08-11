@@ -96,7 +96,7 @@ let g:maplocalleader = '-'|		"Map the localleader key to a backslash
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "}}}
 "------------------------------ NEOVIM PROVIDER {{{
-let g:python3_host_prog="/opt/python-3.9.5/bin/python3.9"
+" let g:python3_host_prog="/opt/python-3.9.5/bin/python3.9"
 " let g:python_host_prog="/usr/bin/python2"
 
 " let g:ruby_version=get(systemlist("ls -l $HOME/.gem/ruby/ | tail -n +2 | rev | awk '{print $1}' | rev | sort -r | head -n 1"),0)
@@ -699,7 +699,7 @@ nnoremap <silent> <localleader>u :UltiSnipsEdit<cr>
 nnoremap <silent> <localleader>p :call <SID>FormatAndFeedToRepl()<cr>
 "Comment the line of the cursor
 "nnoremap <silent> <localleader>c :call <SID>CommentLines()<cr>
-"nnoremap <silent> <localleader>c <plug>NERDCommenterComment
+nnoremap <localleader>c :call NERDComment('n','sexy')<cr>
 "toggle number option
 nnoremap <silent> <localleader>N :setlocal number!<cr>
 "toggle spell control
@@ -942,6 +942,29 @@ endif
 "}}}
 "------------------------------ NERDCOMMENTER{{{
 if match(&runtimepath,'nerdcommenter') != -1
+" Create default mappings
+let g:NERDCreateDefaultMappings = 1
+
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
+
+" Add your own custom formats or override the defaults
+" let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+
+" Allow commenting and inverting empty lines (useful when commenting a region)
+let g:NERDCommentEmptyLines = 1
+
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+
+" Enable NERDCommenterToggle to check all selected lines is commented or not 
+let g:NERDToggleCheckAllLines = 1
 endif
 "}}}
 "------------------------------ NERDTREE{{{
