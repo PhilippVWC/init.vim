@@ -1,31 +1,49 @@
-snippet test "testthat snippet"
-testthat::test_that(desc = "${1:Beschreibung}", code = {
+snippet link "Roxygen2 link"
+\code{\link[${2:package}]{${1:function}}}
+endsnippet
+
+snippet inputTest "testthat input assertions"
+  lsimrs:::log_fun()
   # input tests
-  ${2:
-  testthat::expect_error(lsimrs:::split_into_microtables(lines = 1))
-  testthat::expect_error(lsimrs:::split_into_microtables(lines = data.frame(a = 1)))
-  testthat::expect_error(lsimrs:::split_into_microtables(lines = list(a = 1)))
-  testthat::expect_silent(lsimrs:::split_into_microtables(lines = "***TABLE***"))
-  testthat::expect_silent(lsimrs:::split_into_microtables(lines = "abcdef...xyz"))
-  testthat::expect_silent(lsimrs:::split_into_microtables(lines = ""))
-  testthat::expect_error(lsimrs:::split_into_microtables(lines = NULL))
-  testthat::expect_error(lsimrs:::split_into_microtables(lines = NA))
+  assertthat::assert_that(${2:is.what?}(${1:argument}),
+    msg = "Dem Argument \"$1\" wurde kein ${3:Zeichenkettenvektor} zugewiesen."
+  )
+  ${4:
+  assertthat::assert_that(
+    is.list(l) &&
+      !is.data.frame(l) &&
+      !tibble::is_tibble(l),
+    msg = "Dem Argument \"l\" wurde keine Liste zugewiesen."
+  )
   }
+  # end input tests
+endsnippet
+snippet test "testthat snippet"
+testthat::test_that(desc = "${1:description}", code = {
+  # input tests
+  testthat::expect_error(lsimrs:::${2:function name}(${3:argument name} = 1))
+  testthat::expect_error(lsimrs:::$2($3 = data.frame(a = 1)))
+  testthat::expect_error(lsimrs:::$2($3 = list(a = 1)))
+  testthat::expect_error(lsimrs:::$2($3 = NULL))
+  testthat::expect_error(lsimrs:::$2($3 = NA))
+  testthat::expect_silent(lsimrs:::$2($3 = "***TABLE***"))
+  testthat::expect_silent(lsimrs:::$2($3 = "abcdef...xyz"))
+  testthat::expect_silent(lsimrs:::$2($3 = ""))
   # output tests
 
   ## arrange
-  lines_list <- list()
-  expectations <- list()
-  purrr::map2(
-    .x = lines_list,
+  args <- list($4)
+  expectations <- list($5)
+  purrr::walk2(
+    .x = args,
     .y = expectations,
-    .f = function(lines, expected) {
+    .f = function(arg, expectation) {
       ## act
-      object <- lsimrs:::${3:Funktionsname}(${4:Argumente} = lines)
+      object <- lsimrs:::$2($3 = arg)
       ## assert
-      testthat::expect_type(
+      testthat::expect_equal(
         object = object,
-        type = "list"
+        expected = expectation
       )
         })
 })
@@ -235,9 +253,7 @@ endsnippet
 
 
 snippet fun "function"
-${1:myFunction} = function(
-  ${2:parameters}
-  ){
+${1:myFunction} <- function(${2:parameters}){
   $0
 }
 endsnippet
@@ -293,13 +309,13 @@ if (!(dir.exists(paths = excels))) {
 endsnippet
 
 snippet doc "roxygen documentation"
-#' @title ${1:title}
-#' @description ${2:description}
-#' @param ${3:parameter name} ${4:datatyp} - ${5:parameter description}
-#' @details ${6:details}
-#' @importFrom ${7:R package} ${8:function}
-#' @author Philipp van Wickevoort Crommelin - parcIT GmbH
-#' @export
+#' @title ${1:Title}
+#' @description ${2:Description.}
+#' @param ${3:Parameter name} (\strong{${4:data type}}) ${5:Parameter description.}
+#' @return (\strong{${6:data type}}) ${7:Description of return value.}
+#' @details ${8:Details.}
+#' @importFrom ${9:R package} ${10:function}
+#' @template parcit
 endsnippet
 
 ########################################
@@ -321,12 +337,11 @@ endsnippet
 
 snippet try "tryCatch block"
   tryCatch(
+  error = function(cnd){},
+  warning = function(cnd){},
   expr = {
   ${VISUAL}
-  },
-  warning = function(w){print(w)},
-  error = function(e){print(e)}
-  )
+  })
 endsnippet
 
 snippet clidivv "put into cli div"

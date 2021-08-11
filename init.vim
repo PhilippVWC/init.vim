@@ -3,6 +3,7 @@
 "================================================= Plugins{{{
 call plug#begin()
 Plug 'jalvesaq/Nvim-R'
+Plug 'preservim/nerdcommenter'
 " Plug 'ycm-core/YouCompleteMe'
 " Plug 'ncm2/ncm2'
 " Plug 'roxma/nvim-yarp'
@@ -618,8 +619,10 @@ set number
 " set expandtab
 " set shiftwidth=2
 " set softtabstop=2
-" set autoindent
-" set smartindent
+set autoindent
+set smartindent
+" don't resize other windows, when splitting a window
+set noequalalways
 filetype plugin on
 "}}}
 "------------------------------ ABBREVIATIONS{{{
@@ -660,7 +663,9 @@ iabbrev ~  ~<space>|    " Replace NON-BRAKE-SPACE character (Hex-Code c2a0)
 "       \]
 "       \}
 "
-"Now jump to a tag with :tag /pattern or use the following mapping
+"Jump to Tag directly
+nnoremap <silent> g] :execute 'ptjump '.expand("<cword>")<cr>
+nnoremap <silent> <localleader>g] :execute 'tjump '.expand("<cword>")<cr>
 " nnoremap <silent> <localleader>F :execute "tag ".expand("<cword>")<cr>
 nnoremap <silent> <localleader>F :call <SID>OpenTagInNewSplit(expand("<cword>"))<cr>
 "Surround word by given character
@@ -693,7 +698,8 @@ nnoremap <silent> <localleader>u :UltiSnipsEdit<cr>
 "Read local scope R function arguments and send to R-REPL
 nnoremap <silent> <localleader>p :call <SID>FormatAndFeedToRepl()<cr>
 "Comment the line of the cursor
-nnoremap <silent> <localleader>c :call <SID>CommentLines()<cr>
+"nnoremap <silent> <localleader>c :call <SID>CommentLines()<cr>
+"nnoremap <silent> <localleader>c <plug>NERDCommenterComment
 "toggle number option
 nnoremap <silent> <localleader>N :setlocal number!<cr>
 "toggle spell control
@@ -864,6 +870,7 @@ augroup r
 " 		autocmd Filetype r :nmap <buffer> <localleader>ri <Plug>RStop
 		autocmd Filetype r :nmap <localleader>ri :RStop<CR>
 		autocmd Filetype r :nmap <localleader>rh <Plug>RHelp
+		autocmd Filetype r :nmap <buffer> <localleader>rH :execute ':call g:SendCmdToR("help(,'.expand("<cword>").')")'<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>rg :execute ':call g:SendCmdToR("tibble::glimpse('.expand("<cword>").')")'<CR>
 		autocmd Filetype r :nmap <buffer> <localleader>rL :execute ':call g:SendCmdToR("length('.expand("<cword>").')")'<CR>
 		autocmd Filetype r :nmap <localleader>rl :execute ':call g:SendCmdToR("library('.expand("<cword>").')")'<CR>
@@ -931,6 +938,10 @@ if match(&runtimepath,'deoplete') != -1
 " 	call deoplete#custom#var('omni', 'input_patterns', {
 " 	      \ 'tex': g:vimtex#re#deoplete
 " 	      \})
+endif
+"}}}
+"------------------------------ NERDCOMMENTER{{{
+if match(&runtimepath,'nerdcommenter') != -1
 endif
 "}}}
 "------------------------------ NERDTREE{{{
