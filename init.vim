@@ -96,7 +96,7 @@ let g:maplocalleader = '-'|		"Map the localleader key to a backslash
 let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "}}}
 "------------------------------ NEOVIM PROVIDER {{{
-" let g:python3_host_prog="/opt/python-3.9.5/bin/python3.9"
+let g:python3_host_prog="/opt/python-3.9.5/bin/python3.9"
 " let g:python_host_prog="/usr/bin/python2"
 
 " let g:ruby_version=get(systemlist("ls -l $HOME/.gem/ruby/ | tail -n +2 | rev | awk '{print $1}' | rev | sort -r | head -n 1"),0)
@@ -108,11 +108,36 @@ let g:trlWspPattern = '\v\s+$'|		"Search pattern for trailing whitespace
 "------------------------------ FUNCTIONS{{{
 "TODO: Function that changes a word globally
 "TODO: create formatter for r function arguments
+"------------------------------ MemorizeBufferNrAndClose{{{
+function! s:MemorizeBufferNrAndClose()
+	let g:memorizedBufferNr = bufnr()
+	if (&readonly || &buftype != "") 
+		q
+	else
+		wq
+	endif
+endfunction
+"}}}
+"------------------------------ OpenRecentlyClosedWindow{{{
+" This function reopens the buffer of the 
+" recently closed window in a new spit
+function! s:OpenRecentlyClosedWindow(split)
+	if(exists("g:memorizedBufferNr"))
+		if (a:split == 'horizontal') 
+			execute 'sbuffer '.g:memorizedBufferNr
+		elseif (a:split == 'vertical') 
+			execute 'vertical sbuffer '.g:memorizedBufferNr
+		endif
+	else
+		echo "No content. Nothing done."
+	endif
+endfunction
+"}}}
 "------------------------------ PlugLoaded{{{
 "Check wether plugin is currently loaded
 "see
 "https://vi.stackexchange.com/questions/10939/how-to-see-if-a-plugin-is-active
-function! PlugLoaded(name)
+function! s:PlugLoaded(name)
 	return (
 				\ has_key(g:plugs, a:name) &&
 				\ isdirectory(g:plugs[a:name].dir) &&
@@ -166,7 +191,7 @@ function! s:Surround(char)
 	let s:p = [line("."),col(".")+1]
 	execute "normal! bi".a:char."\<esc>ea".get(s:surroundChar,a:char,'#')."\<esc>"
 	call cursor(s:p)
-endfunction
+endfunctio
 "}}}
 "------------------------------ CommentLines{{{
 "Function to comment "lines" according to filetype/programming language used
@@ -593,7 +618,7 @@ endfunction
 " set fileformat=unix
 set path=**
 command! Tex :w|:!pdflatex -shell-escape %
-command! RemoveSwap :call <SID>RemoveSwapFile()<cr>
+command! RemoveSwap :call <SID>RemoveSwapFile()<CR>
 command! TaggeR :!tag.R
 " set nocompatible| "Required by the vim-polyglot plugin
 set omnifunc=syntaxcomplete#Complete
@@ -637,8 +662,8 @@ iabbrev ~  ~<space>|    " Replace NON-BRAKE-SPACE character (Hex-Code c2a0)
 " noremap f t
 "move cursor just after found character
 " noremap F T
-" noremap <silent> t :call <SID>BufferCycle("up")<cr>
-" noremap <silent> <s-T> :call <SID>BufferCycle("down")<cr>
+" noremap <silent> t :call <SID>BufferCycle("up")<CR>
+" noremap <silent> <s-T> :call <SID>BufferCycle("down")<CR>
 "}}}
 "------------------------------ NORMAL MODE{{{
 "jump to tag - Don't forget to create a tag file with ctags, like
@@ -664,122 +689,124 @@ iabbrev ~  ~<space>|    " Replace NON-BRAKE-SPACE character (Hex-Code c2a0)
 "       \}
 "
 "Jump to Tag directly
-nnoremap <silent> g] :execute 'ptjump '.expand("<cword>")<cr>
-nnoremap <silent> <localleader>g] :execute 'tjump '.expand("<cword>")<cr>
-" nnoremap <silent> <localleader>F :execute "tag ".expand("<cword>")<cr>
-nnoremap <silent> <localleader>F :call <SID>OpenTagInNewSplit(expand("<cword>"))<cr>
+nnoremap <silent> g] :execute 'ptjump '.expand("<cword>")<CR>
+nnoremap <silent> <localleader>g] :execute 'tjump '.expand("<cword>")<CR>
+" nnoremap <silent> <localleader>F :execute "tag ".expand("<cword>")<CR>
+nnoremap <silent> <localleader>F :call <SID>OpenTagInNewSplit(expand("<cword>"))<CR>
 "Surround word by given character
-nnoremap <silent> <localleader>e{ :call <SID>Surround('{')<cr>
-nnoremap <silent> <localleader>e[ :call <SID>Surround('[')<cr>
-nnoremap <silent> <localleader>e( :call <SID>Surround('(')<cr>
-nnoremap <silent> <localleader>e$ :call <SID>Surround('$')<cr>
-nnoremap <silent> <localleader>e/ :call <SID>Surround('/')<cr>
-nnoremap <silent> <localleader>e\ :call <SID>Surround('\\')<cr>
-nnoremap <silent> <localleader>e< :call <SID>Surround('<')<cr>
-nnoremap <silent> <localleader>e' :call <SID>Surround("'")<cr>
-nnoremap <silent> <localleader>e" :call <SID>Surround('"')<cr>
-nnoremap <silent> <localleader>es :call <SID>Surround(' ')<cr>
+nnoremap <silent> <localleader>e{ :call <SID>Surround('{')<CR>
+nnoremap <silent> <localleader>e[ :call <SID>Surround('[')<CR>
+nnoremap <silent> <localleader>e( :call <SID>Surround('(')<CR>
+nnoremap <silent> <localleader>e$ :call <SID>Surround('$')<CR>
+nnoremap <silent> <localleader>e/ :call <SID>Surround('/')<CR>
+nnoremap <silent> <localleader>e\ :call <SID>Surround('\\')<CR>
+nnoremap <silent> <localleader>e< :call <SID>Surround('<')<CR>
+nnoremap <silent> <localleader>e' :call <SID>Surround("'")<CR>
+nnoremap <silent> <localleader>e" :call <SID>Surround('"')<CR>
+nnoremap <silent> <localleader>es :call <SID>Surround(' ')<CR>
 
 "Change surrounding character
-nnoremap <silent> ce{ :call <SID>ChangeSurroundingChar('{')<cr>
-nnoremap <silent> ce[ :call <SID>ChangeSurroundingChar('[')<cr>
-nnoremap <silent> ce( :call <SID>ChangeSurroundingChar('(')<cr>
-nnoremap <silent> ce$ :call <SID>ChangeSurroundingChar('$')<cr>
-nnoremap <silent> ce/ :call <SID>ChangeSurroundingChar('/')<cr>
-nnoremap <silent> ce\ :call <SID>ChangeSurroundingChar('\\')<cr>
-nnoremap <silent> ce< :call <SID>ChangeSurroundingChar('<')<cr>
-nnoremap <silent> ce' :call <SID>ChangeSurroundingChar("'")<cr>
-nnoremap <silent> ce" :call <SID>ChangeSurroundingChar('"')<cr>
-nnoremap <silent> ces :call <SID>ChangeSurroundingChar(' ')<cr>
+nnoremap <silent> ce{ :call <SID>ChangeSurroundingChar('{')<CR>
+nnoremap <silent> ce[ :call <SID>ChangeSurroundingChar('[')<CR>
+nnoremap <silent> ce( :call <SID>ChangeSurroundingChar('(')<CR>
+nnoremap <silent> ce$ :call <SID>ChangeSurroundingChar('$')<CR>
+nnoremap <silent> ce/ :call <SID>ChangeSurroundingChar('/')<CR>
+nnoremap <silent> ce\ :call <SID>ChangeSurroundingChar('\\')<CR>
+nnoremap <silent> ce< :call <SID>ChangeSurroundingChar('<')<CR>
+nnoremap <silent> ce' :call <SID>ChangeSurroundingChar("'")<CR>
+nnoremap <silent> ce" :call <SID>ChangeSurroundingChar('"')<CR>
+nnoremap <silent> ces :call <SID>ChangeSurroundingChar(' ')<CR>
 "Reindent entire file
-nnoremap <silent> <localleader>i mqgg=G`q<cr>
+nnoremap <silent> <localleader>i mqgg=G`q<CR>
 "Read local scope R function arguments and send to R-REPL
-nnoremap <silent> <localleader>u :UltiSnipsEdit<cr>
+nnoremap <silent> <localleader>u :UltiSnipsEdit<CR>
 "Read local scope R function arguments and send to R-REPL
-nnoremap <silent> <localleader>p :call <SID>FormatAndFeedToRepl()<cr>
+nnoremap <silent> <localleader>p :call <SID>FormatAndFeedToRepl()<CR>
 "Comment the line of the cursor
-"nnoremap <silent> <localleader>c :call <SID>CommentLines()<cr>
-nnoremap <localleader>c :call NERDComment('n','sexy')<cr>
+"nnoremap <silent> <localleader>c :call <SID>CommentLines()<CR>
+nnoremap <localleader>c :call NERDComment('n','toggle')<CR>
 "toggle number option
-nnoremap <silent> <localleader>N :setlocal number!<cr>
+nnoremap <silent> <localleader>N :setlocal number!<CR>
 "toggle spell control
-nnoremap <silent> <localleader>s :call <SID>SpellCheckToggle()<cr>
+nnoremap <silent> <localleader>s :call <SID>SpellCheckToggle()<CR>
 "Enter insert mode automatically after Deletion from cursor to EOL character
 nnoremap <silent> D Da
 "toggle quickfix window
-nnoremap <localleader>q :call <SID>QuickFixToggle()<cr>
+nnoremap <localleader>q :call <SID>QuickFixToggle()<CR>
 "navigate within the quickfix-window
-nnoremap <silent> ä :cprevious<cr>
-nnoremap <silent> ü :cnext<cr>
+nnoremap <silent> ä :cprevious<CR>
+nnoremap <silent> ü :cnext<CR>
 "Cycle through all listed buffers
-" nnoremap <localleader>f :call <SID>FoldColumnToggle()<cr>
+" nnoremap <localleader>f :call <SID>FoldColumnToggle()<CR>
 "echo cword
-nnoremap <localleader>ee :execute "echom shellescape(expand(\"\<cword>\"))"<cr>
+nnoremap <localleader>ee :execute "echom shellescape(expand(\"\<cword>\"))"<CR>
 "echo cWORD
-nnoremap <localleader>EE :execute "echom shellescape(expand(\"\<cWORD>\"))"<cr>
+nnoremap <localleader>EE :execute "echom shellescape(expand(\"\<cWORD>\"))"<CR>
 "disable highlighting from previous search commands.
-nnoremap <silent> <localleader>v :nohl<cr>
+nnoremap <silent> <localleader>v :nohl<CR>
 "Disable search highlighting
-nnoremap <silent> <localleader>l :nohlsearch<cr>
+nnoremap <silent> <localleader>l :nohlsearch<CR>
 "Perform 'very magic' searches by default, for conventional regex pattern parsing like
 "perl, python and ruby.
 nnoremap / /\v
 "Highlight all trailing white space charactes before end-of-line character
-" nnoremap <silent> <localleader>w :call <SID>HlTrlWsp()<cr>
+" nnoremap <silent> <localleader>w :call <SID>HlTrlWsp()<CR>
 "Delete all trailing white space charactes before end-of-line character
-" nnoremap <silent> <localleader>W :execute "normal! mq:%s/".trlWspPattern."//g\r:nohl\r`q"<cr>
-"Write and close all windows in all tabs und quit vim
-nnoremap <localleader>Z :execute ":wall \| :qall"<CR>
-"maximize window
-"nnoremap <localleader>M :tabedit %<cr>
-nnoremap <silent> <localleader>M :call <SID>MaxCurWin()<cr>
-"minimize window
-nnoremap <silent> <localleader>m :call <SID>MinCurWin()<cr>
+" nnoremap <silent> <localleader>W :execute "normal! mq:%s/".trlWspPattern."//g\r:nohl\r`q"<CR>
 "write and close
-nnoremap Z ZZ|	"write and close
+nnoremap Z :call <SID>MemorizeBufferNrAndClose()<CR>
+"Write and close all windows in all tabs (quit vim)
+nnoremap <localleader>Z :execute ":wall \| :qall"<CR>
+nnoremap <leader>o :call <SID>OpenRecentlyClosedWindow("horizontal")<CR>
+nnoremap <leader>vo :call <SID>OpenRecentlyClosedWindow("vertical")<CR>
+"maximize window
+"nnoremap <localleader>M :tabedit %<CR>
+nnoremap <silent> <localleader>M :call <SID>MaxCurWin()<CR>
+"minimize window
+nnoremap <silent> <localleader>m :call <SID>MinCurWin()<CR>
 "map redo to capital u
 nnoremap U <c-r>
 "go to next buffer
-nnoremap <silent> <localleader>b :bnext<cr>
+nnoremap <silent> <localleader>b :bnext<CR>
 "go to previous buffer
-nnoremap <silent> <localleader>B :bprevious<cr>
+nnoremap <silent> <localleader>B :bprevious<CR>
 "go to next window
 nnoremap <silent> <tab> :call <SID>GoToNeighbourWin("forward")<esc>
 "go to previous window
 nnoremap <silent> <S-tab> :call <SID>GoToNeighbourWin("backward")<esc>
 "Edit R function collection
-nnoremap <silent> <localleader>er :execute ":split ".g:RFUNS."\|:lcd ".g:RFUNS_DIR<cr>
+nnoremap <silent> <localleader>er :execute ":split ".g:RFUNS."\|:lcd ".g:RFUNS_DIR<CR>
 "Edit vimrc file
-nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC<cr>
+nnoremap <silent> <localleader>ev :execute ":split ".$MYVIMRC<CR>
 "source (aka. "reload") vimrc file
 nnoremap <localleader>r :source $MYVIMRC<CR>
 "open terminal emulator. For automatic switch to insert mode (aka terminal mode)
 "define autocomand according to autocomd termOpen * :startinsert
-nnoremap <silent> <localleader>C :execute ":split\|:terminal"<cr>
+nnoremap <silent> <localleader>C :execute ":split\|:terminal"<CR>
 "select word with space key
 nnoremap <space> viw
 "clear current line
-nnoremap <silent> <localleader>d :call <sid>DeleteLine()<cr>
+nnoremap <silent> <localleader>d :call <sid>DeleteLine()<CR>
 "}}}
 "------------------------------ VISUAL MODE{{{
 "Enclose/surround visually selected area with/by angle brackets
-vnoremap <localleader>e< <esc>`<i<<esc>`>la><esc>
+vnoremap <localleader>e< <esc>`<i<<esc>`>la><esc>`<i
 "Enclose/surround visually selected area with/by brackets
-vnoremap <localleader>e[ <esc>`<i[<esc>`>la]<esc>
+vnoremap <localleader>e[ <esc>`<i[<esc>`>la]<esc>`<i
 "Enclose/surround visually selected area with/by braces
-vnoremap <localleader>e{ <esc>`<i{<esc>`>la}<esc>
+vnoremap <localleader>e{ <esc>`<i{<esc>`>la}<esc>`<i
 "Enclose/surround visually selected area with/by parenthesis
-vnoremap <localleader>e( <esc>`<i(<esc>`>la)<esc>
+vnoremap <localleader>e( <esc>`<i(<esc>`>la)<esc>`<i
 "Enclose/surround visually selected area with/by single quotes
-vnoremap <localleader>e' <esc>`<i'<esc>`>la'<esc>
+vnoremap <localleader>e' <esc>`<i'<esc>`>la'<esc>`<i
 "Enclose/surround visually selected area with/by single quotes
-vnoremap <localleader>e" <esc>`<i"<esc>`>la"<esc>
+vnoremap <localleader>e" <esc>`<i"<esc>`>la"<esc>`<i
 "Indent with tab
 vnoremap <silent> <tab> >
 "Unindent with tab
 vnoremap <silent> <s-tab> <
 "comment visually selected lines
-vnoremap <silent> <localleader>c :call <SID>CommentLines()<cr>
+vnoremap <silent> <localleader>c :call <SID>CommentLines()<CR>
 "go to the last printable character of current line (skip newline char)
 vnoremap $ g_
 "Search constrained to visually selected range.
@@ -787,21 +814,21 @@ vnoremap <silent> / :<C-U>call <SID>RangeSearch('/')<CR>:if strlen(g:srchstr) > 
 "Backward search constrained to visually selected range
 vnoremap <silent> ? :<C-U>call <SID>RangeSearch('?')<CR>:if strlen(g:srchstr) > 0\|execute '?'.g:srchstr\|endif<CR> <lsflaksjfd>
 "constrain selection to content of next emerging pair of paranthesis
-vnoremap n( <esc>:<c-u>execute "normal! /".'\v\('."\rlvi("<cr>
+vnoremap n( <esc>:<c-u>execute "normal! /".'\v\('."\rlvi("<CR>
 "constrain selection to content of previously emerging pair of paranthesis
-vnoremap p( <esc>:<c-u>execute "normal! ?".'\v\)'."\rhvi("<cr>
+vnoremap p( <esc>:<c-u>execute "normal! ?".'\v\)'."\rhvi("<CR>
 "constrain selection to content of next emerging pair of braces
-vnoremap n{ <esc>:<c-u>execute "normal! /".'\v\{'."\rlvi{"<cr>
+vnoremap n{ <esc>:<c-u>execute "normal! /".'\v\{'."\rlvi{"<CR>
 "constrain selection to content of previously emerging pair of braces
-vnoremap p{ <esc>:<c-u>execute "normal! ?".'\v\}'."\rhvi{"<cr>
+vnoremap p{ <esc>:<c-u>execute "normal! ?".'\v\}'."\rhvi{"<CR>
 "constrain selection to content of next emerging pair of square brackets
-vnoremap n[ <esc>:<c-u>execute "normal! /".'\v\['."\rlvi["<cr>
+vnoremap n[ <esc>:<c-u>execute "normal! /".'\v\['."\rlvi["<CR>
 "constrain selection to content of previously emerging pair of square brackets
-vnoremap p[ <esc>:<c-u>execute "normal! ?".'\v\]'."\rhvi["<cr>
+vnoremap p[ <esc>:<c-u>execute "normal! ?".'\v\]'."\rhvi["<CR>
 "constrain selection to content of next emerging pair of angle brackets
-vnoremap n< <esc>:<c-u>execute "normal! /".'\v\<'."\rlvi<"<cr>
+vnoremap n< <esc>:<c-u>execute "normal! /".'\v\<'."\rlvi<"<CR>
 "constrain selection to content of previously emerging pair of angle brackets
-vnoremap p< <esc>:<c-u>execute "normal! ?".'\v\>'."\rhvi<"<cr>
+vnoremap p< <esc>:<c-u>execute "normal! ?".'\v\>'."\rhvi<"<CR>
 "}}} <alskdjflkasf>
 "------------------------------ INSERT MODE{{{
 "Open completion menuh
@@ -829,11 +856,11 @@ if(len(maparg('cp'))!=0)|	"check whether mapping already exists
 	unmap cp|		"unmap iron-vims repeat command
 endif
 onoremap p i(|"inner paranthesis environment
-onoremap p( :<c-u>normal! F)hvi(<cr>|	"last paranethesis environment
-onoremap n( :<c-u>normal! f(lvi(<cr>|	"next paranthesis environment
-onoremap b :<c-u>normal! vi{<cr>|	"inner brace environment
-onoremap n{ :<c-u>normal! f{lvi{<cr>|	"next brace environment
-onoremap p{ :<c-u>normal! F}hvi{<cr>|	"last brace environment
+onoremap p( :<c-u>normal! F)hvi(<CR>|	"last paranethesis environment
+onoremap n( :<c-u>normal! f(lvi(<CR>|	"next paranthesis environment
+onoremap b :<c-u>normal! vi{<CR>|	"inner brace environment
+onoremap n{ :<c-u>normal! f{lvi{<CR>|	"next brace environment
+onoremap p{ :<c-u>normal! F}hvi{<CR>|	"last brace environment
 "}}}
 "}}}
 "------------------------------ AUTOCOMMANDS{{{
@@ -856,8 +883,8 @@ augroup end
 augroup r
 	autocmd!
 	autocmd Filetype r :setlocal colorcolumn=80|                    "Display a coloured vertical bar
-	autocmd Filetype r :nnoremap <buffer> = :execute "!styler ".expand("%")<cr>
-	autocmd Filetype r :nnoremap <buffer> <localleader>rt :TaggeR<cr>
+	autocmd Filetype r :nnoremap <buffer> = :execute "!styler ".expand("%")<CR>
+	autocmd Filetype r :nnoremap <buffer> <localleader>rt :TaggeR<CR>
 	if match(&runtimepath,'Nvim-R') != -1
 		autocmd Filetype r :nmap <buffer> , <Plug>RDSendLine
 		"	autocmd Filetype r :remap the 'Send selection' command of Nvim-R plugin"
@@ -886,9 +913,9 @@ augroup end
 "------------------------------ Filetype markdown{{{
 augroup markdown
 	autocmd!
-	autocmd FileType markdown onoremap <buffer> in@ :<c-u>execute "normal! /@\r:nohlsearch\rhviw"<cr>
-	autocmd FileType markdown onoremap <buffer> ih :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_"<cr>|	"delete markdown file heading of current section
-	autocmd FileType markdown onoremap <buffer> ah :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_j"<cr>|	"delete around heading
+	autocmd FileType markdown onoremap <buffer> in@ :<c-u>execute "normal! /@\r:nohlsearch\rhviw"<CR>
+	autocmd FileType markdown onoremap <buffer> ih :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_"<CR>|	"delete markdown file heading of current section
+	autocmd FileType markdown onoremap <buffer> ah :<c-u>execute "normal! ?^==\\+$\r:nohlsearch\rkvg_j"<CR>|	"delete around heading
 augroup end
 "}}}
 "------------------------------ Filetype perl{{{
@@ -983,7 +1010,7 @@ if match(&runtimepath,'nerdtree') != -1
 	let NERDTreeShowLineNumbers = 1
 	"show hidden files per default
 	let NERDTreeShowHidden = 1
-	nnoremap <localleader>n :call <SID>OpenOrRefreshNerdTree()<cr>
+	nnoremap <localleader>n :call <SID>OpenOrRefreshNerdTree()<CR>
 	"nnoremap <localleader>h :call <Plug>NERDTreeMapOpenSplit()<CR>
 	let g:webdevicons_enable_nerdtree = 1
 endif
@@ -1028,7 +1055,7 @@ endif
 if match(&runtimepath,'ultisnips') != -1
 	let g:UltiSnipsEditSplit="context"
 	"dont use <Tab> key to expand snippet
-	let g:UltiSnipsExpandTrigger = "<localleader><cr>"
+	let g:UltiSnipsExpandTrigger = "<localleader><CR>"
 	"let snippet displayed in the completion pop up be expanded by hitting Carriage Return
 	let g:ulti_expand_or_jump_res = 0
 	function ExpandSnippetOrCarriageReturn()
@@ -1053,9 +1080,9 @@ endif
 "------------------------------ FUGITIVE{{{
 if match(&runtimepath,'fugitive') != -1
 	"Git add file that corresponds to current buffer
-	nnoremap <silent> <localleader>ga :Git add %<cr>
+	nnoremap <silent> <localleader>ga :Git add %<CR>
 	"Git rebase --continue
-	nnoremap <silent> <localleader>grc :Git rebase --continue<cr>
+	nnoremap <silent> <localleader>grc :Git rebase --continue<CR>
 endif
 "}}}
 "------------------------------ VIM-ONE{{{
